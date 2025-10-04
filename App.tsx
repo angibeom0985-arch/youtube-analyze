@@ -278,8 +278,6 @@ const App: React.FC = () => {
           </nav>
         </header>
 
-        <AdSense />
-
         <main>
           {/* --- INPUT SECTION --- */}
           <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-6 mb-8">
