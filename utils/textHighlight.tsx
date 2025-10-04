@@ -174,57 +174,21 @@ export const highlightImportantText = (text: string): string => {
   // 먼저 줄바꿈을 br 태그로 변환
   result = result.replace(/\n/g, '<br/>');
   
-  // 1단계: 문맥 기반 패턴 강조 (더 긴 문구를 먼저 처리)
-  contextPatterns.forEach(pattern => {
-    result = result.replace(pattern, (match, group1) => {
-      // 이미 span 태그 안에 있으면 스킵
-      if (match.includes('<span') || match.includes('</span>')) {
-        return match;
-      }
-      // 그룹이 있으면 그룹만 강조, 없으면 전체 강조
-      if (group1) {
-        const highlighted = `<span class="underline decoration-2 decoration-orange-400 underline-offset-4 font-semibold">${group1}</span>`;
-        return match.replace(group1, highlighted);
-      }
-      return `<span class="underline decoration-2 decoration-orange-400 underline-offset-4 font-semibold">${match}</span>`;
-    });
-  });
+  // 각 섹션당 하나의 중요 문장에만 밑줄 (볼드 제거, 밑줄만)
+  // 중요한 핵심 키워드만 선별
+  const criticalKeywords = [
+    '핵심 메시지', '목표 시청자', '기획 의도', '핵심 전략', '성공 요인',
+    '핵심 포인트', '주요 포인트', '가장 중요한', '결정적인', '필수적인',
+    '차별점', '강점', '특징', '효과', '조회수', '참여도'
+  ];
   
-  // 2단계: 기본 키워드 강조
-  basicKeywords.forEach(keyword => {
-    // 특수 문자 이스케이프
+  // 중요 키워드만 밑줄 (font-semibold 제거)
+  criticalKeywords.forEach(keyword => {
     const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    
-    // 이미 span 태그 안에 있지 않은 경우에만 매칭
     const regex = new RegExp(`(?![^<]*>)(${escapedKeyword})(?![^<]*</)`, 'gi');
     
     result = result.replace(regex, (match) => {
-      return `<span class="underline decoration-2 decoration-orange-400 underline-offset-4 font-semibold">${match}</span>`;
-    });
-  });
-  
-  // 3단계: 숫자+단위 패턴 강조
-  const numberPatterns = [
-    { regex: /(?![^<]*>)(\d+)%(?![^<]*<\/)/g, replacement: '<span class="underline decoration-2 decoration-orange-400 underline-offset-4 font-semibold">$1%</span>' },
-    { regex: /(?![^<]*>)(\d+)만\s*회(?![^<]*<\/)/g, replacement: '<span class="underline decoration-2 decoration-orange-400 underline-offset-4 font-semibold">$1만 회</span>' },
-    { regex: /(?![^<]*>)(\d+)만\s*명(?![^<]*<\/)/g, replacement: '<span class="underline decoration-2 decoration-orange-400 underline-offset-4 font-semibold">$1만 명</span>' },
-    { regex: /(?![^<]*>)(\d+)초(?![^<]*<\/)/g, replacement: '<span class="underline decoration-2 decoration-orange-400 underline-offset-4 font-semibold">$1초</span>' },
-    { regex: /(?![^<]*>)(\d+)분(?![^<]*<\/)/g, replacement: '<span class="underline decoration-2 decoration-orange-400 underline-offset-4 font-semibold">$1분</span>' },
-    { regex: /(?![^<]*>)(\d+)시간(?![^<]*<\/)/g, replacement: '<span class="underline decoration-2 decoration-orange-400 underline-offset-4 font-semibold">$1시간</span>' },
-  ];
-  
-  numberPatterns.forEach(({ regex, replacement }) => {
-    result = result.replace(regex, replacement);
-  });
-  
-  // 4단계: "~다", "~습니다"로 끝나는 중요 문장 (20~80자) 강조
-  // 단, 너무 많이 강조되지 않도록 주의
-  const importantSentenceMarkers = ['중요', '핵심', '필수', '강력', '효과적', '성공'];
-  importantSentenceMarkers.forEach(marker => {
-    const sentenceRegex = new RegExp(`(?![^<]*>)([^.!?]{10,80}${marker}[^.!?]{5,40}[다습니다])(?![^<]*<\/)`, 'g');
-    result = result.replace(sentenceRegex, (match) => {
-      if (match.includes('<span')) return match;
-      return `<span class="underline decoration-2 decoration-orange-400 underline-offset-4 font-semibold">${match}</span>`;
+      return `<span class="underline decoration-2 decoration-orange-400 underline-offset-4">${match}</span>`;
     });
   });
   
