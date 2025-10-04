@@ -16,15 +16,13 @@ const FloatingAnchorAd: React.FC = () => {
   const adHeight = isMobile ? '50px' : '90px';
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A1A] shadow-lg">
-      <div className="max-w-7xl mx-auto px-2 py-1 flex justify-center">
-        <ins 
-          className="adsbygoogle"
-          style={{ display: 'inline-block', width: adWidth, height: adHeight }}
-          data-ad-client="ca-pub-2686975437928535"
-          data-ad-slot="8116896499"
-        />
-      </div>
+    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40 bg-[#1A1A1A] shadow-lg rounded-lg overflow-hidden">
+      <ins 
+        className="adsbygoogle"
+        style={{ display: 'inline-block', width: adWidth, height: adHeight }}
+        data-ad-client="ca-pub-2686975437928535"
+        data-ad-slot="8116896499"
+      />
     </div>
   );
 };
