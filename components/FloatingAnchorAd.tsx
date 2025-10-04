@@ -63,7 +63,7 @@ const FloatingAnchorAd: React.FC = () => {
                 className="adsbygoogle"
                 style={{ display: 'block' }}
                 data-ad-client="ca-pub-2686975437928535"
-                data-ad-slot="2376295288"
+                data-ad-slot="8116896499"
                 data-ad-format="auto"
                 data-full-width-responsive="true"
               />
