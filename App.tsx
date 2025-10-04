@@ -16,6 +16,7 @@ import Footer from './components/Footer';
 import AdBlockDetector from './components/AdBlockDetector';
 import AdBlockWarningModal from './components/AdBlockWarningModal';
 import FloatingAnchorAd from './components/FloatingAnchorAd';
+import SidebarAds from './components/SidebarAds';
 import { getStoredApiKey, saveApiKey } from './utils/apiKeyStorage';
 import { highlightImportantText } from './utils/textHighlight.tsx';
 
@@ -890,6 +891,9 @@ const App: React.FC = () => {
           <span>초기화</span>
         </button>
       )}
+      
+      {/* 사이드바 광고 - 애드블럭 감지 시 숨김 */}
+      {!adBlockDetected && <SidebarAds />}
       
       {/* 플로팅 앵커 광고 - 애드블럭 감지 시 숨김 */}
       {!adBlockDetected && <FloatingAnchorAd />}
