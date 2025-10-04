@@ -82,28 +82,33 @@ const ResultCard: React.FC<ResultCardProps> = ({ title, children, className, con
   };
 
   return (
-    <div className={`bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-6 mb-6 ${className}`}>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-red-400 to-red-500 bg-clip-text text-transparent">{title}</h2>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleCopy}
-            className="text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors shadow-lg"
-            title="복사하고 쿠팡 혜택 받기"
-          >
-            📋 복사
-          </button>
-          <button
-            onClick={handleDownload}
-            className="text-xs bg-zinc-700 hover:bg-zinc-600 text-neutral-300 font-semibold py-2 px-4 rounded-md transition-colors shadow-lg"
-            title="다운로드하고 쿠팡 혜택 받기"
-          >
-            💾 다운로드
-          </button>
+    <div className={`bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-6 mb-6 ${className} relative`}>
+      {/* Sticky 헤더 영역 */}
+      <div className="sticky top-0 bg-[#1A1A1A] z-10 -mx-6 -mt-6 px-6 pt-6 pb-4 rounded-t-xl border-b border-[#2A2A2A]">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-red-400 to-red-500 bg-clip-text text-transparent">{title}</h2>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCopy}
+              className="text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors shadow-lg whitespace-nowrap"
+              title="복사하고 쿠팡 혜택 받기"
+            >
+              📋 복사
+            </button>
+            <button
+              onClick={handleDownload}
+              className="text-xs bg-zinc-700 hover:bg-zinc-600 text-neutral-300 font-semibold py-2 px-4 rounded-md transition-colors shadow-lg whitespace-nowrap"
+              title="다운로드하고 쿠팡 혜택 받기"
+            >
+              💾 다운로드
+            </button>
+          </div>
         </div>
       </div>
+      
+      {/* 컨텐츠 영역 */}
       <div 
-        className="text-white"
+        className="text-white mt-4"
         onMouseDown={preventSelection}
         onDragStart={preventSelection}
         onContextMenu={preventContextMenu}
