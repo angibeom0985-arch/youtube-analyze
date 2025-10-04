@@ -57,6 +57,109 @@ const App: React.FC = () => {
     }
   }, []);
 
+  // 분석 결과 저장 (localStorage)
+  useEffect(() => {
+    if (analysisResult) {
+      localStorage.setItem('lastAnalysisResult', JSON.stringify(analysisResult));
+      localStorage.setItem('lastAnalysisTimestamp', Date.now().toString());
+    }
+  }, [analysisResult]);
+
+  useEffect(() => {
+    if (newPlan) {
+      localStorage.setItem('lastNewPlan', JSON.stringify(newPlan));
+      localStorage.setItem('lastNewPlanTimestamp', Date.now().toString());
+    }
+  }, [newPlan]);
+
+  useEffect(() => {
+    if (suggestedIdeas.length > 0) {
+      localStorage.setItem('lastSuggestedIdeas', JSON.stringify(suggestedIdeas));
+    }
+  }, [suggestedIdeas]);
+
+  useEffect(() => {
+    if (transcript) {
+      localStorage.setItem('lastTranscript', transcript);
+    }
+  }, [transcript]);
+
+  useEffect(() => {
+    if (youtubeUrl) {
+      localStorage.setItem('lastYoutubeUrl', youtubeUrl);
+    }
+  }, [youtubeUrl]);
+
+  useEffect(() => {
+    if (newKeyword) {
+      localStorage.setItem('lastNewKeyword', newKeyword);
+    }
+  }, [newKeyword]);
+
+  // 페이지 로드 시 저장된 데이터 복원 (24시간 이내)
+  useEffect(() => {
+    const restoreData = () => {
+      const now = Date.now();
+      const maxAge = 24 * 60 * 60 * 1000; // 24시간
+
+      // 분석 결과 복원
+      const savedAnalysis = localStorage.getItem('lastAnalysisResult');
+      const analysisTimestamp = localStorage.getItem('lastAnalysisTimestamp');
+      if (savedAnalysis && analysisTimestamp) {
+        const age = now - parseInt(analysisTimestamp);
+        if (age < maxAge) {
+          try {
+            setAnalysisResult(JSON.parse(savedAnalysis));
+          } catch (e) {
+            console.error('Failed to restore analysis result:', e);
+          }
+        }
+      }
+
+      // 새 기획안 복원
+      const savedPlan = localStorage.getItem('lastNewPlan');
+      const planTimestamp = localStorage.getItem('lastNewPlanTimestamp');
+      if (savedPlan && planTimestamp) {
+        const age = now - parseInt(planTimestamp);
+        if (age < maxAge) {
+          try {
+            setNewPlan(JSON.parse(savedPlan));
+          } catch (e) {
+            console.error('Failed to restore new plan:', e);
+          }
+        }
+      }
+
+      // 아이디어 복원
+      const savedIdeas = localStorage.getItem('lastSuggestedIdeas');
+      if (savedIdeas) {
+        try {
+          setSuggestedIdeas(JSON.parse(savedIdeas));
+        } catch (e) {
+          console.error('Failed to restore ideas:', e);
+        }
+      }
+
+      // 입력값 복원
+      const savedTranscript = localStorage.getItem('lastTranscript');
+      if (savedTranscript) {
+        setTranscript(savedTranscript);
+      }
+
+      const savedUrl = localStorage.getItem('lastYoutubeUrl');
+      if (savedUrl) {
+        setYoutubeUrl(savedUrl);
+      }
+
+      const savedKeyword = localStorage.getItem('lastNewKeyword');
+      if (savedKeyword) {
+        setNewKeyword(savedKeyword);
+      }
+    };
+
+    restoreData();
+  }, []); // 최초 한 번만 실행
+
   useEffect(() => {
     const fetchVideoDetails = async () => {
       const trimmedUrl = youtubeUrl.trim();
