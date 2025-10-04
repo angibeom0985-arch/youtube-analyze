@@ -25,21 +25,29 @@ def create_og_image():
     
     # 한글 폰트 로드 (Windows 시스템 폰트)
     try:
-        # Windows에서 한글 지원 폰트 시도
-        title_font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 80)  # 맑은 고딕
-        subtitle_font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 45)
-        desc_font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 32)
-    except:
+        # 나눔고딕 사용
+        title_font = ImageFont.truetype("C:/Windows/Fonts/NanumGothic.ttf", 80)
+        subtitle_font = ImageFont.truetype("C:/Windows/Fonts/NanumGothic.ttf", 45)
+        desc_font = ImageFont.truetype("C:/Windows/Fonts/NanumGothic.ttf", 32)
+    except Exception as e:
+        print(f"⚠️ Font loading error: {e}")
         try:
-            # 맑은 고딕이 없으면 굴림 시도
-            title_font = ImageFont.truetype("C:/Windows/Fonts/gulim.ttc", 80)
-            subtitle_font = ImageFont.truetype("C:/Windows/Fonts/gulim.ttc", 45)
-            desc_font = ImageFont.truetype("C:/Windows/Fonts/gulim.ttc", 32)
+            # Hancom Gothic 시도
+            title_font = ImageFont.truetype("C:/Windows/Fonts/Hancom Gothic Regular.ttf", 80)
+            subtitle_font = ImageFont.truetype("C:/Windows/Fonts/Hancom Gothic Regular.ttf", 45)
+            desc_font = ImageFont.truetype("C:/Windows/Fonts/Hancom Gothic Regular.ttf", 32)
         except:
-            # 모두 실패 시 기본 폰트
-            title_font = ImageFont.load_default()
-            subtitle_font = ImageFont.load_default()
-            desc_font = ImageFont.load_default()
+            try:
+                # 굴림 시도
+                title_font = ImageFont.truetype("C:/Windows/Fonts/GOTHIC.TTF", 80)
+                subtitle_font = ImageFont.truetype("C:/Windows/Fonts/GOTHIC.TTF", 45)
+                desc_font = ImageFont.truetype("C:/Windows/Fonts/GOTHIC.TTF", 32)
+            except:
+                # 모두 실패 시 기본 폰트
+                print("❌ All fonts failed, using default")
+                title_font = ImageFont.load_default()
+                subtitle_font = ImageFont.load_default()
+                desc_font = ImageFont.load_default()
     
     # 텍스트 그리기
     # 메인 타이틀
@@ -108,12 +116,12 @@ def create_guide_og_image():
         draw.rectangle([(0, y), (width, y+1)], fill=(r, g, b))
     
     try:
-        title_font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 70)
-        subtitle_font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 40)
+        title_font = ImageFont.truetype("C:/Windows/Fonts/NanumGothic.ttf", 70)
+        subtitle_font = ImageFont.truetype("C:/Windows/Fonts/NanumGothic.ttf", 40)
     except:
         try:
-            title_font = ImageFont.truetype("C:/Windows/Fonts/gulim.ttc", 70)
-            subtitle_font = ImageFont.truetype("C:/Windows/Fonts/gulim.ttc", 40)
+            title_font = ImageFont.truetype("C:/Windows/Fonts/GOTHIC.TTF", 70)
+            subtitle_font = ImageFont.truetype("C:/Windows/Fonts/GOTHIC.TTF", 40)
         except:
             title_font = ImageFont.load_default()
             subtitle_font = ImageFont.load_default()
@@ -148,12 +156,12 @@ def create_api_guide_og_image():
         draw.rectangle([(0, y), (width, y+1)], fill=(r, g, b))
     
     try:
-        title_font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 70)
-        subtitle_font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 40)
+        title_font = ImageFont.truetype("C:/Windows/Fonts/NanumGothic.ttf", 70)
+        subtitle_font = ImageFont.truetype("C:/Windows/Fonts/NanumGothic.ttf", 40)
     except:
         try:
-            title_font = ImageFont.truetype("C:/Windows/Fonts/gulim.ttc", 70)
-            subtitle_font = ImageFont.truetype("C:/Windows/Fonts/gulim.ttc", 40)
+            title_font = ImageFont.truetype("C:/Windows/Fonts/GOTHIC.TTF", 70)
+            subtitle_font = ImageFont.truetype("C:/Windows/Fonts/GOTHIC.TTF", 40)
         except:
             title_font = ImageFont.load_default()
             subtitle_font = ImageFont.load_default()
