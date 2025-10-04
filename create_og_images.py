@@ -23,16 +23,23 @@ def create_og_image():
     overlay = Image.new('RGBA', (width, height), (0, 0, 0, 100))
     img.paste(overlay, (0, 0), overlay)
     
-    # 폰트 로드 시도
+    # 한글 폰트 로드 (Windows 시스템 폰트)
     try:
-        title_font = ImageFont.truetype("arial.ttf", 80)
-        subtitle_font = ImageFont.truetype("arial.ttf", 45)
-        desc_font = ImageFont.truetype("arial.ttf", 32)
+        # Windows에서 한글 지원 폰트 시도
+        title_font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 80)  # 맑은 고딕
+        subtitle_font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 45)
+        desc_font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 32)
     except:
-        # 폰트 로드 실패 시 기본 폰트
-        title_font = ImageFont.load_default()
-        subtitle_font = ImageFont.load_default()
-        desc_font = ImageFont.load_default()
+        try:
+            # 맑은 고딕이 없으면 굴림 시도
+            title_font = ImageFont.truetype("C:/Windows/Fonts/gulim.ttc", 80)
+            subtitle_font = ImageFont.truetype("C:/Windows/Fonts/gulim.ttc", 45)
+            desc_font = ImageFont.truetype("C:/Windows/Fonts/gulim.ttc", 32)
+        except:
+            # 모두 실패 시 기본 폰트
+            title_font = ImageFont.load_default()
+            subtitle_font = ImageFont.load_default()
+            desc_font = ImageFont.load_default()
     
     # 텍스트 그리기
     # 메인 타이틀
@@ -101,11 +108,15 @@ def create_guide_og_image():
         draw.rectangle([(0, y), (width, y+1)], fill=(r, g, b))
     
     try:
-        title_font = ImageFont.truetype("arial.ttf", 70)
-        subtitle_font = ImageFont.truetype("arial.ttf", 40)
+        title_font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 70)
+        subtitle_font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 40)
     except:
-        title_font = ImageFont.load_default()
-        subtitle_font = ImageFont.load_default()
+        try:
+            title_font = ImageFont.truetype("C:/Windows/Fonts/gulim.ttc", 70)
+            subtitle_font = ImageFont.truetype("C:/Windows/Fonts/gulim.ttc", 40)
+        except:
+            title_font = ImageFont.load_default()
+            subtitle_font = ImageFont.load_default()
     
     title = "사용 방법 가이드"
     title_bbox = draw.textbbox((0, 0), title, font=title_font)
@@ -137,11 +148,15 @@ def create_api_guide_og_image():
         draw.rectangle([(0, y), (width, y+1)], fill=(r, g, b))
     
     try:
-        title_font = ImageFont.truetype("arial.ttf", 70)
-        subtitle_font = ImageFont.truetype("arial.ttf", 40)
+        title_font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 70)
+        subtitle_font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 40)
     except:
-        title_font = ImageFont.load_default()
-        subtitle_font = ImageFont.load_default()
+        try:
+            title_font = ImageFont.truetype("C:/Windows/Fonts/gulim.ttc", 70)
+            subtitle_font = ImageFont.truetype("C:/Windows/Fonts/gulim.ttc", 40)
+        except:
+            title_font = ImageFont.load_default()
+            subtitle_font = ImageFont.load_default()
     
     title = "API 키 발급 가이드"
     title_bbox = draw.textbbox((0, 0), title, font=title_font)
