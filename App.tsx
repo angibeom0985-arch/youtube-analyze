@@ -16,6 +16,7 @@ import Footer from './components/Footer';
 import AdBlockDetector from './components/AdBlockDetector';
 import AdBlockWarningModal from './components/AdBlockWarningModal';
 import FloatingAnchorAd from './components/FloatingAnchorAd';
+import FloatingSideAd from './components/FloatingSideAd';
 import { getStoredApiKey, saveApiKey } from './utils/apiKeyStorage';
 import { highlightImportantText } from './utils/textHighlight.tsx';
 
@@ -879,6 +880,12 @@ const App: React.FC = () => {
       
       {/* 플로팅 앵커 광고 */}
       <FloatingAnchorAd />
+      
+      {/* 왼쪽 사이드 플로팅 광고 */}
+      <FloatingSideAd position="left" />
+      
+      {/* 오른쪽 사이드 플로팅 광고 */}
+      <FloatingSideAd position="right" />
       
       {/* 플로팅 초기화 버튼 */}
       {(analysisResult || newPlan || transcript || youtubeUrl) && (
