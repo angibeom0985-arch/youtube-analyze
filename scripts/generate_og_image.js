@@ -4,12 +4,17 @@ const path = require("path");
 
 // 한글 폰트 등록
 try {
-  registerFont("C:/Windows/Fonts/malgunbd.ttf", {
-    family: "Malgun Gothic Bold",
+  registerFont("C:\\Windows\\Fonts\\malgunbd.ttf", {
+    family: "Malgun Gothic",
+    weight: "bold"
   });
-  registerFont("C:/Windows/Fonts/malgun.ttf", { family: "Malgun Gothic" });
+  registerFont("C:\\Windows\\Fonts\\malgun.ttf", { 
+    family: "Malgun Gothic",
+    weight: "normal"
+  });
+  console.log("✅ 폰트 로드 성공");
 } catch (e) {
-  console.warn("폰트 로드 실패:", e.message);
+  console.error("❌ 폰트 로드 실패:", e.message);
 }
 
 function createOgImage(outputPath, title, subtitle, colors, width, height) {
@@ -34,34 +39,47 @@ function createOgImage(outputPath, title, subtitle, colors, width, height) {
   ctx.fill();
   ctx.globalAlpha = 1.0;
 
-  // 중앙 컨테이너 박스 (약간 투명)
+  // 중앙 컨테이너 박스 (약간 투명) - 둥근 모서리
   ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
-  ctx.roundRect(width * 0.1, height * 0.25, width * 0.8, height * 0.5, 20);
+  const containerRadius = 20;
+  const containerX = width * 0.1;
+  const containerY = height * 0.25;
+  const containerWidth = width * 0.8;
+  const containerHeight = height * 0.5;
+  
+  ctx.beginPath();
+  ctx.moveTo(containerX + containerRadius, containerY);
+  ctx.lineTo(containerX + containerWidth - containerRadius, containerY);
+  ctx.quadraticCurveTo(containerX + containerWidth, containerY, containerX + containerWidth, containerY + containerRadius);
+  ctx.lineTo(containerX + containerWidth, containerY + containerHeight - containerRadius);
+  ctx.quadraticCurveTo(containerX + containerWidth, containerY + containerHeight, containerX + containerWidth - containerRadius, containerY + containerHeight);
+  ctx.lineTo(containerX + containerRadius, containerY + containerHeight);
+  ctx.quadraticCurveTo(containerX, containerY + containerHeight, containerX, containerY + containerHeight - containerRadius);
+  ctx.lineTo(containerX, containerY + containerRadius);
+  ctx.quadraticCurveTo(containerX, containerY, containerX + containerRadius, containerY);
+  ctx.closePath();
   ctx.fill();
 
   // 상단 강조 라인
   ctx.fillStyle = colors.accent;
-  ctx.roundRect(width * 0.1, height * 0.25, width * 0.8, 8, [8, 8, 0, 0]);
-  ctx.fill();
+  ctx.fillRect(width * 0.1, height * 0.25, width * 0.8, 8);
 
   // 타이틀 텍스트
   const scale = Math.min(width, height) / 630;
-  ctx.font = `bold ${Math.floor(
-    85 * scale
-  )}px "Malgun Gothic Bold", "Malgun Gothic", sans-serif`;
+  ctx.font = `bold ${Math.floor(85 * scale)}px "Malgun Gothic"`;
   ctx.fillStyle = "#ffffff";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(title, width / 2, height * 0.4);
 
   // 서브타이틀 텍스트
-  ctx.font = `${Math.floor(42 * scale)}px "Malgun Gothic", sans-serif`;
+  ctx.font = `${Math.floor(42 * scale)}px "Malgun Gothic"`;
   ctx.fillStyle = "#e0e0e0";
   ctx.fillText(subtitle, width / 2, height * 0.54);
 
   // 도메인 박스
   const domain = "youtube-analyze.money-hotissue.com";
-  ctx.font = `${Math.floor(28 * scale)}px "Malgun Gothic", sans-serif`;
+  ctx.font = `${Math.floor(28 * scale)}px "Malgun Gothic"`;
   const domainWidth = ctx.measureText(domain).width;
   const boxPadding = 25 * scale;
   const boxX = (width - domainWidth) / 2 - boxPadding;
@@ -69,9 +87,20 @@ function createOgImage(outputPath, title, subtitle, colors, width, height) {
   const boxWidth = domainWidth + boxPadding * 2;
   const boxHeight = 55 * scale;
 
-  // 도메인 배경 박스
+  // 도메인 배경 박스 (둥근 모서리)
   ctx.fillStyle = "#ffffff";
-  ctx.roundRect(boxX, boxY, boxWidth, boxHeight, 10);
+  const domainRadius = 10;
+  ctx.beginPath();
+  ctx.moveTo(boxX + domainRadius, boxY);
+  ctx.lineTo(boxX + boxWidth - domainRadius, boxY);
+  ctx.quadraticCurveTo(boxX + boxWidth, boxY, boxX + boxWidth, boxY + domainRadius);
+  ctx.lineTo(boxX + boxWidth, boxY + boxHeight - domainRadius);
+  ctx.quadraticCurveTo(boxX + boxWidth, boxY + boxHeight, boxX + boxWidth - domainRadius, boxY + boxHeight);
+  ctx.lineTo(boxX + domainRadius, boxY + boxHeight);
+  ctx.quadraticCurveTo(boxX, boxY + boxHeight, boxX, boxY + boxHeight - domainRadius);
+  ctx.lineTo(boxX, boxY + domainRadius);
+  ctx.quadraticCurveTo(boxX, boxY, boxX + domainRadius, boxY);
+  ctx.closePath();
   ctx.fill();
 
   // 도메인 텍스트
