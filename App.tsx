@@ -221,6 +221,34 @@ const App: React.FC = () => {
     setError(null);
   };
 
+  // 전체 초기화 함수
+  const handleReset = () => {
+    const confirmed = window.confirm('모든 분석 내용과 입력값이 초기화됩니다. 계속하시겠습니까?');
+    if (!confirmed) return;
+
+    // 상태 초기화
+    setYoutubeUrl('');
+    setTranscript('');
+    setNewKeyword('');
+    setAnalysisResult(null);
+    setNewPlan(null);
+    setSuggestedIdeas([]);
+    setVideoDetails(null);
+    setError(null);
+
+    // localStorage 초기화
+    localStorage.removeItem('lastAnalysisResult');
+    localStorage.removeItem('lastAnalysisTimestamp');
+    localStorage.removeItem('lastNewPlan');
+    localStorage.removeItem('lastNewPlanTimestamp');
+    localStorage.removeItem('lastSuggestedIdeas');
+    localStorage.removeItem('lastTranscript');
+    localStorage.removeItem('lastYoutubeUrl');
+    localStorage.removeItem('lastNewKeyword');
+
+    alert('✅ 모든 내용이 초기화되었습니다!');
+  };
+
   const handleSaveApiKey = (key: string) => {
     saveApiKey(key);
     setApiKey(key);
@@ -831,6 +859,20 @@ const App: React.FC = () => {
         </main>
       </div>
       <Footer />
+      
+      {/* 플로팅 초기화 버튼 */}
+      {(analysisResult || newPlan || transcript || youtubeUrl) && (
+        <button
+          onClick={handleReset}
+          className="fixed bottom-6 right-6 bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 flex items-center gap-2 font-semibold z-50 border-2 border-red-400"
+          title="모든 내용 초기화"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+          </svg>
+          <span>초기화</span>
+        </button>
+      )}
     </div>
   );
 };
