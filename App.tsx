@@ -13,6 +13,8 @@ import Loader from './components/Loader';
 import ApiKeyModal from './components/ApiKeyModal';
 import AdSense from './components/AdSense';
 import Footer from './components/Footer';
+import AdBlockDetector from './components/AdBlockDetector';
+import AdBlockWarningModal from './components/AdBlockWarningModal';
 import { getStoredApiKey, saveApiKey } from './utils/apiKeyStorage';
 import { highlightImportantText } from './utils/textHighlight.tsx';
 
@@ -48,6 +50,13 @@ const App: React.FC = () => {
   // API 키 관리
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [showApiKeyModal, setShowApiKeyModal] = useState<boolean>(false);
+
+  // 애드블럭 감지
+  const [adBlockDetected, setAdBlockDetected] = useState<boolean>(false);
+
+  const handleAdBlockDetected = () => {
+    setAdBlockDetected(true);
+  };
 
   // API 키 로드
   useEffect(() => {
@@ -367,6 +376,12 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#121212] text-white font-sans p-4 sm:p-8">
+      {/* 애드블럭 감지 */}
+      <AdBlockDetector onAdBlockDetected={handleAdBlockDetected} />
+      
+      {/* 애드블럭 경고 모달 */}
+      <AdBlockWarningModal isOpen={adBlockDetected} />
+      
       <ApiKeyModal
         isOpen={showApiKeyModal}
         onClose={() => setShowApiKeyModal(false)}
@@ -374,7 +389,8 @@ const App: React.FC = () => {
         currentApiKey={apiKey}
       />
       
-      <div className="max-w-4xl mx-auto">
+      {/* 애드블럭 감지 시 컨텐츠 흐림 처리 */}
+      <div className={`max-w-4xl mx-auto ${adBlockDetected ? 'filter blur-sm pointer-events-none' : ''}`}>
         <header className="text-center mb-10">
           <div className="flex justify-between items-center mb-4">
             <div className="flex-1"></div>
