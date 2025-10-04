@@ -11,7 +11,7 @@ const FloatingAnchorAd: React.FC = () => {
   }, []);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A1A] border-t-2 border-red-500 shadow-2xl">
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A1A] shadow-lg">
       <div className="max-w-7xl mx-auto px-2 py-1">
         <center>
           {/* 반응형: 모바일 320x50px / 데스크톱 728x90px */}
