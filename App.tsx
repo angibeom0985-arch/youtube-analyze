@@ -14,8 +14,9 @@ import ApiKeyModal from './components/ApiKeyModal';
 import AdSense from './components/AdSense';
 import { getStoredApiKey, saveApiKey } from './utils/apiKeyStorage';
 
-const categories = ['정보 전달', '썰 채널', '쇼핑 리뷰', 'IT/테크', '요리/쿡방', '뷰티', '게임'];
+const categories = ['썰 채널', '정보 전달', '쇼핑 리뷰', 'IT/테크', '요리/쿡방', '뷰티', '게임'];
 const lengthOptions = ['8분', '30분', '1시간'];
+const contentTypes = ['숏폼', '롱폼'];
 const characterColors = ['text-red-400', 'text-cyan-400', 'text-green-400', 'text-yellow-400', 'text-purple-400', 'text-orange-400'];
 
 const App: React.FC = () => {
@@ -34,6 +35,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [selectedCategory, setSelectedCategory] = useState<string>(categories[0]);
+  const [contentType, setContentType] = useState<string>('롱폼');
   const [lengthMode, setLengthMode] = useState<string>('8분');
   const [customLength, setCustomLength] = useState<string>('8분');
   
@@ -228,7 +230,7 @@ const App: React.FC = () => {
 
 
   const ideasTitle = selectedCategory === '쇼핑 리뷰' ? '리뷰할 제품 추천' : '새로운 아이디어 제안';
-  const newKeywordPlaceholder = selectedCategory === '쇼핑 리뷰' ? '리뷰할 제품명 입력' : '새 영상의 핵심 키워드 입력';
+  const newKeywordPlaceholder = selectedCategory === '쇼핑 리뷰' ? '리뷰할 제품명 입력' : '떡상할 제목을 입력하세요';
 
   return (
     <div className="min-h-screen bg-[#121212] text-white font-sans p-4 sm:p-8">
@@ -241,13 +243,11 @@ const App: React.FC = () => {
       
       <div className="max-w-4xl mx-auto">
         <header className="text-center mb-10">
-          <div className="flex justify-between items-start mb-4">
+          <div className="flex justify-between items-center mb-4">
             <div className="flex-1"></div>
-            <div className="flex-1 flex justify-center">
-              <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-[#FF0000] to-[#FF2B2B] bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(255,0,0,0.6)]">
-                유튜브 영상 분석 AI
-              </h1>
-            </div>
+            <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-[#FF0000] to-[#FF2B2B] bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(255,0,0,0.6)] whitespace-nowrap">
+              유튜브 영상 분석 AI
+            </h1>
             <div className="flex-1 flex justify-end">
               <button
                 onClick={() => setShowApiKeyModal(true)}
@@ -260,11 +260,20 @@ const App: React.FC = () => {
               </button>
             </div>
           </div>
-          <p className="text-neutral-300">성공한 유튜브 영상의 비밀을 분석하고, 당신의 다음 대박 영상을 기획하세요.</p>
-          <nav className="mt-4 flex justify-center gap-4 text-sm">
-            <a href="/" className="text-blue-400 hover:text-blue-300 underline">홈</a>
-            <a href="/guide" className="text-blue-400 hover:text-blue-300 underline">사용법</a>
-            <a href="/api-guide" className="text-blue-400 hover:text-blue-300 underline">API 발급</a>
+          <p className="text-neutral-300 mb-4">성공한 유튜브 영상의 비밀을 분석하고, 당신의 다음 대박 영상을 기획하세요.</p>
+          <nav className="flex justify-center gap-3">
+            <a 
+              href="/guide" 
+              className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors border border-zinc-700 text-sm font-medium"
+            >
+              📖 사용법
+            </a>
+            <a 
+              href="/api-guide" 
+              className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors border border-zinc-700 text-sm font-medium"
+            >
+              🔑 API 발급
+            </a>
           </nav>
         </header>
 
@@ -335,7 +344,24 @@ const App: React.FC = () => {
               </div>
             </div>
             <div>
-              <label htmlFor="transcript" className="block text-2xl font-bold text-neutral-100 mb-3">대본 입력</label>
+              <div className="flex items-center justify-between mb-3">
+                <label htmlFor="transcript" className="block text-2xl font-bold text-neutral-100">대본 입력</label>
+                <div className="flex gap-2">
+                  {contentTypes.map(type => (
+                    <button
+                      key={type}
+                      onClick={() => setContentType(type)}
+                      className={`px-3 py-1 text-sm font-medium rounded-md transition-all duration-200 ${
+                        contentType === type
+                          ? 'bg-gradient-to-br from-[#D90000] to-[#FF2B2B] text-white'
+                          : 'bg-[#2A2A2A] hover:bg-zinc-700 text-neutral-200'
+                      }`}
+                    >
+                      {type}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <textarea 
                 id="transcript"
                 rows={10}
@@ -460,7 +486,7 @@ const App: React.FC = () => {
 
           {/* --- NEW PLAN GENERATION SECTION --- */}
           <div id="generation-section" className="mb-8">
-              <h2 className="text-3xl font-bold text-center mb-6 text-white">새로운 영상 기획 생성</h2>
+              <h2 className="text-3xl font-bold text-center mb-6 text-white">나만의 떡상 대본 작성</h2>
               <div className={`bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-6 space-y-6 transition-opacity ${!analysisResult && 'opacity-50 pointer-events-none'}`}>
                  <div>
                   <label className="block text-xl font-bold text-neutral-100 mb-3">예상 영상 길이</label>
@@ -536,7 +562,7 @@ const App: React.FC = () => {
                 </div>
 
                  <div>
-                  <label htmlFor="new-keyword" className="block text-xl font-bold text-neutral-100 mb-3">새 영상의 핵심 키워드 (직접 입력 또는 아이디어 선택)</label>
+                  <label htmlFor="new-keyword" className="block text-xl font-bold text-neutral-100 mb-3">새로운 떡상 제목 (직접 입력 또는 아이디어 선택)</label>
                   <input
                     id="new-keyword"
                     type="text"
