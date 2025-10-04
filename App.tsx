@@ -15,6 +15,7 @@ import AdSense from './components/AdSense';
 import Footer from './components/Footer';
 import AdBlockDetector from './components/AdBlockDetector';
 import AdBlockWarningModal from './components/AdBlockWarningModal';
+import FloatingAnchorAd from './components/FloatingAnchorAd';
 import { getStoredApiKey, saveApiKey } from './utils/apiKeyStorage';
 import { highlightImportantText } from './utils/textHighlight.tsx';
 
@@ -876,11 +877,14 @@ const App: React.FC = () => {
       </div>
       <Footer />
       
+      {/* 플로팅 앵커 광고 */}
+      <FloatingAnchorAd />
+      
       {/* 플로팅 초기화 버튼 */}
       {(analysisResult || newPlan || transcript || youtubeUrl) && (
         <button
           onClick={handleReset}
-          className="fixed bottom-6 right-6 bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 flex items-center gap-2 font-semibold z-50 border-2 border-red-400"
+          className="fixed bottom-24 right-6 bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 flex items-center gap-2 font-semibold z-50 border-2 border-red-400"
           title="모든 내용 초기화"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
