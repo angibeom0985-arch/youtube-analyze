@@ -1,8 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FiHome } from 'react-icons/fi';
 import AdSense from '../components/AdSense';
 
 const GuidePage: React.FC = () => {
+  useEffect(() => {
+    // 페이지 제목 설정
+    document.title = '사용 방법 가이드 - 유튜브 영상 분석 AI';
+    
+    // OG 태그 업데이트
+    const updateMetaTag = (property: string, content: string) => {
+      let meta = document.querySelector(`meta[property="${property}"]`);
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('property', property);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+    
+    updateMetaTag('og:title', '사용 방법 가이드 - 유튜브 영상 분석 AI');
+    updateMetaTag('og:description', '30초 만에 시작하는 영상 분석! 유튜브 영상 분석 AI의 모든 기능을 단계별로 알려드립니다.');
+    updateMetaTag('og:image', 'https://youtube-analyze.money-hotissue.com/og-image-guide.png');
+    updateMetaTag('og:url', 'https://youtube-analyze.money-hotissue.com/guide');
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#121212] text-white font-sans p-4 sm:p-8">
       <div className="max-w-4xl mx-auto">

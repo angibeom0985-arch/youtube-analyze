@@ -1,8 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FiHome, FiExternalLink } from 'react-icons/fi';
 import AdSense from '../components/AdSense';
 
 const ApiGuidePage: React.FC = () => {
+  useEffect(() => {
+    // 페이지 제목 설정
+    document.title = 'API 키 발급 가이드 - 유튜브 영상 분석 AI';
+    
+    // OG 태그 업데이트
+    const updateMetaTag = (property: string, content: string) => {
+      let meta = document.querySelector(`meta[property="${property}"]`);
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('property', property);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+    
+    updateMetaTag('og:title', 'API 키 발급 가이드 - 유튜브 영상 분석 AI');
+    updateMetaTag('og:description', '무료 Google Gemini API 키 발급 방법을 8단계로 쉽게 알려드립니다. 신용카드 등록 없이 바로 시작!');
+    updateMetaTag('og:image', 'https://youtube-analyze.money-hotissue.com/og-image-api-guide.png');
+    updateMetaTag('og:url', 'https://youtube-analyze.money-hotissue.com/api-guide');
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#121212] text-white font-sans p-4 sm:p-8">
       <div className="max-w-4xl mx-auto">
