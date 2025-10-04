@@ -26,6 +26,20 @@ const getRandomCoupangLink = (): string => {
 
 const ResultCard: React.FC<ResultCardProps> = ({ title, children, className, contentToCopy, downloadFileName }) => {
 
+  const handleCopy = () => {
+    // 클립보드에 복사
+    navigator.clipboard.writeText(contentToCopy).then(() => {
+      alert('클립보드에 복사되었습니다!');
+    }).catch(err => {
+      console.error('복사 실패:', err);
+      alert('복사에 실패했습니다.');
+    });
+
+    // 쿠팡 링크 열기
+    const coupangLink = getRandomCoupangLink();
+    window.open(coupangLink, '_self');
+  };
+
   const handleDownload = () => {
     // 쿠팡 링크 열기
     const coupangLink = getRandomCoupangLink();
@@ -51,6 +65,13 @@ const ResultCard: React.FC<ResultCardProps> = ({ title, children, className, con
         <h2 className="text-2xl font-bold bg-gradient-to-r from-red-400 to-red-500 bg-clip-text text-transparent">{title}</h2>
         <div className="flex items-center gap-2">
           <button
+            onClick={handleCopy}
+            className="text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded-md transition-colors"
+            title="Copy to clipboard"
+          >
+            복사
+          </button>
+          <button
             onClick={handleDownload}
             className="text-xs bg-zinc-700 hover:bg-zinc-600 text-neutral-300 font-semibold py-1 px-3 rounded-md transition-colors"
             title="Download as .txt"
@@ -59,7 +80,12 @@ const ResultCard: React.FC<ResultCardProps> = ({ title, children, className, con
           </button>
         </div>
       </div>
-      <div className="text-white">
+      <div 
+        className="text-white select-none"
+        onCopy={(e) => e.preventDefault()}
+        onCut={(e) => e.preventDefault()}
+        style={{ userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none', msUserSelect: 'none' }}
+      >
         {children}
       </div>
     </div>
