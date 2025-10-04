@@ -368,6 +368,8 @@ const App: React.FC = () => {
             </div>
           </div>
 
+          <AdSense />
+
           {/* --- ANALYSIS RESULTS SECTION --- */}
           <div id="analysis-results" className="mb-12">
             <h2 className="text-3xl font-bold text-center mb-6 text-white">영상 분석 결과</h2>
@@ -418,8 +420,6 @@ const App: React.FC = () => {
                     ))}
                   </div>
                 </ResultCard>
-
-                <AdSense />
               
                 {analysisResult.scriptStructure && (
                   <ResultCard 
@@ -455,7 +455,7 @@ const App: React.FC = () => {
               </div>
             )}
           </div>
-          
+
           <AdSense />
 
           {/* --- NEW PLAN GENERATION SECTION --- */}
