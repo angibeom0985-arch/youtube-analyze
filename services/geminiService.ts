@@ -85,15 +85,16 @@ const storyChannelNewPlanSchema = {
     },
     scriptWithCharacters: {
       type: Type.ARRAY,
-      description: "새로운 영상에 대한 상세한, 한 줄 한 줄의 대본입니다. 각 객체는 화자, 대사, 그리고 해당 장면에 대한 이미지 생성 프롬프트를 포함해야 합니다.",
+      description: "새로운 영상에 대한 상세한, 한 줄 한 줄의 대본입니다. 각 객체는 화자, 대사, 타임스탬프(예상 시간), 그리고 해당 장면에 대한 이미지 생성 프롬프트를 포함해야 합니다.",
       items: {
         type: Type.OBJECT,
         properties: {
           character: { type: Type.STRING, description: "이 대사를 말하는 인물 또는 화자입니다." },
           line: { type: Type.STRING, description: "이 대사의 대화 또는 행동입니다. 마크다운 사용이 가능합니다." },
+          timestamp: { type: Type.STRING, description: "이 대사가 등장할 예상 시간 (MM:SS 형식, 예: '00:15', '01:30'). 전체 영상 길이를 고려하여 각 대사의 진행 시간을 계산해주세요." },
           imagePrompt: { type: Type.STRING, description: "이 대사와 장면에 어울리는 이미지를 생성하기 위한 상세한 프롬프트입니다. DALL-E 또는 Midjourney와 같은 이미지 생성 AI에 사용할 수 있도록 영어로 작성해주세요." }
         },
-        required: ["character", "line", "imagePrompt"]
+        required: ["character", "line", "timestamp", "imagePrompt"]
       }
     }
   },

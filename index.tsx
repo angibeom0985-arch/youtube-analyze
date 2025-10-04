@@ -3,9 +3,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
-import GuidePage from './pages/GuidePage';
-import ApiGuidePage from './pages/ApiGuidePage';
-import AdminPage from './pages/AdminPage';
+import GuidePage from './pages/GuidePage.tsx';
+import ApiGuidePage from './pages/ApiGuidePage.tsx';
+import AdminPage from './pages/AdminPage.tsx';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

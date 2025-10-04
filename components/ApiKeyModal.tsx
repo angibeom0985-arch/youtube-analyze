@@ -99,7 +99,6 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose, onSave, curr
         <div className="mt-4 pt-4 border-t border-gray-700">
           <a
             href="/api-guide"
-            target="_blank"
             className="text-sm text-blue-400 hover:text-blue-300 underline"
           >
             API 키 발급 방법 보기 →

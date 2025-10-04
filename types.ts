@@ -29,13 +29,16 @@ export interface AnalysisResult {
   scriptStructure?: ScriptStage[];
 }
 
+export interface ScriptLine {
+  character: string;
+  line: string;
+  imagePrompt: string;
+  timestamp?: string;
+}
+
 export interface NewPlan {
   newIntent: StructuredContent[];
   characters?: string[];
-  scriptWithCharacters?: {
-    character: string;
-    line: string;
-    imagePrompt: string;
-  }[];
+  scriptWithCharacters?: ScriptLine[];
   scriptOutline?: OutlineStage[];
 }

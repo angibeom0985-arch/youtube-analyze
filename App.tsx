@@ -12,8 +12,9 @@ import KeywordPill from './components/KeywordPill';
 import Loader from './components/Loader';
 import ApiKeyModal from './components/ApiKeyModal';
 import AdSense from './components/AdSense';
+import Footer from './components/Footer';
 import { getStoredApiKey, saveApiKey } from './utils/apiKeyStorage';
-import { highlightImportantText } from './utils/textHighlight';
+import { highlightImportantText } from './utils/textHighlight.tsx';
 
 const categories = ['썰 채널', '정보 전달', '쇼핑 리뷰', 'IT/테크', '요리/쿡방', '뷰티', '게임'];
 const lengthOptions = ['8분', '30분', '1시간'];
@@ -302,7 +303,7 @@ const App: React.FC = () => {
               ) : (
                 <div className="relative group mt-2">
                   <div className="border border-[#2A2A2A] rounded-lg overflow-hidden bg-zinc-900/50 focus-within:ring-2 focus-within:ring-red-500">
-                    <a href={youtubeUrl} target="_blank" rel="noopener noreferrer" className="block hover:opacity-90 transition-opacity focus:outline-none">
+                    <a href={youtubeUrl} className="block hover:opacity-90 transition-opacity focus:outline-none">
                       <img src={videoDetails.thumbnailUrl} alt="YouTube Video Thumbnail" className="w-full object-cover aspect-video" />
                       <div className="p-4 border-t border-[#2A2A2A]">
                         <p className="font-semibold text-white mb-1 truncate" title={videoDetails.title}>{videoDetails.title}</p>
@@ -599,9 +600,10 @@ const App: React.FC = () => {
                     {newPlan.newIntent.map((item, index) => (
                       <div key={index} className="bg-zinc-900 p-4 rounded-lg border border-[#2A2A2A]">
                         <h3 className="font-bold text-red-500 mb-2">{item.title}</h3>
-                        <div className="prose prose-invert max-w-none prose-p:text-white prose-strong:text-red-500 prose-strong:underline prose-strong:decoration-red-500/70 prose-strong:underline-offset-4">
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.description}</ReactMarkdown>
-                        </div>
+                        <div 
+                          className="prose prose-invert max-w-none prose-p:text-white prose-strong:text-red-500"
+                          dangerouslySetInnerHTML={{ __html: highlightImportantText(item.description.replace(/\*\*/g, '')) }}
+                        />
                       </div>
                     ))}
                   </div>
@@ -632,6 +634,9 @@ const App: React.FC = () => {
                               <div className="flex items-start gap-4">
                                 <div className="w-28 flex-shrink-0 pt-1">
                                   <span className={`font-bold text-sm ${characterColorMap.get(item.character) || 'text-red-500'}`}>{item.character}</span>
+                                  {item.timestamp && (
+                                    <div className="text-xs text-neutral-500 font-mono mt-1">[{item.timestamp}]</div>
+                                  )}
                                 </div>
                                 <div className="flex-grow prose prose-invert max-w-none prose-p:my-0 prose-p:text-white prose-strong:text-red-500 prose-strong:underline prose-strong:decoration-red-500/70 prose-strong:underline-offset-4">
                                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.line}</ReactMarkdown>
@@ -656,6 +661,40 @@ const App: React.FC = () => {
                       </div>
                     </div>
                   </ResultCard>
+                )}
+
+                {/* 다른 사이트 소개 섹션 */}
+                {newPlan.scriptWithCharacters && (
+                  <div className="mt-8 bg-gradient-to-br from-purple-900/30 via-pink-900/30 to-blue-900/30 border-2 border-purple-500/50 rounded-xl p-8">
+                    <div className="text-center mb-6">
+                      <h3 className="text-2xl font-bold text-white mb-2">🎬 더 많은 영상 제작 도구가 필요하신가요?</h3>
+                      <p className="text-lg text-neutral-200">프로페셔널한 영상 편집과 효과를 위한 도구들을 확인해보세요!</p>
+                      <p className="text-md text-purple-300 mt-2 font-semibold">위에서 만든 대본을 토대로 AI 영상 1분컷 가능</p>
+                    </div>
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <a
+                        href="https://youtube-image.money-hotissue.com"
+                        className="bg-gradient-to-br from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 text-center shadow-lg"
+                      >
+                        <div className="text-3xl mb-2">📸</div>
+                        <div className="text-lg">숏폼/롱폼 이미지 생성</div>
+                      </a>
+                      <a
+                        href="https://aimusic-l.money-hotissue.com"
+                        className="bg-gradient-to-br from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 text-center shadow-lg"
+                      >
+                        <div className="text-3xl mb-2">🎵</div>
+                        <div className="text-lg">AI 음악 가사 1초 완성</div>
+                      </a>
+                      <a
+                        href="https://aimusic-i.money-hotissue.com"
+                        className="bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 text-center shadow-lg"
+                      >
+                        <div className="text-3xl mb-2">🎨</div>
+                        <div className="text-lg">AI 음악 썸네일 제작</div>
+                      </a>
+                    </div>
+                  </div>
                 )}
 
                 {newPlan.scriptOutline && (
@@ -688,6 +727,7 @@ const App: React.FC = () => {
           </div>
         </main>
       </div>
+      <Footer />
     </div>
   );
 };

@@ -57,8 +57,6 @@ const ApiGuidePage: React.FC = () => {
               <p className="font-semibold">접속 주소:</p>
               <a
                 href="https://aistudio.google.com"
-                target="_blank"
-                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
               >
                 <span>https://aistudio.google.com</span>
@@ -253,8 +251,6 @@ const ApiGuidePage: React.FC = () => {
             <div className="space-y-3 text-neutral-300">
               <a
                 href="https://ai.google.dev/gemini-api/docs/rate-limits?hl=ko#free-tier"
-                target="_blank"
-                rel="noopener noreferrer"
                 className="block p-4 bg-zinc-900 rounded-lg hover:bg-zinc-800 transition-colors border border-[#2A2A2A]"
               >
                 <div className="flex items-start justify-between gap-3">
@@ -268,8 +264,6 @@ const ApiGuidePage: React.FC = () => {
 
               <a
                 href="https://ai.google.dev/gemini-api/docs/pricing?hl=ko"
-                target="_blank"
-                rel="noopener noreferrer"
                 className="block p-4 bg-zinc-900 rounded-lg hover:bg-zinc-800 transition-colors border border-[#2A2A2A]"
               >
                 <div className="flex items-start justify-between gap-3">
@@ -283,8 +277,6 @@ const ApiGuidePage: React.FC = () => {
 
               <a
                 href="https://cloud.google.com/vertex-ai/generative-ai/docs/quotas?hl=ko"
-                target="_blank"
-                rel="noopener noreferrer"
                 className="block p-4 bg-zinc-900 rounded-lg hover:bg-zinc-800 transition-colors border border-[#2A2A2A]"
               >
                 <div className="flex items-start justify-between gap-3">

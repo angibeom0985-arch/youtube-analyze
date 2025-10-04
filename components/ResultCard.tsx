@@ -9,18 +9,40 @@ interface ResultCardProps {
   downloadFileName: string;
 }
 
+// 쿠팡파트너스 링크 배열
+const coupangLinks = [
+  'https://link.coupang.com/a/cUJcDz',
+  'https://link.coupang.com/a/cUJcJa',
+  'https://link.coupang.com/a/cUJcNB',
+  'https://link.coupang.com/a/cUJcSB',
+  'https://link.coupang.com/a/cUJcU8',
+  'https://link.coupang.com/a/cUJc0a',
+];
+
+// 랜덤 쿠팡 링크 선택 함수
+const getRandomCoupangLink = (): string => {
+  return coupangLinks[Math.floor(Math.random() * coupangLinks.length)];
+};
+
 const ResultCard: React.FC<ResultCardProps> = ({ title, children, className, contentToCopy, downloadFileName }) => {
 
   const handleDownload = () => {
-    const blob = new Blob([contentToCopy], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${downloadFileName}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    // 쿠팡 링크 열기
+    const coupangLink = getRandomCoupangLink();
+    window.open(coupangLink, '_self');
+    
+    // 다운로드 실행
+    setTimeout(() => {
+      const blob = new Blob([contentToCopy], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${downloadFileName}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
   };
 
   return (
