@@ -381,6 +381,8 @@ const App: React.FC = () => {
           
           {error && <div className="bg-red-900 border border-red-700 text-red-200 p-4 rounded-lg my-6 text-center">{error}</div>}
 
+          <AdSense />
+
           {/* --- SEPARATOR --- */}
           <div className="my-12">
             <div className="relative">
@@ -392,8 +394,6 @@ const App: React.FC = () => {
               </div>
             </div>
           </div>
-
-          <AdSense />
 
           {/* --- ANALYSIS RESULTS SECTION --- */}
           <div id="analysis-results" className="mb-12">
