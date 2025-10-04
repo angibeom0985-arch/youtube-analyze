@@ -16,7 +16,6 @@ import Footer from './components/Footer';
 import AdBlockDetector from './components/AdBlockDetector';
 import AdBlockWarningModal from './components/AdBlockWarningModal';
 import FloatingAnchorAd from './components/FloatingAnchorAd';
-import FloatingSideAd from './components/FloatingSideAd';
 import { getStoredApiKey, saveApiKey } from './utils/apiKeyStorage';
 import { highlightImportantText } from './utils/textHighlight.tsx';
 
@@ -377,7 +376,7 @@ const App: React.FC = () => {
   const newKeywordPlaceholder = selectedCategory === '쇼핑 리뷰' ? '리뷰할 제품명 입력' : '떡상할 제목을 입력하세요';
 
   return (
-    <div className="min-h-screen bg-[#121212] text-white font-sans p-4 sm:p-8">
+    <div className="min-h-screen bg-[#121212] text-white font-sans p-4 sm:p-8 pb-32">
       {/* 애드블럭 감지 */}
       <AdBlockDetector onAdBlockDetected={handleAdBlockDetected} />
       
@@ -878,15 +877,6 @@ const App: React.FC = () => {
       </div>
       <Footer />
       
-      {/* 플로팅 앵커 광고 */}
-      <FloatingAnchorAd />
-      
-      {/* 왼쪽 사이드 플로팅 광고 */}
-      <FloatingSideAd position="left" />
-      
-      {/* 오른쪽 사이드 플로팅 광고 */}
-      <FloatingSideAd position="right" />
-      
       {/* 플로팅 초기화 버튼 */}
       {(analysisResult || newPlan || transcript || youtubeUrl) && (
         <button
@@ -900,6 +890,9 @@ const App: React.FC = () => {
           <span>초기화</span>
         </button>
       )}
+      
+      {/* 플로팅 앵커 광고 - 애드블럭 감지 시 숨김 */}
+      {!adBlockDetected && <FloatingAnchorAd />}
     </div>
   );
 };
