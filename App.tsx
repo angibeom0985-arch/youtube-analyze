@@ -13,6 +13,7 @@ import Loader from './components/Loader';
 import ApiKeyModal from './components/ApiKeyModal';
 import AdSense from './components/AdSense';
 import { getStoredApiKey, saveApiKey } from './utils/apiKeyStorage';
+import { highlightImportantText } from './utils/textHighlight';
 
 const categories = ['썰 채널', '정보 전달', '쇼핑 리뷰', 'IT/테크', '요리/쿡방', '뷰티', '게임'];
 const lengthOptions = ['8분', '30분', '1시간'];
@@ -422,9 +423,10 @@ const App: React.FC = () => {
                     {analysisResult.intent.map((item, index) => (
                       <div key={index} className="bg-zinc-900 p-4 rounded-lg border border-[#2A2A2A]">
                         <h3 className="font-bold text-red-500 mb-2">{item.title}</h3>
-                        <div className="prose prose-invert max-w-none prose-p:text-white prose-strong:text-red-500 prose-strong:underline prose-strong:decoration-red-500/70 prose-strong:underline-offset-4">
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.description}</ReactMarkdown>
-                        </div>
+                        <div 
+                          className="prose prose-invert max-w-none prose-p:text-white prose-strong:text-red-500"
+                          dangerouslySetInnerHTML={{ __html: highlightImportantText(item.description.replace(/\*\*/g, '')) }}
+                        />
                       </div>
                     ))}
                   </div>
@@ -439,9 +441,10 @@ const App: React.FC = () => {
                     {analysisResult.viewPrediction.map((item, index) => (
                       <div key={index} className="bg-zinc-900 p-4 rounded-lg border border-[#2A2A2A]">
                         <h3 className="font-bold text-red-500 mb-2">{item.title}</h3>
-                        <div className="prose prose-invert max-w-none prose-p:text-white prose-strong:text-red-500 prose-strong:underline prose-strong:decoration-red-500/70 prose-strong:underline-offset-4">
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.description}</ReactMarkdown>
-                        </div>
+                        <div 
+                          className="prose prose-invert max-w-none prose-p:text-white prose-strong:text-red-500"
+                          dangerouslySetInnerHTML={{ __html: highlightImportantText(item.description.replace(/\*\*/g, '')) }}
+                        />
                       </div>
                     ))}
                   </div>
@@ -457,9 +460,10 @@ const App: React.FC = () => {
                       {analysisResult.scriptStructure.map((stage: ScriptStage, index: number) => (
                         <div key={index} className="bg-zinc-900 p-4 rounded-lg border border-[#2A2A2A]">
                           <h3 className="font-bold text-lg text-red-500 mb-3">{stage.stage}</h3>
-                          <div className="prose prose-invert max-w-none prose-p:text-white prose-strong:text-red-500 prose-strong:underline prose-strong:decoration-red-500/70 prose-strong:underline-offset-4 mb-4">
-                             <ReactMarkdown remarkPlugins={[remarkGfm]}>{stage.purpose}</ReactMarkdown>
-                          </div>
+                          <div 
+                            className="prose prose-invert max-w-none prose-p:text-white prose-strong:text-red-500 mb-4"
+                            dangerouslySetInnerHTML={{ __html: highlightImportantText(stage.purpose.replace(/\*\*/g, '')) }}
+                          />
                           <ul className="space-y-3 text-white">
                             {stage.quotes.map((quote: ScriptQuote, qIndex: number) => (
                                <li key={qIndex} className="text-base flex items-start">
