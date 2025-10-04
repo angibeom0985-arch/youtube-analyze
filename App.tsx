@@ -16,7 +16,7 @@ import Footer from './components/Footer';
 import { getStoredApiKey, saveApiKey } from './utils/apiKeyStorage';
 import { highlightImportantText } from './utils/textHighlight.tsx';
 
-const categories = ['썰 채널', '정보 전달', '쇼핑 리뷰', 'IT/테크', '요리/쿡방', '뷰티', '게임'];
+const categories = ['썰 채널', '정보 전달', '쇼핑 리뷰', 'IT/테크', '요리/쿡방', '뷰티', '게임', '건강'];
 const lengthOptions = ['8분', '30분', '1시간'];
 const contentTypes = ['숏폼', '롱폼'];
 const characterColors = ['text-red-400', 'text-cyan-400', 'text-green-400', 'text-yellow-400', 'text-purple-400', 'text-orange-400'];
