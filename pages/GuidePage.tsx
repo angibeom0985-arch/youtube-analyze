@@ -71,42 +71,91 @@ const GuidePage: React.FC = () => {
               <p>AI가 다음 항목들을 분석하여 제공합니다:</p>
               <ul className="list-disc list-inside ml-4 space-y-2">
                 <li><strong>핵심 키워드:</strong> 영상의 주요 키워드 추출</li>
-                <li><strong>기획 의도:</strong> 영상의 목적과 전략 분석</li>
-                <li><strong>조회수 예측:</strong> 성공 요인 분석</li>
-                <li><strong>대본 구조:</strong> 단계별 구성 분석 (썰 채널만)</li>
+                <li><strong>기획 의도:</strong> 영상의 목적과 전략 분석 (중요 키워드 <span className="underline decoration-orange-400">오렌지색 밑줄</span> 강조)</li>
+                <li><strong>조회수 예측 분석:</strong> 성공 요인 분석 (핵심 내용 자동 강조)</li>
+                <li><strong>대본 구조 분석:</strong> 단계별 구성 분석 및 타임스탬프 표시 (썰 채널만)</li>
               </ul>
-              <p className="mt-4">각 결과 카드에서 "복사" 또는 "다운로드" 버튼을 사용할 수 있습니다.</p>
+              
+              <div className="mt-4 p-4 bg-blue-900/20 border border-blue-700/50 rounded-lg">
+                <h3 className="text-blue-300 font-bold mb-2">📥 다운로드 및 복사 기능</h3>
+                <p>각 결과 카드에서 "다운로드" 버튼을 클릭하면:</p>
+                <ul className="list-disc list-inside ml-4 mt-2 space-y-1 text-sm">
+                  <li>분석 결과가 .txt 파일로 다운로드됩니다</li>
+                  <li>자동으로 쿠팡 파트너스 페이지가 열립니다 (추가 비용 없음)</li>
+                  <li>수수료는 개발자에게 지원되어 무료 서비스 유지에 도움이 됩니다</li>
+                </ul>
+              </div>
             </div>
           </section>
 
           <section className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-6">
             <h2 className="text-2xl font-bold text-red-500 mb-4">4. 새로운 영상 기획</h2>
             <div className="space-y-3 text-neutral-300">
-              <h3 className="font-semibold text-white">예상 영상 길이 설정</h3>
-              <p>생성할 영상의 목표 길이를 선택하거나 직접 입력합니다.</p>
+              <h3 className="font-semibold text-white">콘텐츠 타입 선택</h3>
+              <p><strong>숏폼</strong> 또는 <strong>롱폼</strong>을 선택하여 영상 형식을 결정합니다.</p>
+              
+              <h3 className="font-semibold text-white mt-4">예상 영상 길이 설정</h3>
+              <p>생성할 영상의 목표 길이를 선택하거나 직접 입력합니다 (예: 8분, 30분, 1시간).</p>
               
               <h3 className="font-semibold text-white mt-4">키워드 선택</h3>
-              <p>AI가 제안한 아이디어를 선택하거나 직접 키워드를 입력합니다.</p>
+              <p>AI가 제안한 아이디어 중 하나를 선택하거나 직접 키워드를 입력합니다.</p>
               
               <h3 className="font-semibold text-white mt-4">기획안 생성</h3>
               <p>"기획안 생성" 버튼을 클릭하면 새로운 영상 기획안과 대본이 생성됩니다.</p>
               
-              <h3 className="font-semibold text-white mt-4">이미지 프롬프트 활용</h3>
-              <p>썰 채널의 경우, 각 장면마다 이미지 생성 AI용 프롬프트가 제공됩니다. 이를 DALL-E, Midjourney 등에 활용할 수 있습니다.</p>
+              <div className="mt-4 p-4 bg-purple-900/20 border border-purple-700/50 rounded-lg">
+                <h3 className="text-purple-300 font-bold mb-2">✨ 썰 채널 특별 기능</h3>
+                <ul className="list-disc list-inside ml-4 space-y-2 text-sm">
+                  <li><strong>다양한 배역:</strong> 나레이터뿐만 아니라 주인공, 친구, 가족 등 여러 캐릭터가 등장하는 대본 생성</li>
+                  <li><strong>타임라인:</strong> 각 대사마다 예상 시간 표시 (예: [00:15], [01:30])</li>
+                  <li><strong>이미지 프롬프트:</strong> 각 장면마다 DALL-E, Midjourney 등에서 사용 가능한 영문 프롬프트 제공</li>
+                  <li><strong>대화형 구성:</strong> 캐릭터 간의 자연스러운 대화와 상호작용으로 몰입감 향상</li>
+                </ul>
+              </div>
             </div>
           </section>
 
           <AdSense />
 
           <section className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-6">
-            <h2 className="text-2xl font-bold text-red-500 mb-4">5. 팁과 주의사항</h2>
+            <h2 className="text-2xl font-bold text-red-500 mb-4">5. 추가 도구 활용</h2>
+            <div className="space-y-3 text-neutral-300">
+              <p>생성된 대본을 바탕으로 영상 제작을 완성하세요!</p>
+              
+              <div className="grid md:grid-cols-3 gap-4 mt-4">
+                <div className="bg-green-900/20 border border-green-700/50 rounded-lg p-4">
+                  <div className="text-2xl mb-2">📸</div>
+                  <h3 className="font-bold text-green-300 mb-2">숏폼/롱폼 이미지 생성</h3>
+                  <p className="text-sm">AI로 영상에 필요한 이미지를 1분 안에 생성</p>
+                </div>
+                <div className="bg-pink-900/20 border border-pink-700/50 rounded-lg p-4">
+                  <div className="text-2xl mb-2">🎵</div>
+                  <h3 className="font-bold text-pink-300 mb-2">AI 음악 가사 완성</h3>
+                  <p className="text-sm">배경음악 가사를 AI가 1초 만에 작성</p>
+                </div>
+                <div className="bg-blue-900/20 border border-blue-700/50 rounded-lg p-4">
+                  <div className="text-2xl mb-2">🎨</div>
+                  <h3 className="font-bold text-blue-300 mb-2">AI 음악 썸네일 제작</h3>
+                  <p className="text-sm">클릭을 부르는 썸네일을 AI로 제작</p>
+                </div>
+              </div>
+              <p className="mt-4 text-sm text-purple-300">💡 대본 생성 후 하단에 표시되는 링크를 통해 바로 이동할 수 있습니다!</p>
+            </div>
+          </section>
+
+          <AdSense />
+
+          <section className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-6">
+            <h2 className="text-2xl font-bold text-red-500 mb-4">6. 팁과 주의사항</h2>
             <div className="space-y-3 text-neutral-300">
               <ul className="list-disc list-inside ml-4 space-y-2">
-                <li>정확한 분석을 위해 가능한 한 전체 대본을 입력하세요.</li>
-                <li>카테고리는 영상의 성격에 맞게 선택하는 것이 중요합니다.</li>
-                <li>생성된 기획안은 참고용이며, 창의적으로 수정하여 사용하세요.</li>
-                <li>API 키는 사용량에 따라 과금될 수 있으니 주의하세요.</li>
-                <li>분석 결과를 다운로드하여 보관할 수 있습니다.</li>
+                <li><strong>정확한 대본 입력:</strong> 가능한 한 전체 대본을 입력하면 더 정확한 분석이 가능합니다.</li>
+                <li><strong>카테고리 선택:</strong> 영상의 성격에 맞는 카테고리를 선택하는 것이 중요합니다.</li>
+                <li><strong>창의적 활용:</strong> 생성된 기획안은 참고용이며, 자신만의 아이디어를 추가하여 사용하세요.</li>
+                <li><strong>API 사용량:</strong> Google Gemini API 무료 등급은 분당 15회 제한이 있습니다.</li>
+                <li><strong>결과 저장:</strong> 다운로드 기능으로 분석 결과를 .txt 파일로 보관할 수 있습니다.</li>
+                <li><strong>쿠팡 파트너스:</strong> 다운로드 시 쿠팡 페이지가 열리며, 이는 무료 서비스 운영에 도움이 됩니다.</li>
+                <li><strong>브라우저 저장:</strong> API 키는 브라우저에만 저장되며 외부로 전송되지 않습니다.</li>
               </ul>
             </div>
           </section>
