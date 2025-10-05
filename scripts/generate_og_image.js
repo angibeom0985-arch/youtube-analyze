@@ -6,11 +6,11 @@ const path = require("path");
 try {
   registerFont("C:\\Windows\\Fonts\\malgunbd.ttf", {
     family: "Malgun Gothic",
-    weight: "bold"
+    weight: "bold",
   });
-  registerFont("C:\\Windows\\Fonts\\malgun.ttf", { 
+  registerFont("C:\\Windows\\Fonts\\malgun.ttf", {
     family: "Malgun Gothic",
-    weight: "normal"
+    weight: "normal",
   });
   console.log("✅ 폰트 로드 성공");
 } catch (e) {
@@ -46,17 +46,40 @@ function createOgImage(outputPath, title, subtitle, colors, width, height) {
   const containerY = height * 0.25;
   const containerWidth = width * 0.8;
   const containerHeight = height * 0.5;
-  
+
   ctx.beginPath();
   ctx.moveTo(containerX + containerRadius, containerY);
   ctx.lineTo(containerX + containerWidth - containerRadius, containerY);
-  ctx.quadraticCurveTo(containerX + containerWidth, containerY, containerX + containerWidth, containerY + containerRadius);
-  ctx.lineTo(containerX + containerWidth, containerY + containerHeight - containerRadius);
-  ctx.quadraticCurveTo(containerX + containerWidth, containerY + containerHeight, containerX + containerWidth - containerRadius, containerY + containerHeight);
+  ctx.quadraticCurveTo(
+    containerX + containerWidth,
+    containerY,
+    containerX + containerWidth,
+    containerY + containerRadius
+  );
+  ctx.lineTo(
+    containerX + containerWidth,
+    containerY + containerHeight - containerRadius
+  );
+  ctx.quadraticCurveTo(
+    containerX + containerWidth,
+    containerY + containerHeight,
+    containerX + containerWidth - containerRadius,
+    containerY + containerHeight
+  );
   ctx.lineTo(containerX + containerRadius, containerY + containerHeight);
-  ctx.quadraticCurveTo(containerX, containerY + containerHeight, containerX, containerY + containerHeight - containerRadius);
+  ctx.quadraticCurveTo(
+    containerX,
+    containerY + containerHeight,
+    containerX,
+    containerY + containerHeight - containerRadius
+  );
   ctx.lineTo(containerX, containerY + containerRadius);
-  ctx.quadraticCurveTo(containerX, containerY, containerX + containerRadius, containerY);
+  ctx.quadraticCurveTo(
+    containerX,
+    containerY,
+    containerX + containerRadius,
+    containerY
+  );
   ctx.closePath();
   ctx.fill();
 
@@ -93,11 +116,26 @@ function createOgImage(outputPath, title, subtitle, colors, width, height) {
   ctx.beginPath();
   ctx.moveTo(boxX + domainRadius, boxY);
   ctx.lineTo(boxX + boxWidth - domainRadius, boxY);
-  ctx.quadraticCurveTo(boxX + boxWidth, boxY, boxX + boxWidth, boxY + domainRadius);
+  ctx.quadraticCurveTo(
+    boxX + boxWidth,
+    boxY,
+    boxX + boxWidth,
+    boxY + domainRadius
+  );
   ctx.lineTo(boxX + boxWidth, boxY + boxHeight - domainRadius);
-  ctx.quadraticCurveTo(boxX + boxWidth, boxY + boxHeight, boxX + boxWidth - domainRadius, boxY + boxHeight);
+  ctx.quadraticCurveTo(
+    boxX + boxWidth,
+    boxY + boxHeight,
+    boxX + boxWidth - domainRadius,
+    boxY + boxHeight
+  );
   ctx.lineTo(boxX + domainRadius, boxY + boxHeight);
-  ctx.quadraticCurveTo(boxX, boxY + boxHeight, boxX, boxY + boxHeight - domainRadius);
+  ctx.quadraticCurveTo(
+    boxX,
+    boxY + boxHeight,
+    boxX,
+    boxY + boxHeight - domainRadius
+  );
   ctx.lineTo(boxX, boxY + domainRadius);
   ctx.quadraticCurveTo(boxX, boxY, boxX + domainRadius, boxY);
   ctx.closePath();
