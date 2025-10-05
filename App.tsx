@@ -99,6 +99,7 @@ const App: React.FC = () => {
   const [characterColorMap, setCharacterColorMap] = useState(
     new Map<string, string>()
   );
+  const [copiedPromptIndex, setCopiedPromptIndex] = useState<number | null>(null);
 
   // API 키 관리
   const [apiKey, setApiKey] = useState<string | null>(null);
@@ -403,7 +404,7 @@ const App: React.FC = () => {
       clearInterval(styleInterval);
       clearInterval(selectionInterval);
       clearInterval(devToolsInterval);
-      
+
       // 스타일 복원
       document.body.style.userSelect = "";
       document.body.style.webkitUserSelect = "";
@@ -426,6 +427,16 @@ const App: React.FC = () => {
     setNewPlan(null);
     setSuggestedIdeas([]);
     setError(null);
+  };
+
+  // 이미지 프롬프트 개별 복사
+  const handleCopyPrompt = (prompt: string, index: number) => {
+    navigator.clipboard.writeText(prompt).then(() => {
+      setCopiedPromptIndex(index);
+      setTimeout(() => setCopiedPromptIndex(null), 2000);
+    }).catch(err => {
+      console.error('복사 실패:', err);
+    });
   };
 
   // 전체 초기화 함수
@@ -648,7 +659,8 @@ const App: React.FC = () => {
             </div>
           </div>
           <p className="text-neutral-300 mb-4">
-            당신만 "이것"을 모릅니다. 떡상 비밀 파헤치고, 나만의 새로운 대본을 1분만에 작성해보세요!
+            당신만 "이것"을 모릅니다. 떡상 비밀 파헤치고, 나만의 새로운 대본을
+            1분만에 작성해보세요!
           </p>
           <nav className="flex justify-center gap-3">
             <a
@@ -1203,13 +1215,20 @@ const App: React.FC = () => {
                                 </div>
                               </div>
                               {item.imagePrompt && (
-                                <div className="mt-3 ml-[128px] p-3 rounded-md border bg-zinc-950 border-zinc-700/50">
+                                <div className="mt-3 ml-[128px] p-3 rounded-md border bg-zinc-950 border-zinc-700/50 relative group">
                                   <p className="text-xs font-semibold text-neutral-400 mb-1">
                                     🎨 이미지 생성 프롬프트
                                   </p>
-                                  <p className="text-sm text-neutral-300 font-mono">
+                                  <p className="text-sm text-neutral-300 font-mono pr-16">
                                     {item.imagePrompt}
                                   </p>
+                                  <button
+                                    onClick={() => handleCopyPrompt(item.imagePrompt, index)}
+                                    className="absolute top-2 right-2 text-xs bg-zinc-700 hover:bg-zinc-600 text-neutral-300 font-semibold py-1 px-2 rounded-md transition-all opacity-0 group-hover:opacity-100"
+                                    title="프롬프트 복사"
+                                  >
+                                    {copiedPromptIndex === index ? "복사됨!" : "복사"}
+                                  </button>
                                 </div>
                               )}
                             </div>
