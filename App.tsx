@@ -20,7 +20,7 @@ import SidebarAds from './components/SidebarAds';
 import { getStoredApiKey, saveApiKey } from './utils/apiKeyStorage';
 import { highlightImportantText } from './utils/textHighlight.tsx';
 
-const categories = ['썰 채널', '정보 전달', '쇼핑 리뷰', 'IT/테크', '요리/쿡방', '뷰티', '게임', '건강', '미스터리', '브이로그'];
+const categories = ['썰 채널', '정보 전달', '쇼핑 리뷰', 'IT/테크', '요리/쿡방', '뷰티', '게임', '건강', '미스터리', '브이로그', '야담'];
 const lengthOptions = ['8분', '30분', '1시간'];
 const contentTypes = ['숏폼', '롱폼'];
 const vlogTypes = ['모닝 루틴', '나이트 루틴', '먹방', '여행', '쇼핑 하울', '공부', '운동', '일상', '데이트', '요리'];

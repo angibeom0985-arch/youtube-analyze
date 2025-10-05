@@ -215,7 +215,8 @@ export const generateNewPlan = async (analysis: AnalysisResult, newKeyword: stri
 
     const isStoryChannel = category === '썰 채널';
     const isVlogChannel = category === '브이로그';
-    const schema = isStoryChannel ? storyChannelNewPlanSchema : structuredOutlinePlanSchema;
+    const isYadamChannel = category === '야담';
+    const schema = (isStoryChannel || isYadamChannel) ? storyChannelNewPlanSchema : structuredOutlinePlanSchema;
     
     let contents;
     if (isStoryChannel) {
@@ -267,6 +268,36 @@ ${specificVlogPrompt}
 각 장면마다 구체적인 촬영 가이드와 편집 포인트를 포함해주세요.\n\n성공적인 동영상 분석 내용:\n\n${analysisString}\n\n이제 위 분석된 성공 구조를 따르되 새로운 키워드에 초점을 맞춘 새로운 기획안을 생성해주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
     } else if (category === '쇼핑 리뷰') {
       contents = `성공적인 리뷰 영상의 분석을 바탕으로, "${newKeyword}" 제품에 대한 리뷰 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다. 영상은 '오프닝', '제품 소개', '주요 특징 시연', '장단점 분석', '총평 및 추천'으로 구성되어야 합니다. 이 구조에 맞춰 각 단계별 제목, 목적, 상세 내용이 포함된 구조적인 개요를 작성해주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.\n\n참고용 분석 내용:\n${analysisString}`;
+    } else if (category === '야담') {
+      contents = `성인 대상의 성숙한 연애/관계 이야기("${newKeyword}")를 다루는 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.
+
+**중요: 콘텐츠 가이드라인**
+- 선정적이거나 노골적인 표현은 절대 사용하지 마세요
+- 성인들의 솔직하고 현실적인 연애 고민, 관계 경험담에 초점
+- 유머러스하면서도 품위 있는 스토리텔링
+- 공감과 위로를 줄 수 있는 따뜻한 톤
+- 교훈이나 인사이트를 담아 의미 있는 내용으로 구성
+
+**콘텐츠 방향:**
+- 연애 초기의 설렘과 고민 (썸, 호감, 첫 만남)
+- 관계에서 겪는 현실적인 문제와 해결 (다툼, 오해, 화해)
+- 이별과 성장 이야기 (극복, 교훈, 새로운 시작)
+- 연애 심리와 패턴 분석 (MBTI, 연애 스타일)
+- 건강한 관계를 위한 소통과 이해
+
+**스토리텔링 구조:**
+1. 후크: 공감 가는 상황 제시
+2. 전개: 등장인물의 심리와 행동 묘사
+3. 갈등: 관계에서의 현실적인 문제
+4. 해결/인사이트: 배울 점이나 교훈
+5. 마무리: 시청자에게 위로와 응원 메시지
+
+**배역 구성:**
+- '나', '상대방', '친구' 등 자연스러운 대화형 구성
+- 각 배역의 심리와 감정선을 섬세하게 표현
+- 현실적이고 공감 가는 대사와 상황 연출
+
+모든 내용은 건전하고 교육적인 가치를 지니며, 플랫폼 가이드라인을 100% 준수해야 합니다.\n\n참고용 분석 내용:\n${analysisString}\n\n위 구조를 참고하여 JSON 형식으로 제공해주세요.`;
     } else {
       contents = `성공적인 정보성 영상의 분석을 바탕으로, "${newKeyword}" 주제에 대한 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다. 영상은 '도입(문제 제기)', '본론(핵심 정보 전달)', '결론(요약 및 제언)'의 구조를 가져야 합니다. 이 구조에 맞춰 각 단계별 제목, 목적, 상세 내용이 포함된 구조적인 개요를 작성해주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.\n\n참고용 분석 내용:\n${analysisString}`;
     }
