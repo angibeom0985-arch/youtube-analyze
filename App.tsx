@@ -455,7 +455,7 @@ const App: React.FC = () => {
         setCopiedPromptIndex(index);
         setTimeout(() => setCopiedPromptIndex(null), 2000);
         alert("✅ 이미지 프롬프트가 복사되었습니다!");
-        
+
         // 3초 후 쿠팡 파트너스 링크 새창으로 열기
         setTimeout(() => {
           const coupangLink = getRandomCoupangLink();
@@ -1244,7 +1244,7 @@ const App: React.FC = () => {
                                 </div>
                               </div>
                               {item.imagePrompt && (
-                                <div className="mt-3 ml-[128px] p-3 rounded-md border bg-zinc-950 border-zinc-700/50 relative group">
+                                <div className="mt-3 ml-[128px] p-3 rounded-md border bg-zinc-950 border-zinc-700/50 relative">
                                   <p className="text-xs font-semibold text-neutral-400 mb-1">
                                     🎨 이미지 생성 프롬프트
                                   </p>
@@ -1255,7 +1255,7 @@ const App: React.FC = () => {
                                     onClick={() =>
                                       handleCopyPrompt(item.imagePrompt, index)
                                     }
-                                    className="absolute top-2 right-2 text-xs bg-zinc-700 hover:bg-zinc-600 text-neutral-300 font-semibold py-1 px-2 rounded-md transition-all opacity-0 group-hover:opacity-100"
+                                    className="absolute top-2 right-2 text-xs bg-zinc-700 hover:bg-zinc-600 text-neutral-300 font-semibold py-1 px-2 rounded-md transition-all"
                                     title="프롬프트 복사"
                                   >
                                     {copiedPromptIndex === index
