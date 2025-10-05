@@ -501,7 +501,7 @@ const App: React.FC = () => {
           <div className="flex justify-between items-center mb-4">
             <div className="flex-1"></div>
             <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-[#FF0000] to-[#FF2B2B] bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(255,0,0,0.6)] whitespace-nowrap">
-              유튜브 영상 분석 AI
+              유튜브 떡상 대본의 비밀 파헤치기+모방
             </h1>
             <div className="flex-1 flex justify-end">
               <button
@@ -518,8 +518,7 @@ const App: React.FC = () => {
             </div>
           </div>
           <p className="text-neutral-300 mb-4">
-            성공한 유튜브 영상의 비밀을 분석하고, 당신의 다음 대박 영상을
-            기획하세요.
+            당신만 "이것"을 모릅니다. 떡상 비밀 파헤치고, 나만의 새로운 대본을 1분만에 작성해보세요!
           </p>
           <nav className="flex justify-center gap-3">
             <a
