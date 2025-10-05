@@ -99,7 +99,6 @@ const App: React.FC = () => {
   const [characterColorMap, setCharacterColorMap] = useState(
     new Map<string, string>()
   );
-  const [copiedPrompt, setCopiedPrompt] = useState<string | null>(null);
 
   // API 키 관리
   const [apiKey, setApiKey] = useState<string | null>(null);
@@ -416,12 +415,6 @@ const App: React.FC = () => {
       setIsGenerating(false);
     }
   }, [analysisResult, newKeyword, customLength, selectedCategory, apiKey]);
-
-  const handleCopyPrompt = (prompt: string) => {
-    navigator.clipboard.writeText(prompt);
-    setCopiedPrompt(prompt);
-    setTimeout(() => setCopiedPrompt(null), 2000);
-  };
 
   // --- Text Formatting Helpers for Download ---
   const formatKeywordsToText = (keywords: string[]): string =>
@@ -1073,24 +1066,13 @@ const App: React.FC = () => {
                                 </div>
                               </div>
                               {item.imagePrompt && (
-                                <div className="mt-3 ml-[128px] p-3 rounded-md border bg-zinc-950 border-zinc-700/50 relative group">
+                                <div className="mt-3 ml-[128px] p-3 rounded-md border bg-zinc-950 border-zinc-700/50">
                                   <p className="text-xs font-semibold text-neutral-400 mb-1">
                                     🎨 이미지 생성 프롬프트
                                   </p>
-                                  <p className="text-sm text-neutral-300 font-mono pr-16">
+                                  <p className="text-sm text-neutral-300 font-mono">
                                     {item.imagePrompt}
                                   </p>
-                                  <button
-                                    onClick={() =>
-                                      handleCopyPrompt(item.imagePrompt)
-                                    }
-                                    className="absolute top-2 right-2 text-xs bg-zinc-700 hover:bg-zinc-600 text-neutral-300 font-semibold py-1 px-2 rounded-md transition-all opacity-0 group-hover:opacity-100"
-                                    title="프롬프트 복사"
-                                  >
-                                    {copiedPrompt === item.imagePrompt
-                                      ? "복사됨!"
-                                      : "복사"}
-                                  </button>
                                 </div>
                               )}
                             </div>
