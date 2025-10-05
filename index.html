@@ -175,9 +175,17 @@
         // 키보드 단축키 방지
         document.addEventListener('keydown', function(e) {
           // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+S, Ctrl+U, Ctrl+S, Ctrl+P, PrintScreen, Win+Shift+S
+          // 알캡처(ALCapture) 단축키: Ctrl+Shift+C/W/D/A/S/F
           if (e.keyCode === 123 || 
               e.keyCode === 44 || // PrintScreen
-              (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 83)) || // Ctrl+Shift+I/J/S
+              (e.ctrlKey && e.shiftKey && e.keyCode === 73) || // Ctrl+Shift+I
+              (e.ctrlKey && e.shiftKey && e.keyCode === 74) || // Ctrl+Shift+J
+              (e.ctrlKey && e.shiftKey && e.keyCode === 67) || // Ctrl+Shift+C (알캡처: 직접 시작 캡처)
+              (e.ctrlKey && e.shiftKey && e.keyCode === 87) || // Ctrl+Shift+W (알캡처: 창 캡처)
+              (e.ctrlKey && e.shiftKey && e.keyCode === 68) || // Ctrl+Shift+D (알캡처: 단일영역 캡처)
+              (e.ctrlKey && e.shiftKey && e.keyCode === 65) || // Ctrl+Shift+A (알캡처: 전체캡처)
+              (e.ctrlKey && e.shiftKey && e.keyCode === 83) || // Ctrl+Shift+S (알캡처: 스크롤 캡처)
+              (e.ctrlKey && e.shiftKey && e.keyCode === 70) || // Ctrl+Shift+F (알캡처: 지정사이즈 캡처)
               (e.metaKey && e.shiftKey && e.keyCode === 83) || // Win+Shift+S (Windows 스크린샷 도구)
               (e.ctrlKey && e.keyCode === 85) || // Ctrl+U
               (e.ctrlKey && e.keyCode === 83) || // Ctrl+S (페이지 저장)
