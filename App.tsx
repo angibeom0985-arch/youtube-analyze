@@ -23,6 +23,7 @@ import { highlightImportantText } from './utils/textHighlight.tsx';
 const categories = ['썰 채널', '정보 전달', '쇼핑 리뷰', 'IT/테크', '요리/쿡방', '뷰티', '게임', '건강', '미스터리', '브이로그'];
 const lengthOptions = ['8분', '30분', '1시간'];
 const contentTypes = ['숏폼', '롱폼'];
+const vlogTypes = ['모닝 루틴', '나이트 루틴', '먹방', '여행', '쇼핑 하울', '공부', '운동', '일상', '데이트', '요리'];
 const characterColors = ['text-red-400', 'text-cyan-400', 'text-green-400', 'text-yellow-400', 'text-purple-400', 'text-orange-400'];
 
 const App: React.FC = () => {
@@ -41,6 +42,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [selectedCategory, setSelectedCategory] = useState<string>(categories[0]);
+  const [selectedVlogType, setSelectedVlogType] = useState<string>(vlogTypes[0]);
   const [contentType, setContentType] = useState<string>('롱폼');
   const [lengthMode, setLengthMode] = useState<string>('8분');
   const [customLength, setCustomLength] = useState<string>('8분');
@@ -330,7 +332,14 @@ const App: React.FC = () => {
     setNewPlan(null);
     
     try {
-      const result = await generateNewPlan(analysisResult, newKeyword, customLength, selectedCategory, apiKey);
+      const result = await generateNewPlan(
+        analysisResult, 
+        newKeyword, 
+        customLength, 
+        selectedCategory, 
+        apiKey,
+        selectedCategory === '브이로그' ? selectedVlogType : undefined
+      );
       setNewPlan(result);
     } catch (e: any) {
       setError(e.message || '기획안 생성 중 오류가 발생했습니다.');
@@ -492,6 +501,28 @@ const App: React.FC = () => {
                 ))}
               </div>
             </div>
+
+            {/* 브이로그 서브타입 선택 */}
+            {selectedCategory === '브이로그' && (
+              <div className="mb-6">
+                <label className="block text-xl font-bold text-neutral-100 mb-3">브이로그 타입</label>
+                <div className="flex flex-wrap gap-2">
+                  {vlogTypes.map(vlogType => (
+                    <button
+                      key={vlogType}
+                      onClick={() => setSelectedVlogType(vlogType)}
+                      className={`px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                        selectedVlogType === vlogType
+                          ? 'bg-gradient-to-br from-[#D90000] to-[#FF2B2B] text-white shadow-[0_0_10px_rgba(255,43,43,0.5)]'
+                          : 'bg-[#2A2A2A] hover:bg-zinc-700 text-neutral-200'
+                      }`}
+                    >
+                      {vlogType}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             <div>
               <div className="flex items-center justify-between mb-3">
                 <label htmlFor="transcript" className="block text-2xl font-bold text-neutral-100">대본 입력</label>

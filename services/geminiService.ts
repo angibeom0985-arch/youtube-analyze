@@ -203,7 +203,7 @@ export const generateIdeas = async (analysis: AnalysisResult, category: string, 
   }
 };
 
-export const generateNewPlan = async (analysis: AnalysisResult, newKeyword: string, length: string, category: string, apiKey: string): Promise<NewPlan> => {
+export const generateNewPlan = async (analysis: AnalysisResult, newKeyword: string, length: string, category: string, apiKey: string, vlogType?: string): Promise<NewPlan> => {
   try {
     const ai = createAI(apiKey);
     
@@ -230,22 +230,39 @@ export const generateNewPlan = async (analysis: AnalysisResult, newKeyword: stri
 
 각 대사마다 해당 장면을 시각적으로 묘사하는 상세한 이미지 생성 프롬프트('imagePrompt')를 반드시 포함해야 합니다.\n\n성공적인 동영상 분석 내용:\n\n${analysisString}\n\n이제 위 분석된 성공 구조를 따르되 새로운 키워드에 초점을 맞춘 새로운 기획안을 생성해주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
     } else if (isVlogChannel) {
-      contents = `이전 성공적인 브이로그 영상의 분석을 바탕으로, 키워드 "${newKeyword}"에 대한 새로운 브이로그 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.
+      const vlogTypePrompts: Record<string, string> = {
+        '모닝 루틴': '아침 시간대의 루틴을 중심으로, 기상부터 외출 준비까지의 과정을 자연스럽게 보여주세요. 건강한 습관, 아침 식사, 메이크업/스타일링, 출근/등교 준비 등을 포함하세요.',
+        '나이트 루틴': '저녁~취침 전 루틴을 담아, 하루 마무리 과정을 보여주세요. 저녁 식사, 스킨케어, 독서/취미, 침대 정리, 명상 등 편안한 분위기를 연출하세요.',
+        '먹방': '음식을 먹는 과정을 중심으로, 맛 리액션과 음식 소개를 자연스럽게 담아주세요. ASMR 요소, 음식 디테일 클로즈업, 조리 과정(선택)을 포함하세요.',
+        '여행': '여행지 탐방과 경험을 중심으로 구성하세요. 이동 과정, 명소 방문, 로컬 음식, 숙소 투어, 여행 팁을 자연스럽게 녹여내세요.',
+        '쇼핑 하울': '새로 구매한 제품들을 언박싱하고 소개하는 과정을 담아주세요. 구매 동기, 가격, 착용/사용 후기를 솔직하게 전달하세요.',
+        '공부': '공부하는 모습과 학습 방법을 보여주세요. 책상 세팅, 공부 타임랩스, 집중력 유지 팁, 휴식 시간을 자연스럽게 구성하세요.',
+        '운동': '운동 루틴과 과정을 담아주세요. 준비운동, 본 운동, 식단 관리, 동기부여 메시지를 포함하여 건강한 라이프스타일을 보여주세요.',
+        '일상': '특별한 테마 없이 하루의 자연스러운 흐름을 담아주세요. 일과, 소소한 행복, 예상치 못한 순간들을 솔직하게 공유하세요.',
+        '데이트': '데이트 과정을 로맨틱하게 담아주세요. 데이트 준비, 만남, 데이트 코스, 둘만의 대화를 감성적으로 표현하세요.',
+        '요리': '요리 과정과 완성까지를 보여주세요. 레시피 소개, 조리 과정, 플레이팅, 시식 리액션을 자연스럽게 담아주세요.'
+      };
 
-**브이로그 콘텐츠 특성:**
-- 일상 속 특별한 순간과 감성적인 스토리라인
+      const specificVlogPrompt = vlogTypePrompts[vlogType || '일상'] || vlogTypePrompts['일상'];
+
+      contents = `이전 성공적인 브이로그 영상의 분석을 바탕으로, "${vlogType || '일상'}" 타입의 브이로그를 "${newKeyword}" 키워드로 기획해주세요. 목표 영상 길이는 약 ${length}입니다.
+
+**${vlogType || '일상'} 브이로그 특화 가이드:**
+${specificVlogPrompt}
+
+**공통 브이로그 요소:**
 - 자연스러운 흐름과 친근한 톤앤매너
 - 시청자와의 공감대 형성 (TMI, 솔직한 이야기)
 - 편집 리듬: 빠른 컷 전환과 감성적인 BGM
 - 시각적 미학: 자연광, 감성적인 색감, 일상의 아름다움 포착
-- 썸네일: 자연스럽고 공감 가는 순간 (억지스럽지 않게)
+- 썸네일: 자연스럽고 공감 가는 순간
 
-**구성 요소:**
-1. 인트로: 오늘의 컨셉/일정 소개
-2. 일상 루틴: 아침/점심/저녁 등 시간의 흐름
-3. 하이라이트 순간: 특별한 경험/장소/만남
-4. TMI & 속마음: 개인적인 생각과 감정 공유
-5. 아웃트로: 마무리 인사와 다음 영상 예고
+**구성 흐름:**
+1. 인트로: 오늘의 브이로그 소개
+2. 메인 컨텐츠: ${vlogType || '일상'}에 맞는 자연스러운 전개
+3. 하이라이트: 특별한 순간/포인트
+4. TMI: 개인적인 생각과 감정 공유
+5. 아웃트로: 마무리와 다음 영상 예고
 
 각 장면마다 구체적인 촬영 가이드와 편집 포인트를 포함해주세요.\n\n성공적인 동영상 분석 내용:\n\n${analysisString}\n\n이제 위 분석된 성공 구조를 따르되 새로운 키워드에 초점을 맞춘 새로운 기획안을 생성해주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
     } else if (category === '쇼핑 리뷰') {
