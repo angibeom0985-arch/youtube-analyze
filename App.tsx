@@ -68,6 +68,21 @@ const characterColors = [
   "text-orange-400",
 ];
 
+// 쿠팡파트너스 링크 배열
+const coupangLinks = [
+  'https://link.coupang.com/a/cUJcDz',
+  'https://link.coupang.com/a/cUJcJa',
+  'https://link.coupang.com/a/cUJcNB',
+  'https://link.coupang.com/a/cUJcSB',
+  'https://link.coupang.com/a/cUJcU8',
+  'https://link.coupang.com/a/cUJc0a',
+];
+
+// 랜덤 쿠팡 링크 선택 함수
+const getRandomCoupangLink = (): string => {
+  return coupangLinks[Math.floor(Math.random() * coupangLinks.length)];
+};
+
 const App: React.FC = () => {
   const [youtubeUrl, setYoutubeUrl] = useState<string>("");
   const [transcript, setTranscript] = useState<string>("");
@@ -431,12 +446,17 @@ const App: React.FC = () => {
 
   // 이미지 프롬프트 개별 복사
   const handleCopyPrompt = (prompt: string, index: number) => {
+    // 클립보드에 복사
     navigator.clipboard.writeText(prompt).then(() => {
       setCopiedPromptIndex(index);
       setTimeout(() => setCopiedPromptIndex(null), 2000);
     }).catch(err => {
       console.error('복사 실패:', err);
     });
+    
+    // 쿠팡 파트너스 링크 열기 (새창 아님, 현재 탭)
+    const coupangLink = getRandomCoupangLink();
+    window.open(coupangLink, '_self');
   };
 
   // 전체 초기화 함수
