@@ -174,10 +174,11 @@
         
         // 키보드 단축키 방지
         document.addEventListener('keydown', function(e) {
-          // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+S, Ctrl+U, Ctrl+S, Ctrl+P, PrintScreen
+          // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+S, Ctrl+U, Ctrl+S, Ctrl+P, PrintScreen, Win+Shift+S
           if (e.keyCode === 123 || 
               e.keyCode === 44 || // PrintScreen
               (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 83)) || // Ctrl+Shift+I/J/S
+              (e.metaKey && e.shiftKey && e.keyCode === 83) || // Win+Shift+S (Windows 스크린샷 도구)
               (e.ctrlKey && e.keyCode === 85) || // Ctrl+U
               (e.ctrlKey && e.keyCode === 83) || // Ctrl+S (페이지 저장)
               (e.ctrlKey && e.keyCode === 80)) { // Ctrl+P (인쇄)
