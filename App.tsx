@@ -275,6 +275,132 @@ const App: React.FC = () => {
     }
   }, [newPlan]);
 
+  // 강력한 복사/드래그/우클릭 방지 시스템
+  useEffect(() => {
+    // 다층 방어 함수들
+    const preventAction = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    };
+
+    const preventCopy = (e: ClipboardEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      e.clipboardData?.clearData();
+      return false;
+    };
+
+    const preventDrag = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    };
+
+    const preventSelect = (e: Event) => {
+      e.preventDefault();
+      return false;
+    };
+
+    const disableTextSelection = () => {
+      document.body.style.userSelect = "none";
+      document.body.style.webkitUserSelect = "none";
+      (document.body.style as any).msUserSelect = "none";
+      (document.body.style as any).MozUserSelect = "none";
+    };
+
+    const preventKeyboardShortcuts = (e: KeyboardEvent) => {
+      // Ctrl+C, Ctrl+X, Ctrl+A, Ctrl+U, F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
+      if (
+        (e.ctrlKey && (e.key === "c" || e.key === "C")) ||
+        (e.ctrlKey && (e.key === "x" || e.key === "X")) ||
+        (e.ctrlKey && (e.key === "a" || e.key === "A")) ||
+        (e.ctrlKey && (e.key === "u" || e.key === "U")) ||
+        (e.ctrlKey && e.shiftKey && (e.key === "i" || e.key === "I")) ||
+        (e.ctrlKey && e.shiftKey && (e.key === "j" || e.key === "J")) ||
+        (e.ctrlKey && e.shiftKey && (e.key === "c" || e.key === "C")) ||
+        e.key === "F12"
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    };
+
+    // CSS로 선택 방지
+    disableTextSelection();
+
+    // 이벤트 리스너 등록 (capture phase에서 차단)
+    const events = [
+      { type: "contextmenu", handler: preventAction },
+      { type: "copy", handler: preventCopy },
+      { type: "cut", handler: preventCopy },
+      { type: "paste", handler: preventAction },
+      { type: "selectstart", handler: preventSelect },
+      { type: "dragstart", handler: preventDrag },
+      { type: "drag", handler: preventDrag },
+      { type: "dragover", handler: preventDrag },
+      { type: "drop", handler: preventDrag },
+      { type: "mousedown", handler: preventSelect },
+      { type: "keydown", handler: preventKeyboardShortcuts },
+    ];
+
+    events.forEach(({ type, handler }) => {
+      document.addEventListener(type, handler as EventListener, {
+        capture: true,
+        passive: false,
+      });
+    });
+
+    // 주기적으로 스타일 재적용 (우회 방지)
+    const styleInterval = setInterval(() => {
+      disableTextSelection();
+    }, 1000);
+
+    // Selection API 감시 및 차단
+    const clearSelection = () => {
+      if (window.getSelection) {
+        const selection = window.getSelection();
+        if (selection && selection.toString().length > 0) {
+          selection.removeAllRanges();
+        }
+      }
+    };
+
+    const selectionInterval = setInterval(clearSelection, 100);
+
+    // DevTools 감지 및 경고
+    const detectDevTools = () => {
+      const threshold = 160;
+      if (
+        window.outerWidth - window.innerWidth > threshold ||
+        window.outerHeight - window.innerHeight > threshold
+      ) {
+        console.clear();
+      }
+    };
+
+    const devToolsInterval = setInterval(detectDevTools, 1000);
+
+    // Cleanup
+    return () => {
+      events.forEach(({ type, handler }) => {
+        document.removeEventListener(type, handler as EventListener, {
+          capture: true,
+        });
+      });
+      clearInterval(styleInterval);
+      clearInterval(selectionInterval);
+      clearInterval(devToolsInterval);
+      
+      // 스타일 복원
+      document.body.style.userSelect = "";
+      document.body.style.webkitUserSelect = "";
+      (document.body.style as any).msUserSelect = "";
+      (document.body.style as any).MozUserSelect = "";
+    };
+  }, []);
+
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newUrl = e.target.value;
     setYoutubeUrl(newUrl);
