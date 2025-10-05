@@ -450,8 +450,10 @@ const App: React.FC = () => {
     navigator.clipboard.writeText(prompt).then(() => {
       setCopiedPromptIndex(index);
       setTimeout(() => setCopiedPromptIndex(null), 2000);
+      alert('✅ 이미지 프롬프트가 복사되었습니다!');
     }).catch(err => {
       console.error('복사 실패:', err);
+      alert('❌ 복사에 실패했습니다.');
     });
     
     // 쿠팡 파트너스 링크 열기 (새창 아님, 현재 탭)
