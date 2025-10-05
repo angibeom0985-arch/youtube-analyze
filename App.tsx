@@ -70,12 +70,12 @@ const characterColors = [
 
 // 쿠팡파트너스 링크 배열
 const coupangLinks = [
-  'https://link.coupang.com/a/cUJcDz',
-  'https://link.coupang.com/a/cUJcJa',
-  'https://link.coupang.com/a/cUJcNB',
-  'https://link.coupang.com/a/cUJcSB',
-  'https://link.coupang.com/a/cUJcU8',
-  'https://link.coupang.com/a/cUJc0a',
+  "https://link.coupang.com/a/cUJcDz",
+  "https://link.coupang.com/a/cUJcJa",
+  "https://link.coupang.com/a/cUJcNB",
+  "https://link.coupang.com/a/cUJcSB",
+  "https://link.coupang.com/a/cUJcU8",
+  "https://link.coupang.com/a/cUJc0a",
 ];
 
 // 랜덤 쿠팡 링크 선택 함수
@@ -114,7 +114,9 @@ const App: React.FC = () => {
   const [characterColorMap, setCharacterColorMap] = useState(
     new Map<string, string>()
   );
-  const [copiedPromptIndex, setCopiedPromptIndex] = useState<number | null>(null);
+  const [copiedPromptIndex, setCopiedPromptIndex] = useState<number | null>(
+    null
+  );
 
   // API 키 관리
   const [apiKey, setApiKey] = useState<string | null>(null);
@@ -447,18 +449,23 @@ const App: React.FC = () => {
   // 이미지 프롬프트 개별 복사
   const handleCopyPrompt = (prompt: string, index: number) => {
     // 클립보드에 복사
-    navigator.clipboard.writeText(prompt).then(() => {
-      setCopiedPromptIndex(index);
-      setTimeout(() => setCopiedPromptIndex(null), 2000);
-      alert('✅ 이미지 프롬프트가 복사되었습니다!');
-    }).catch(err => {
-      console.error('복사 실패:', err);
-      alert('❌ 복사에 실패했습니다.');
-    });
-    
-    // 쿠팡 파트너스 링크 열기 (새창 아님, 현재 탭)
-    const coupangLink = getRandomCoupangLink();
-    window.open(coupangLink, '_self');
+    navigator.clipboard
+      .writeText(prompt)
+      .then(() => {
+        setCopiedPromptIndex(index);
+        setTimeout(() => setCopiedPromptIndex(null), 2000);
+        alert("✅ 이미지 프롬프트가 복사되었습니다!");
+        
+        // 3초 후 쿠팡 파트너스 링크 새창으로 열기
+        setTimeout(() => {
+          const coupangLink = getRandomCoupangLink();
+          window.open(coupangLink, "_blank");
+        }, 3000);
+      })
+      .catch((err) => {
+        console.error("복사 실패:", err);
+        alert("❌ 복사에 실패했습니다.");
+      });
   };
 
   // 전체 초기화 함수
@@ -1245,11 +1252,15 @@ const App: React.FC = () => {
                                     {item.imagePrompt}
                                   </p>
                                   <button
-                                    onClick={() => handleCopyPrompt(item.imagePrompt, index)}
+                                    onClick={() =>
+                                      handleCopyPrompt(item.imagePrompt, index)
+                                    }
                                     className="absolute top-2 right-2 text-xs bg-zinc-700 hover:bg-zinc-600 text-neutral-300 font-semibold py-1 px-2 rounded-md transition-all opacity-0 group-hover:opacity-100"
                                     title="프롬프트 복사"
                                   >
-                                    {copiedPromptIndex === index ? "복사됨!" : "복사"}
+                                    {copiedPromptIndex === index
+                                      ? "복사됨!"
+                                      : "복사"}
                                   </button>
                                 </div>
                               )}
