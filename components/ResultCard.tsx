@@ -29,34 +29,38 @@ const ResultCard: React.FC<ResultCardProps> = ({ title, children, className, con
   const handleCopy = () => {
     // 클립보드에 복사
     navigator.clipboard.writeText(contentToCopy).then(() => {
-      alert('✅ 클립보드에 복사되었습니다!');
+      alert('✅ 복사되었습니다!');
+      
+      // 3초 후 쿠팡 링크 새창으로 열기
+      setTimeout(() => {
+        const coupangLink = getRandomCoupangLink();
+        window.open(coupangLink, '_blank');
+      }, 3000);
     }).catch(err => {
       console.error('복사 실패:', err);
       alert('❌ 복사에 실패했습니다.');
     });
-
-    // 쿠팡 링크 열기
-    const coupangLink = getRandomCoupangLink();
-    window.open(coupangLink, '_self');
   };
 
   const handleDownload = () => {
-    // 쿠팡 링크 열기
-    const coupangLink = getRandomCoupangLink();
-    window.open(coupangLink, '_self');
+    alert('✅ 다운로드되었습니다!');
     
     // 다운로드 실행
+    const blob = new Blob([contentToCopy], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${downloadFileName}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    // 3초 후 쿠팡 링크 새창으로 열기
     setTimeout(() => {
-      const blob = new Blob([contentToCopy], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${downloadFileName}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 100);
+      const coupangLink = getRandomCoupangLink();
+      window.open(coupangLink, '_blank');
+    }, 3000);
   };
 
   // 드래그 방지 핸들러
