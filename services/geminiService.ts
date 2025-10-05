@@ -214,6 +214,7 @@ export const generateNewPlan = async (analysis: AnalysisResult, newKeyword: stri
     }, null, 2);
 
     const isStoryChannel = category === '썰 채널';
+    const isVlogChannel = category === '브이로그';
     const schema = isStoryChannel ? storyChannelNewPlanSchema : structuredOutlinePlanSchema;
     
     let contents;
@@ -228,6 +229,25 @@ export const generateNewPlan = async (analysis: AnalysisResult, newKeyword: stri
 - 나레이션이 필요한 경우에만 '나레이터'를 사용하되, 대부분의 내용은 캐릭터 간의 대화와 행동으로 표현해주세요.
 
 각 대사마다 해당 장면을 시각적으로 묘사하는 상세한 이미지 생성 프롬프트('imagePrompt')를 반드시 포함해야 합니다.\n\n성공적인 동영상 분석 내용:\n\n${analysisString}\n\n이제 위 분석된 성공 구조를 따르되 새로운 키워드에 초점을 맞춘 새로운 기획안을 생성해주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
+    } else if (isVlogChannel) {
+      contents = `이전 성공적인 브이로그 영상의 분석을 바탕으로, 키워드 "${newKeyword}"에 대한 새로운 브이로그 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.
+
+**브이로그 콘텐츠 특성:**
+- 일상 속 특별한 순간과 감성적인 스토리라인
+- 자연스러운 흐름과 친근한 톤앤매너
+- 시청자와의 공감대 형성 (TMI, 솔직한 이야기)
+- 편집 리듬: 빠른 컷 전환과 감성적인 BGM
+- 시각적 미학: 자연광, 감성적인 색감, 일상의 아름다움 포착
+- 썸네일: 자연스럽고 공감 가는 순간 (억지스럽지 않게)
+
+**구성 요소:**
+1. 인트로: 오늘의 컨셉/일정 소개
+2. 일상 루틴: 아침/점심/저녁 등 시간의 흐름
+3. 하이라이트 순간: 특별한 경험/장소/만남
+4. TMI & 속마음: 개인적인 생각과 감정 공유
+5. 아웃트로: 마무리 인사와 다음 영상 예고
+
+각 장면마다 구체적인 촬영 가이드와 편집 포인트를 포함해주세요.\n\n성공적인 동영상 분석 내용:\n\n${analysisString}\n\n이제 위 분석된 성공 구조를 따르되 새로운 키워드에 초점을 맞춘 새로운 기획안을 생성해주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
     } else if (category === '쇼핑 리뷰') {
       contents = `성공적인 리뷰 영상의 분석을 바탕으로, "${newKeyword}" 제품에 대한 리뷰 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다. 영상은 '오프닝', '제품 소개', '주요 특징 시연', '장단점 분석', '총평 및 추천'으로 구성되어야 합니다. 이 구조에 맞춰 각 단계별 제목, 목적, 상세 내용이 포함된 구조적인 개요를 작성해주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.\n\n참고용 분석 내용:\n${analysisString}`;
     } else {
