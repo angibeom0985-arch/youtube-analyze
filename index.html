@@ -116,6 +116,13 @@
       body {
         -webkit-touch-callout: none !important;
       }
+      
+      /* 인쇄 방지 */
+      @media print {
+        body {
+          display: none !important;
+        }
+      }
     </style>
     
     <!-- 추가 보안 스크립트 -->
@@ -167,10 +174,13 @@
         
         // 키보드 단축키 방지
         document.addEventListener('keydown', function(e) {
-          // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+          // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+S, Ctrl+U, Ctrl+S, Ctrl+P, PrintScreen
           if (e.keyCode === 123 || 
-              (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
-              (e.ctrlKey && e.keyCode === 85)) {
+              e.keyCode === 44 || // PrintScreen
+              (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 83)) || // Ctrl+Shift+I/J/S
+              (e.ctrlKey && e.keyCode === 85) || // Ctrl+U
+              (e.ctrlKey && e.keyCode === 83) || // Ctrl+S (페이지 저장)
+              (e.ctrlKey && e.keyCode === 80)) { // Ctrl+P (인쇄)
             e.preventDefault();
             e.stopPropagation();
             return false;
@@ -184,6 +194,22 @@
               e.stopPropagation();
               return false;
             }
+          }
+        }, true);
+        
+        // 인쇄 차단
+        window.addEventListener('beforeprint', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          alert('이 페이지는 인쇄할 수 없습니다.');
+          return false;
+        }, true);
+        
+        // Print Screen 키 추가 감지
+        document.addEventListener('keyup', function(e) {
+          if (e.key === 'PrintScreen' || e.keyCode === 44) {
+            navigator.clipboard.writeText('');
+            console.log('Screenshot blocked');
           }
         }, true);
         

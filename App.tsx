@@ -310,16 +310,21 @@ const App: React.FC = () => {
     };
 
     const preventKeyboardShortcuts = (e: KeyboardEvent) => {
-      // Ctrl+C, Ctrl+X, Ctrl+A, Ctrl+U, F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
+      // Ctrl+C, Ctrl+X, Ctrl+A, Ctrl+U, Ctrl+S, Ctrl+P, F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+Shift+S, PrintScreen
       if (
         (e.ctrlKey && (e.key === "c" || e.key === "C")) ||
         (e.ctrlKey && (e.key === "x" || e.key === "X")) ||
         (e.ctrlKey && (e.key === "a" || e.key === "A")) ||
         (e.ctrlKey && (e.key === "u" || e.key === "U")) ||
+        (e.ctrlKey && (e.key === "s" || e.key === "S")) || // 페이지 저장 차단
+        (e.ctrlKey && (e.key === "p" || e.key === "P")) || // 인쇄 차단
         (e.ctrlKey && e.shiftKey && (e.key === "i" || e.key === "I")) ||
         (e.ctrlKey && e.shiftKey && (e.key === "j" || e.key === "J")) ||
         (e.ctrlKey && e.shiftKey && (e.key === "c" || e.key === "C")) ||
-        e.key === "F12"
+        (e.ctrlKey && e.shiftKey && (e.key === "s" || e.key === "S")) || // Ctrl+Shift+S 페이지 저장 차단
+        e.key === "F12" ||
+        e.key === "PrintScreen" || // Print Screen 키 차단
+        e.keyCode === 44 // Print Screen keyCode
       ) {
         e.preventDefault();
         e.stopPropagation();
