@@ -1402,14 +1402,14 @@ const App: React.FC = () => {
                         <div className="text-lg">숏폼/롱폼 이미지 생성</div>
                       </a>
                       <a
-                        href="https://aimusic-l.money-hotissue.com"
+                        href="https://aimusic.money-hotissue.com/"
                         className="bg-gradient-to-br from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 text-center shadow-lg"
                       >
                         <div className="text-3xl mb-2">🎵</div>
                         <div className="text-lg">AI 음악 가사 1초 완성</div>
                       </a>
                       <a
-                        href="https://aimusic-i.money-hotissue.com"
+                        href="https://aimusic.money-hotissue.com/"
                         className="bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 text-center shadow-lg"
                       >
                         <div className="text-3xl mb-2">🎨</div>

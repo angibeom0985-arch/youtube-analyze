@@ -112,7 +112,9 @@
         cursor: text !important;
       }
 
-      *:not(.api-key-modal):not(.api-key-modal *):not(.youtube-url-input):not(.youtube-url-input *):not(.transcript-input):not(.transcript-input *) {
+      *:not(.api-key-modal):not(.api-key-modal *):not(.youtube-url-input):not(
+          .youtube-url-input *
+        ):not(.transcript-input):not(.transcript-input *) {
         -webkit-user-select: none !important;
         -moz-user-select: none !important;
         -ms-user-select: none !important;
