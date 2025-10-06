@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { FiX, FiSave, FiTrash2 } from 'react-icons/fi';
+import React, { useState, useEffect } from "react";
+import { FiX, FiSave, FiTrash2 } from "react-icons/fi";
 
 interface ApiKeyModalProps {
   isOpen: boolean;
@@ -8,8 +8,13 @@ interface ApiKeyModalProps {
   currentApiKey: string | null;
 }
 
-const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose, onSave, currentApiKey }) => {
-  const [apiKey, setApiKey] = useState(currentApiKey || '');
+const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
+  isOpen,
+  onClose,
+  onSave,
+  currentApiKey,
+}) => {
+  const [apiKey, setApiKey] = useState(currentApiKey || "");
   const [showKey, setShowKey] = useState(false);
 
   useEffect(() => {
@@ -28,7 +33,7 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose, onSave, curr
   };
 
   const handleClear = () => {
-    setApiKey('');
+    setApiKey("");
   };
 
   // 모달 내부에서는 복사/붙여넣기/드래그 허용
@@ -36,14 +41,19 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose, onSave, curr
     e.stopPropagation();
   };
 
-  const handleInputInteraction = (e: React.ClipboardEvent | React.DragEvent | React.MouseEvent) => {
+  const handleInputInteraction = (
+    e: React.ClipboardEvent | React.DragEvent | React.MouseEvent
+  ) => {
     e.stopPropagation();
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4" onClick={onClose}>
-      <div 
-        className="bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-xl border border-gray-700" 
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4"
+      onClick={onClose}
+    >
+      <div
+        className="api-key-modal bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-xl border border-gray-700"
         onClick={handleModalClick}
         onCopy={(e) => e.stopPropagation()}
         onCut={(e) => e.stopPropagation()}
@@ -75,7 +85,7 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose, onSave, curr
               API 키
             </label>
             <input
-              type={showKey ? 'text' : 'password'}
+              type={showKey ? "text" : "password"}
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               placeholder="여기에 API 키를 입력하세요"
@@ -87,7 +97,12 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose, onSave, curr
               onDrag={handleInputInteraction}
               onContextMenu={handleInputInteraction}
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-text select-text"
-              style={{ userSelect: 'text', WebkitUserSelect: 'text' } as React.CSSProperties}
+              style={
+                {
+                  userSelect: "text",
+                  WebkitUserSelect: "text",
+                } as React.CSSProperties
+              }
             />
           </div>
 

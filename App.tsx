@@ -303,6 +303,11 @@ const App: React.FC = () => {
     };
 
     const preventCopy = (e: ClipboardEvent) => {
+      // API 키 모달 내부는 허용
+      const target = e.target as HTMLElement;
+      if (target?.closest('.api-key-modal')) {
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
       e.clipboardData?.clearData();
@@ -328,6 +333,12 @@ const App: React.FC = () => {
     };
 
     const preventKeyboardShortcuts = (e: KeyboardEvent) => {
+      // API 키 모달 내부는 허용
+      const target = e.target as HTMLElement;
+      if (target?.closest('.api-key-modal')) {
+        return;
+      }
+      
       // Ctrl+C, Ctrl+X, Ctrl+A, Ctrl+U, Ctrl+S, Ctrl+P, F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+Shift+S, PrintScreen, Win+Shift+S
       // 알캡처(ALCapture) 단축키: Ctrl+Shift+C/W/D/A/S/F
       // Ctrl+Shift+R은 새로고침을 위해 허용
