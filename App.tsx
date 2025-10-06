@@ -295,6 +295,10 @@ const App: React.FC = () => {
 
   // 강력한 복사/드래그/우클릭 방지 시스템
   useEffect(() => {
+    // API 키 모달이 열려있으면 선택 해제 기능 비활성화
+    if (showApiKeyModal) {
+      return;
+    }
     // 다층 방어 함수들
     const preventAction = (e: Event) => {
       // API 키 모달 내부는 허용
@@ -491,7 +495,7 @@ const App: React.FC = () => {
       (document.body.style as any).msUserSelect = "";
       (document.body.style as any).MozUserSelect = "";
     };
-  }, []);
+  }, [showApiKeyModal]);
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newUrl = e.target.value;
