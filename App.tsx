@@ -44,6 +44,7 @@ const categories = [
   "야담",
   "먹방",
   "49금",
+  "국뽕",
 ];
 const lengthOptions = ["8분", "30분", "1시간"];
 const contentTypes = ["숏폼", "롱폼"];
@@ -303,7 +304,7 @@ const App: React.FC = () => {
     const preventAction = (e: Event) => {
       // API 키 모달 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest('.api-key-modal')) {
+      if (target?.closest(".api-key-modal")) {
         return;
       }
       e.preventDefault();
@@ -314,7 +315,7 @@ const App: React.FC = () => {
     const preventCopy = (e: ClipboardEvent) => {
       // API 키 모달 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest('.api-key-modal')) {
+      if (target?.closest(".api-key-modal")) {
         return;
       }
       e.preventDefault();
@@ -326,7 +327,7 @@ const App: React.FC = () => {
     const preventDrag = (e: DragEvent) => {
       // API 키 모달 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest('.api-key-modal')) {
+      if (target?.closest(".api-key-modal")) {
         return;
       }
       e.preventDefault();
@@ -337,7 +338,7 @@ const App: React.FC = () => {
     const preventSelect = (e: Event) => {
       // API 키 모달 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest('.api-key-modal')) {
+      if (target?.closest(".api-key-modal")) {
         return;
       }
       e.preventDefault();
@@ -347,7 +348,7 @@ const App: React.FC = () => {
     const preventPaste = (e: ClipboardEvent) => {
       // API 키 모달 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest('.api-key-modal')) {
+      if (target?.closest(".api-key-modal")) {
         return;
       }
       e.preventDefault();
@@ -365,10 +366,10 @@ const App: React.FC = () => {
     const preventKeyboardShortcuts = (e: KeyboardEvent) => {
       // API 키 모달 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest('.api-key-modal')) {
+      if (target?.closest(".api-key-modal")) {
         return;
       }
-      
+
       // Ctrl+C, Ctrl+X, Ctrl+A, Ctrl+U, Ctrl+S, Ctrl+P, F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+Shift+S, PrintScreen, Win+Shift+S
       // 알캡처(ALCapture) 단축키: Ctrl+Shift+C/W/D/A/S/F
       // Ctrl+Shift+R은 새로고침을 위해 허용
@@ -430,7 +431,7 @@ const App: React.FC = () => {
     // 주기적으로 스타일 재적용 (우회 방지, API 키 모달 제외)
     const styleInterval = setInterval(() => {
       // API 키 모달이 열려있으면 스킵
-      const modal = document.querySelector('.api-key-modal');
+      const modal = document.querySelector(".api-key-modal");
       if (!modal) {
         disableTextSelection();
       }
@@ -439,11 +440,11 @@ const App: React.FC = () => {
     // Selection API 감시 및 차단 (API 키 모달 제외)
     const clearSelection = () => {
       // API 키 모달이 열려있으면 선택 해제하지 않음
-      const modal = document.querySelector('.api-key-modal');
+      const modal = document.querySelector(".api-key-modal");
       if (modal) {
         return;
       }
-      
+
       if (window.getSelection) {
         const selection = window.getSelection();
         if (selection && selection.toString().length > 0) {
@@ -451,8 +452,10 @@ const App: React.FC = () => {
           try {
             const range = selection.getRangeAt(0);
             const container = range.commonAncestorContainer;
-            const element = (container.nodeType === 1 ? container : container.parentElement) as HTMLElement;
-            if (element?.closest('.api-key-modal')) {
+            const element = (
+              container.nodeType === 1 ? container : container.parentElement
+            ) as HTMLElement;
+            if (element?.closest(".api-key-modal")) {
               return;
             }
           } catch (e) {
@@ -780,11 +783,13 @@ const App: React.FC = () => {
               )}
             </button>
           </nav>
-          
+
           {!apiKey && (
             <div className="mt-4 p-3 bg-red-900/30 border border-red-500/50 rounded-lg text-center">
               <p className="text-red-300 text-sm font-medium">
-                ⚠️ AI 분석 기능을 사용하려면 먼저 <span className="font-bold text-red-200">API 키를 입력</span>해주세요!
+                ⚠️ AI 분석 기능을 사용하려면 먼저{" "}
+                <span className="font-bold text-red-200">API 키를 입력</span>
+                해주세요!
               </p>
             </div>
           )}
