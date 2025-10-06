@@ -132,10 +132,14 @@
       (function () {
         "use strict";
 
-        // 우클릭 방지
+        // 우클릭 방지 (API 키 모달 제외)
         document.addEventListener(
           "contextmenu",
           function (e) {
+            // API 키 모달 내부는 허용
+            if (e.target && e.target.closest && e.target.closest('.api-key-modal')) {
+              return;
+            }
             e.preventDefault();
             e.stopPropagation();
             return false;
@@ -143,10 +147,14 @@
           true
         );
 
-        // 드래그 방지
+        // 드래그 방지 (API 키 모달 제외)
         document.addEventListener(
           "dragstart",
           function (e) {
+            // API 키 모달 내부는 허용
+            if (e.target && e.target.closest && e.target.closest('.api-key-modal')) {
+              return;
+            }
             e.preventDefault();
             e.stopPropagation();
             return false;
@@ -154,10 +162,14 @@
           true
         );
 
-        // 선택 방지
+        // 선택 방지 (API 키 모달 제외)
         document.addEventListener(
           "selectstart",
           function (e) {
+            // API 키 모달 내부는 허용
+            if (e.target && e.target.closest && e.target.closest('.api-key-modal')) {
+              return;
+            }
             e.preventDefault();
             e.stopPropagation();
             return false;
@@ -165,10 +177,14 @@
           true
         );
 
-        // 복사 방지
+        // 복사 방지 (API 키 모달 제외)
         document.addEventListener(
           "copy",
           function (e) {
+            // API 키 모달 내부는 허용
+            if (e.target && e.target.closest && e.target.closest('.api-key-modal')) {
+              return;
+            }
             e.preventDefault();
             e.stopPropagation();
             if (e.clipboardData) {
@@ -179,10 +195,14 @@
           true
         );
 
-        // 잘라내기 방지
+        // 잘라내기 방지 (API 키 모달 제외)
         document.addEventListener(
           "cut",
           function (e) {
+            // API 키 모달 내부는 허용
+            if (e.target && e.target.closest && e.target.closest('.api-key-modal')) {
+              return;
+            }
             e.preventDefault();
             e.stopPropagation();
             if (e.clipboardData) {
@@ -221,12 +241,17 @@
               return false;
             }
 
-            // Ctrl+C, Ctrl+X, Ctrl+A
+            // Ctrl+C, Ctrl+X, Ctrl+A, Ctrl+V, Ctrl+Z
             if (
               e.ctrlKey &&
-              (e.keyCode === 67 || e.keyCode === 88 || e.keyCode === 65)
+              (e.keyCode === 67 || e.keyCode === 88 || e.keyCode === 65 || e.keyCode === 86 || e.keyCode === 90)
             ) {
               var target = e.target;
+              // API 키 모달 내부는 모두 허용
+              if (target.closest && target.closest('.api-key-modal')) {
+                return;
+              }
+              // 일반 INPUT/TEXTAREA는 허용
               if (target.tagName !== "INPUT" && target.tagName !== "TEXTAREA") {
                 e.preventDefault();
                 e.stopPropagation();
