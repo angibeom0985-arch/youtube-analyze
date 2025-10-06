@@ -364,9 +364,9 @@ const App: React.FC = () => {
     };
 
     const preventKeyboardShortcuts = (e: KeyboardEvent) => {
-      // API 키 모달과 유튜브 URL 입력 내부는 허용
+      // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input")) {
+      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input") || target?.closest(".transcript-input")) {
         return;
       }
 
@@ -428,36 +428,38 @@ const App: React.FC = () => {
       });
     });
 
-    // 주기적으로 스타일 재적용 (우회 방지, API 키 모달 및 유튜브 URL 입력 제외)
+    // 주기적으로 스타일 재적용 (우회 방지, API 키 모달, 유튜브 URL 입력, 대본 입력 제외)
     const styleInterval = setInterval(() => {
-      // API 키 모달이나 유튜브 URL 입력이 열려있으면 스킵
+      // API 키 모달, 유튜브 URL 입력, 대본 입력이 열려있으면 스킵
       const modal = document.querySelector(".api-key-modal");
       const youtubeInput = document.querySelector(".youtube-url-input");
-      if (!modal && !youtubeInput) {
+      const transcriptInput = document.querySelector(".transcript-input");
+      if (!modal && !youtubeInput && !transcriptInput) {
         disableTextSelection();
       }
     }, 1000);
 
-    // Selection API 감시 및 차단 (API 키 모달 및 유튜브 URL 입력 제외)
+    // Selection API 감시 및 차단 (API 키 모달, 유튜브 URL 입력, 대본 입력 제외)
     const clearSelection = () => {
-      // API 키 모달이나 유튜브 URL 입력이 열려있으면 선택 해제하지 않음
+      // API 키 모달, 유튜브 URL 입력, 대본 입력이 열려있으면 선택 해제하지 않음
       const modal = document.querySelector(".api-key-modal");
       const youtubeInput = document.querySelector(".youtube-url-input");
-      if (modal || youtubeInput) {
+      const transcriptInput = document.querySelector(".transcript-input");
+      if (modal || youtubeInput || transcriptInput) {
         return;
       }
 
       if (window.getSelection) {
         const selection = window.getSelection();
         if (selection && selection.toString().length > 0) {
-          // 선택된 요소가 API 키 모달이나 유튜브 URL 입력 내부인지 확인
+          // 선택된 요소가 API 키 모달, 유튜브 URL 입력, 대본 입력 내부인지 확인
           try {
             const range = selection.getRangeAt(0);
             const container = range.commonAncestorContainer;
             const element = (
               container.nodeType === 1 ? container : container.parentElement
             ) as HTMLElement;
-            if (element?.closest(".api-key-modal") || element?.closest(".youtube-url-input")) {
+            if (element?.closest(".api-key-modal") || element?.closest(".youtube-url-input") || element?.closest(".transcript-input")) {
               return;
             }
           } catch (e) {
@@ -942,14 +944,17 @@ const App: React.FC = () => {
                   ))}
                 </div>
               </div>
-              <textarea
-                id="transcript"
-                rows={10}
-                value={transcript}
-                onChange={(e) => setTranscript(e.target.value)}
-                placeholder="여기에 스크립트를 붙여넣어 주세요."
-                className="w-full bg-[#121212] border border-[#2A2A2A] rounded-md p-2 text-neutral-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
-              />
+              <div className="transcript-input">
+                <textarea
+                  id="transcript"
+                  rows={10}
+                  value={transcript}
+                  onChange={(e) => setTranscript(e.target.value)}
+                  placeholder="여기에 스크립트를 붙여넣어 주세요."
+                  className="w-full bg-[#121212] border border-[#2A2A2A] rounded-md p-2 text-neutral-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                  style={{ userSelect: 'text', WebkitUserSelect: 'text' } as React.CSSProperties}
+                />
+              </div>
             </div>
             <button
               onClick={handleAnalyze}

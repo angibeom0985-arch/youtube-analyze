@@ -112,7 +112,7 @@
         cursor: text !important;
       }
 
-      *:not(.api-key-modal):not(.api-key-modal *):not(.youtube-url-input):not(.youtube-url-input *) {
+      *:not(.api-key-modal):not(.api-key-modal *):not(.youtube-url-input):not(.youtube-url-input *):not(.transcript-input):not(.transcript-input *) {
         -webkit-user-select: none !important;
         -moz-user-select: none !important;
         -ms-user-select: none !important;
@@ -126,6 +126,8 @@
 
       .youtube-url-input input,
       .youtube-url-input *,
+      .transcript-input textarea,
+      .transcript-input *,
       input,
       textarea {
         -webkit-user-select: text !important;
@@ -152,16 +154,17 @@
       (function () {
         "use strict";
 
-        // 우클릭 방지 (API 키 모달, 유튜브 URL 입력 제외)
+        // 우클릭 방지 (API 키 모달, 유튜브 URL 입력, 대본 입력 제외)
         document.addEventListener(
           "contextmenu",
           function (e) {
-            // API 키 모달과 유튜브 URL 입력 내부는 허용
+            // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
             if (
               e.target &&
               e.target.closest &&
               (e.target.closest(".api-key-modal") ||
-                e.target.closest(".youtube-url-input"))
+                e.target.closest(".youtube-url-input") ||
+                e.target.closest(".transcript-input"))
             ) {
               return;
             }
@@ -172,16 +175,17 @@
           true
         );
 
-        // 드래그 방지 (API 키 모달, 유튜브 URL 입력 제외)
+        // 드래그 방지 (API 키 모달, 유튜브 URL 입력, 대본 입력 제외)
         document.addEventListener(
           "dragstart",
           function (e) {
-            // API 키 모달과 유튜브 URL 입력 내부는 허용
+            // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
             if (
               e.target &&
               e.target.closest &&
               (e.target.closest(".api-key-modal") ||
-                e.target.closest(".youtube-url-input"))
+                e.target.closest(".youtube-url-input") ||
+                e.target.closest(".transcript-input"))
             ) {
               return;
             }
@@ -192,16 +196,17 @@
           true
         );
 
-        // 선택 방지 (API 키 모달, 유튜브 URL 입력 제외)
+        // 선택 방지 (API 키 모달, 유튜브 URL 입력, 대본 입력 제외)
         document.addEventListener(
           "selectstart",
           function (e) {
-            // API 키 모달과 유튜브 URL 입력 내부는 허용
+            // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
             if (
               e.target &&
               e.target.closest &&
               (e.target.closest(".api-key-modal") ||
-                e.target.closest(".youtube-url-input"))
+                e.target.closest(".youtube-url-input") ||
+                e.target.closest(".transcript-input"))
             ) {
               return;
             }
@@ -212,16 +217,17 @@
           true
         );
 
-        // 복사 방지 (API 키 모달, 유튜브 URL 입력 제외)
+        // 복사 방지 (API 키 모달, 유튜브 URL 입력, 대본 입력 제외)
         document.addEventListener(
           "copy",
           function (e) {
-            // API 키 모달과 유튜브 URL 입력 내부는 허용
+            // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
             if (
               e.target &&
               e.target.closest &&
               (e.target.closest(".api-key-modal") ||
-                e.target.closest(".youtube-url-input"))
+                e.target.closest(".youtube-url-input") ||
+                e.target.closest(".transcript-input"))
             ) {
               return;
             }
@@ -235,16 +241,17 @@
           true
         );
 
-        // 잘라내기 방지 (API 키 모달, 유튜브 URL 입력 제외)
+        // 잘라내기 방지 (API 키 모달, 유튜브 URL 입력, 대본 입력 제외)
         document.addEventListener(
           "cut",
           function (e) {
-            // API 키 모달과 유튜브 URL 입력 내부는 허용
+            // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
             if (
               e.target &&
               e.target.closest &&
               (e.target.closest(".api-key-modal") ||
-                e.target.closest(".youtube-url-input"))
+                e.target.closest(".youtube-url-input") ||
+                e.target.closest(".transcript-input"))
             ) {
               return;
             }
@@ -258,16 +265,17 @@
           true
         );
 
-        // 붙여넣기 방지 (API 키 모달, 유튜브 URL 입력 제외)
+        // 붙여넣기 방지 (API 키 모달, 유튜브 URL 입력, 대본 입력 제외)
         document.addEventListener(
           "paste",
           function (e) {
-            // API 키 모달과 유튜브 URL 입력 내부는 허용
+            // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
             if (
               e.target &&
               e.target.closest &&
               (e.target.closest(".api-key-modal") ||
-                e.target.closest(".youtube-url-input"))
+                e.target.closest(".youtube-url-input") ||
+                e.target.closest(".transcript-input"))
             ) {
               return;
             }
@@ -369,13 +377,14 @@
           }
         }, 1000);
 
-        // Selection 감시 (API 키 모달, 유튜브 URL 입력 제외)
+        // Selection 감시 (API 키 모달, 유튜브 URL 입력, 대본 입력 제외)
         setInterval(function () {
           try {
-            // API 키 모달이나 유튜브 URL 입력이 열려있으면 완전히 스킵
+            // API 키 모달, 유튜브 URL 입력, 대본 입력이 열려있으면 완전히 스킵
             var modal = document.querySelector(".api-key-modal");
             var youtubeInput = document.querySelector(".youtube-url-input");
-            if (modal || youtubeInput) {
+            var transcriptInput = document.querySelector(".transcript-input");
+            if (modal || youtubeInput || transcriptInput) {
               return;
             }
 
@@ -384,7 +393,7 @@
               return;
             }
 
-            // 선택된 요소가 API 키 모달이나 유튜브 URL 입력 내부인지 다시 확인
+            // 선택된 요소가 API 키 모달, 유튜브 URL 입력, 대본 입력 내부인지 다시 확인
             if (selection.rangeCount > 0) {
               var range = selection.getRangeAt(0);
               var container = range.commonAncestorContainer;
@@ -399,12 +408,13 @@
                 return;
               }
 
-              // API 키 모달이나 유튜브 URL 입력 내부면 허용
+              // API 키 모달, 유튜브 URL 입력, 대본 입력 내부면 허용
               if (
                 element &&
                 element.closest &&
                 (element.closest(".api-key-modal") ||
-                  element.closest(".youtube-url-input"))
+                  element.closest(".youtube-url-input") ||
+                  element.closest(".transcript-input"))
               ) {
                 return;
               }
