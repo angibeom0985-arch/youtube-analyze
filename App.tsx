@@ -340,6 +340,17 @@ const App: React.FC = () => {
       return false;
     };
 
+    const preventPaste = (e: ClipboardEvent) => {
+      // API 키 모달 내부는 허용
+      const target = e.target as HTMLElement;
+      if (target?.closest('.api-key-modal')) {
+        return;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    };
+
     const disableTextSelection = () => {
       document.body.style.userSelect = "none";
       document.body.style.webkitUserSelect = "none";
@@ -395,7 +406,7 @@ const App: React.FC = () => {
       { type: "contextmenu", handler: preventAction },
       { type: "copy", handler: preventCopy },
       { type: "cut", handler: preventCopy },
-      { type: "paste", handler: preventAction },
+      { type: "paste", handler: preventPaste },
       { type: "selectstart", handler: preventSelect },
       { type: "dragstart", handler: preventDrag },
       { type: "drag", handler: preventDrag },
@@ -412,16 +423,37 @@ const App: React.FC = () => {
       });
     });
 
-    // 주기적으로 스타일 재적용 (우회 방지)
+    // 주기적으로 스타일 재적용 (우회 방지, API 키 모달 제외)
     const styleInterval = setInterval(() => {
-      disableTextSelection();
+      // API 키 모달이 열려있으면 스킵
+      const modal = document.querySelector('.api-key-modal');
+      if (!modal) {
+        disableTextSelection();
+      }
     }, 1000);
 
-    // Selection API 감시 및 차단
+    // Selection API 감시 및 차단 (API 키 모달 제외)
     const clearSelection = () => {
+      // API 키 모달이 열려있으면 선택 해제하지 않음
+      const modal = document.querySelector('.api-key-modal');
+      if (modal) {
+        return;
+      }
+      
       if (window.getSelection) {
         const selection = window.getSelection();
         if (selection && selection.toString().length > 0) {
+          // 선택된 요소가 API 키 모달 내부인지 확인
+          try {
+            const range = selection.getRangeAt(0);
+            const container = range.commonAncestorContainer;
+            const element = (container.nodeType === 1 ? container : container.parentElement) as HTMLElement;
+            if (element?.closest('.api-key-modal')) {
+              return;
+            }
+          } catch (e) {
+            // selection이 없는 경우 무시
+          }
           selection.removeAllRanges();
         }
       }
