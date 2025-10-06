@@ -94,20 +94,11 @@
 
     <!-- 강력한 복사/드래그 방지 CSS -->
     <style>
-      * {
-        -webkit-user-select: none !important;
-        -moz-user-select: none !important;
-        -ms-user-select: none !important;
-        user-select: none !important;
-        -webkit-user-drag: none !important;
-        -khtml-user-drag: none !important;
-        -moz-user-drag: none !important;
-        -o-user-drag: none !important;
-        user-drag: none !important;
-      }
-
-      /* API 키 모달 내부는 모두 허용 */
-      .api-key-modal,
+      /* API 키 모달 내부는 모두 허용 (먼저 선언하여 우선순위 확보) */
+      .api-key-modal input,
+      .api-key-modal textarea,
+      .api-key-modal input[type="text"],
+      .api-key-modal input[type="password"],
       .api-key-modal * {
         -webkit-user-select: text !important;
         -moz-user-select: text !important;
@@ -118,6 +109,19 @@
         -moz-user-drag: auto !important;
         -o-user-drag: auto !important;
         user-drag: auto !important;
+        cursor: text !important;
+      }
+
+      *:not(.api-key-modal):not(.api-key-modal *) {
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        -webkit-user-drag: none !important;
+        -khtml-user-drag: none !important;
+        -moz-user-drag: none !important;
+        -o-user-drag: none !important;
+        user-drag: none !important;
       }
 
       input,
@@ -331,26 +335,38 @@
 
         // Selection 감시 (API 키 모달 제외)
         setInterval(function () {
-          // API 키 모달이 열려있으면 스킵
-          var modal = document.querySelector('.api-key-modal');
-          if (modal) {
-            return;
-          }
-          
-          var selection = window.getSelection();
-          if (selection && selection.toString().length > 0) {
-            // 선택된 요소가 API 키 모달 내부인지 확인
-            try {
+          try {
+            // API 키 모달이 열려있으면 완전히 스킵
+            var modal = document.querySelector('.api-key-modal');
+            if (modal) {
+              return;
+            }
+            
+            var selection = window.getSelection();
+            if (!selection || selection.toString().length === 0) {
+              return;
+            }
+            
+            // 선택된 요소가 API 키 모달 내부인지 다시 확인
+            if (selection.rangeCount > 0) {
               var range = selection.getRangeAt(0);
               var container = range.commonAncestorContainer;
               var element = container.nodeType === 1 ? container : container.parentElement;
+              
+              // input이나 textarea는 무조건 허용
+              if (element && (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA')) {
+                return;
+              }
+              
+              // API 키 모달 내부면 허용
               if (element && element.closest && element.closest('.api-key-modal')) {
                 return;
               }
-            } catch (e) {
-              // 에러 무시
             }
+            
             selection.removeAllRanges();
+          } catch (e) {
+            // 에러 발생 시 선택 해제 안함
           }
         }, 100);
       })();
