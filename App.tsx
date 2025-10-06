@@ -330,6 +330,7 @@ const App: React.FC = () => {
     const preventKeyboardShortcuts = (e: KeyboardEvent) => {
       // Ctrl+C, Ctrl+X, Ctrl+A, Ctrl+U, Ctrl+S, Ctrl+P, F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+Shift+S, PrintScreen, Win+Shift+S
       // 알캡처(ALCapture) 단축키: Ctrl+Shift+C/W/D/A/S/F
+      // Ctrl+Shift+R은 새로고침을 위해 허용
       if (
         (e.ctrlKey && (e.key === "c" || e.key === "C")) ||
         (e.ctrlKey && (e.key === "x" || e.key === "X")) ||
@@ -350,6 +351,10 @@ const App: React.FC = () => {
         e.key === "PrintScreen" || // Print Screen 키 차단
         e.keyCode === 44 // Print Screen keyCode
       ) {
+        // Ctrl+Shift+R은 허용 (새로고침)
+        if (e.ctrlKey && e.shiftKey && (e.key === "r" || e.key === "R")) {
+          return; // 이벤트를 차단하지 않음
+        }
         e.preventDefault();
         e.stopPropagation();
         return false;
@@ -668,30 +673,14 @@ const App: React.FC = () => {
         }`}
       >
         <header className="text-center mb-10">
-          <div className="flex justify-between items-center mb-4 gap-6">
-            <div className="flex-1 min-w-[100px]"></div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold bg-gradient-to-r from-[#FF0000] to-[#FF2B2B] bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(255,0,0,0.6)]">
-              유튜브 떡상 대본의 비밀 파헤치기+모방
-            </h1>
-            <div className="flex-1 min-w-[100px] flex justify-end ml-8 pl-4">
-              <button
-                onClick={() => setShowApiKeyModal(true)}
-                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors border border-gray-700 whitespace-nowrap shrink-0"
-                title="API 키 설정"
-              >
-                <FiSettings size={20} />
-                <span className="text-sm">API 키 입력</span>
-                {apiKey && (
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                )}
-              </button>
-            </div>
-          </div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold bg-gradient-to-r from-[#FF0000] to-[#FF2B2B] bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(255,0,0,0.6)] mb-4">
+            유튜브 떡상 대본의 비밀 파헤치기+모방
+          </h1>
           <p className="text-neutral-300 mb-4">
             당신만 "이것"을 모릅니다. 떡상 비밀 파헤치고, 나만의 새로운 대본을
             1분만에 작성해보세요!
           </p>
-          <nav className="flex justify-center gap-3">
+          <nav className="flex justify-center gap-3 flex-wrap">
             <a
               href="/guide"
               className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors border border-zinc-700 text-sm font-medium"
@@ -702,8 +691,18 @@ const App: React.FC = () => {
               href="/api-guide"
               className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors border border-zinc-700 text-sm font-medium"
             >
-              🔑 API 발급
+              � API 키 발급 방법
             </a>
+            <button
+              onClick={() => setShowApiKeyModal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors border border-zinc-700 text-sm font-medium"
+            >
+              <FiSettings size={16} />
+              <span>API 키 입력</span>
+              {apiKey && (
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              )}
+            </button>
           </nav>
         </header>
 
@@ -944,6 +943,8 @@ const App: React.FC = () => {
                   </div>
                 </ResultCard>
 
+                <AdSense />
+
                 <ResultCard
                   title="3. 조회수 예측 분석"
                   contentToCopy={formatStructuredContentToText(
@@ -972,6 +973,8 @@ const App: React.FC = () => {
                     ))}
                   </div>
                 </ResultCard>
+
+                <AdSense />
 
                 {analysisResult.scriptStructure && (
                   <ResultCard
@@ -1156,6 +1159,8 @@ const App: React.FC = () => {
               <Loader />
             ) : newPlan ? (
               <>
+                <AdSense />
+
                 <ResultCard
                   title="5. 새로운 영상 기획 의도"
                   contentToCopy={formatStructuredContentToText(
@@ -1184,6 +1189,8 @@ const App: React.FC = () => {
                     ))}
                   </div>
                 </ResultCard>
+
+                <AdSense />
 
                 {newPlan.scriptWithCharacters && newPlan.characters && (
                   <ResultCard
@@ -1271,6 +1278,8 @@ const App: React.FC = () => {
                     </div>
                   </ResultCard>
                 )}
+
+                <AdSense />
 
                 {/* 다른 사이트 소개 섹션 */}
                 {newPlan.scriptWithCharacters && (
