@@ -329,10 +329,27 @@
           }
         }, 1000);
 
-        // Selection 감시
+        // Selection 감시 (API 키 모달 제외)
         setInterval(function () {
+          // API 키 모달이 열려있으면 스킵
+          var modal = document.querySelector('.api-key-modal');
+          if (modal) {
+            return;
+          }
+          
           var selection = window.getSelection();
           if (selection && selection.toString().length > 0) {
+            // 선택된 요소가 API 키 모달 내부인지 확인
+            try {
+              var range = selection.getRangeAt(0);
+              var container = range.commonAncestorContainer;
+              var element = container.nodeType === 1 ? container : container.parentElement;
+              if (element && element.closest && element.closest('.api-key-modal')) {
+                return;
+              }
+            } catch (e) {
+              // 에러 무시
+            }
             selection.removeAllRanges();
           }
         }, 100);
