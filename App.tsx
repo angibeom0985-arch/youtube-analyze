@@ -302,9 +302,9 @@ const App: React.FC = () => {
     }
     // 다층 방어 함수들
     const preventAction = (e: Event) => {
-      // API 키 모달과 유튜브 URL 입력 내부는 허용
+      // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input")) {
+      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input") || target?.closest(".transcript-input")) {
         return;
       }
       e.preventDefault();
@@ -313,9 +313,9 @@ const App: React.FC = () => {
     };
 
     const preventCopy = (e: ClipboardEvent) => {
-      // API 키 모달과 유튜브 URL 입력 내부는 허용
+      // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input")) {
+      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input") || target?.closest(".transcript-input")) {
         return;
       }
       e.preventDefault();
@@ -325,9 +325,9 @@ const App: React.FC = () => {
     };
 
     const preventDrag = (e: DragEvent) => {
-      // API 키 모달과 유튜브 URL 입력 내부는 허용
+      // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input")) {
+      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input") || target?.closest(".transcript-input")) {
         return;
       }
       e.preventDefault();
@@ -336,9 +336,9 @@ const App: React.FC = () => {
     };
 
     const preventSelect = (e: Event) => {
-      // API 키 모달과 유튜브 URL 입력 내부는 허용
+      // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input")) {
+      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input") || target?.closest(".transcript-input")) {
         return;
       }
       e.preventDefault();
@@ -346,9 +346,9 @@ const App: React.FC = () => {
     };
 
     const preventPaste = (e: ClipboardEvent) => {
-      // API 키 모달과 유튜브 URL 입력 내부는 허용
+      // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input")) {
+      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input") || target?.closest(".transcript-input")) {
         return;
       }
       e.preventDefault();
