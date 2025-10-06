@@ -708,8 +708,7 @@ const App: React.FC = () => {
               onClick={() => setShowApiKeyModal(true)}
               className="flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-green-600 to-green-800 hover:from-green-500 hover:to-green-700 text-white rounded-lg transition-all border border-green-500/50 text-sm font-medium shadow-lg shadow-green-500/30"
             >
-              <FiSettings size={16} />
-              <span>API 키 입력</span>
+              <span>⚙️ API 키 입력</span>
               {apiKey && (
                 <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
               )}
