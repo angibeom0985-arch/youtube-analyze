@@ -297,6 +297,11 @@ const App: React.FC = () => {
   useEffect(() => {
     // 다층 방어 함수들
     const preventAction = (e: Event) => {
+      // API 키 모달 내부는 허용
+      const target = e.target as HTMLElement;
+      if (target?.closest('.api-key-modal')) {
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
       return false;
@@ -315,12 +320,22 @@ const App: React.FC = () => {
     };
 
     const preventDrag = (e: DragEvent) => {
+      // API 키 모달 내부는 허용
+      const target = e.target as HTMLElement;
+      if (target?.closest('.api-key-modal')) {
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
       return false;
     };
 
     const preventSelect = (e: Event) => {
+      // API 키 모달 내부는 허용
+      const target = e.target as HTMLElement;
+      if (target?.closest('.api-key-modal')) {
+        return;
+      }
       e.preventDefault();
       return false;
     };
