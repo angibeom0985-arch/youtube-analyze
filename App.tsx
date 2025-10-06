@@ -668,19 +668,19 @@ const App: React.FC = () => {
         }`}
       >
         <header className="text-center mb-10">
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex-1"></div>
-            <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-[#FF0000] to-[#FF2B2B] bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(255,0,0,0.6)] whitespace-nowrap">
+          <div className="flex justify-between items-center mb-4 gap-4">
+            <div className="flex-1 min-w-0"></div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold bg-gradient-to-r from-[#FF0000] to-[#FF2B2B] bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(255,0,0,0.6)]">
               유튜브 떡상 대본의 비밀 파헤치기+모방
             </h1>
-            <div className="flex-1 flex justify-end">
+            <div className="flex-1 min-w-0 flex justify-end ml-6">
               <button
                 onClick={() => setShowApiKeyModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors border border-gray-700"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors border border-gray-700 whitespace-nowrap shrink-0"
                 title="API 키 설정"
               >
                 <FiSettings size={20} />
-                <span className="hidden sm:inline text-sm">API 키</span>
+                <span className="text-sm">⚙️ API 키 입력</span>
                 {apiKey && (
                   <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                 )}
@@ -1255,12 +1255,12 @@ const App: React.FC = () => {
                                     onClick={() =>
                                       handleCopyPrompt(item.imagePrompt, index)
                                     }
-                                    className="absolute top-2 right-2 text-xs bg-zinc-700 hover:bg-zinc-600 text-neutral-300 font-semibold py-1 px-2 rounded-md transition-all"
+                                    className="absolute top-2 right-2 text-xs bg-gradient-to-br from-[#D90000] to-[#FF2B2B] hover:from-[#D90000]/90 hover:to-[#FF2B2B]/90 text-white font-bold py-1.5 px-3 rounded-md transition-all shadow-[0_0_10px_rgba(255,43,43,0.5)] hover:shadow-[0_0_15px_rgba(255,43,43,0.7)]"
                                     title="프롬프트 복사"
                                   >
                                     {copiedPromptIndex === index
-                                      ? "복사됨!"
-                                      : "복사"}
+                                      ? "✅ 복사됨!"
+                                      : "📋 복사"}
                                   </button>
                                 </div>
                               )}

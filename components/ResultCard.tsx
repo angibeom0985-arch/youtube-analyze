@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 
 interface ResultCardProps {
   title: string;
@@ -11,12 +10,12 @@ interface ResultCardProps {
 
 // 쿠팡파트너스 링크 배열
 const coupangLinks = [
-  'https://link.coupang.com/a/cUJcDz',
-  'https://link.coupang.com/a/cUJcJa',
-  'https://link.coupang.com/a/cUJcNB',
-  'https://link.coupang.com/a/cUJcSB',
-  'https://link.coupang.com/a/cUJcU8',
-  'https://link.coupang.com/a/cUJc0a',
+  "https://link.coupang.com/a/cUJcDz",
+  "https://link.coupang.com/a/cUJcJa",
+  "https://link.coupang.com/a/cUJcNB",
+  "https://link.coupang.com/a/cUJcSB",
+  "https://link.coupang.com/a/cUJcU8",
+  "https://link.coupang.com/a/cUJc0a",
 ];
 
 // 랜덤 쿠팡 링크 선택 함수
@@ -24,42 +23,52 @@ const getRandomCoupangLink = (): string => {
   return coupangLinks[Math.floor(Math.random() * coupangLinks.length)];
 };
 
-const ResultCard: React.FC<ResultCardProps> = ({ title, children, className, contentToCopy, downloadFileName }) => {
-
+const ResultCard: React.FC<ResultCardProps> = ({
+  title,
+  children,
+  className,
+  contentToCopy,
+  downloadFileName,
+}) => {
   const handleCopy = () => {
     // 클립보드에 복사
-    navigator.clipboard.writeText(contentToCopy).then(() => {
-      alert('✅ 복사되었습니다!');
-      
-      // 3초 후 쿠팡 링크 새창으로 열기
-      setTimeout(() => {
-        const coupangLink = getRandomCoupangLink();
-        window.open(coupangLink, '_blank');
-      }, 3000);
-    }).catch(err => {
-      console.error('복사 실패:', err);
-      alert('❌ 복사에 실패했습니다.');
-    });
+    navigator.clipboard
+      .writeText(contentToCopy)
+      .then(() => {
+        alert("✅ 복사되었습니다!");
+
+        // 3초 후 쿠팡 링크 새창으로 열기
+        setTimeout(() => {
+          const coupangLink = getRandomCoupangLink();
+          window.open(coupangLink, "_blank");
+        }, 3000);
+      })
+      .catch((err) => {
+        console.error("복사 실패:", err);
+        alert("❌ 복사에 실패했습니다.");
+      });
   };
 
   const handleDownload = () => {
-    alert('✅ 다운로드되었습니다!');
-    
+    alert("✅ 다운로드되었습니다!");
+
     // 다운로드 실행
-    const blob = new Blob([contentToCopy], { type: 'text/plain;charset=utf-8' });
+    const blob = new Blob([contentToCopy], {
+      type: "text/plain;charset=utf-8",
+    });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `${downloadFileName}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
+
     // 3초 후 쿠팡 링크 새창으로 열기
     setTimeout(() => {
       const coupangLink = getRandomCoupangLink();
-      window.open(coupangLink, '_blank');
+      window.open(coupangLink, "_blank");
     }, 3000);
   };
 
@@ -78,7 +87,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ title, children, className, con
 
   // 키보드 복사 방지 (Ctrl+C, Cmd+C)
   const preventKeyboardCopy = (e: React.KeyboardEvent) => {
-    if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) {
+    if ((e.ctrlKey || e.metaKey) && (e.key === "c" || e.key === "C")) {
       e.preventDefault();
       alert('❌ 복사는 상단의 "복사" 버튼을 이용해주세요!');
       return false;
@@ -86,11 +95,15 @@ const ResultCard: React.FC<ResultCardProps> = ({ title, children, className, con
   };
 
   return (
-    <div className={`bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-6 mb-6 ${className} relative`}>
+    <div
+      className={`bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-6 mb-6 ${className} relative`}
+    >
       {/* Sticky 헤더 영역 */}
       <div className="sticky top-0 bg-[#1A1A1A] z-10 -mx-6 -mt-6 px-6 pt-6 pb-4 rounded-t-xl border-b border-[#2A2A2A]">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-red-400 to-red-500 bg-clip-text text-transparent">{title}</h2>
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-red-400 to-red-500 bg-clip-text text-transparent">
+            {title}
+          </h2>
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopy}
@@ -109,22 +122,28 @@ const ResultCard: React.FC<ResultCardProps> = ({ title, children, className, con
           </div>
         </div>
       </div>
-      
+
       {/* 컨텐츠 영역 */}
-      <div 
+      <div
         className="text-white mt-4"
         onMouseDown={preventSelection}
         onDragStart={preventSelection}
         onContextMenu={preventContextMenu}
-        onCopy={(e) => { e.preventDefault(); alert('❌ 복사는 상단의 "복사" 버튼을 이용해주세요!'); }}
-        onCut={(e) => { e.preventDefault(); alert('❌ 잘라내기는 사용할 수 없습니다.'); }}
+        onCopy={(e) => {
+          e.preventDefault();
+          alert('❌ 복사는 상단의 "복사" 버튼을 이용해주세요!');
+        }}
+        onCut={(e) => {
+          e.preventDefault();
+          alert("❌ 잘라내기는 사용할 수 없습니다.");
+        }}
         onKeyDown={preventKeyboardCopy}
-        style={{ 
-          userSelect: 'none', 
-          WebkitUserSelect: 'none', 
-          MozUserSelect: 'none', 
-          msUserSelect: 'none',
-          cursor: 'default'
+        style={{
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          MozUserSelect: "none",
+          msUserSelect: "none",
+          cursor: "default",
         }}
         tabIndex={0}
       >
