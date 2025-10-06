@@ -706,14 +706,37 @@ const App: React.FC = () => {
             </a>
             <button
               onClick={() => setShowApiKeyModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-green-600 to-green-800 hover:from-green-500 hover:to-green-700 text-white rounded-lg transition-all border border-green-500/50 text-sm font-medium shadow-lg shadow-green-500/30"
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all text-sm font-medium shadow-lg ${
+                apiKey
+                  ? "bg-gradient-to-br from-green-600 to-green-800 hover:from-green-500 hover:to-green-700 border border-green-500/50 shadow-green-500/30"
+                  : "bg-gradient-to-br from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 border border-red-500/50 shadow-red-500/30 animate-pulse"
+              } text-white`}
             >
-              <span>⚙️ API 키 입력</span>
-              {apiKey && (
-                <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
+              {apiKey ? (
+                <>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    <span>⚙️ API 키 설정됨</span>
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 bg-red-400 rounded-full"></span>
+                    <span>⚙️ API 키 입력 필요</span>
+                  </span>
+                </>
               )}
             </button>
           </nav>
+          
+          {!apiKey && (
+            <div className="mt-4 p-3 bg-red-900/30 border border-red-500/50 rounded-lg text-center">
+              <p className="text-red-300 text-sm font-medium">
+                ⚠️ AI 분석 기능을 사용하려면 먼저 <span className="font-bold text-red-200">API 키를 입력</span>해주세요!
+              </p>
+            </div>
+          )}
         </header>
 
         <main>
