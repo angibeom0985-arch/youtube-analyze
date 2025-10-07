@@ -99,7 +99,19 @@
       .api-key-modal textarea,
       .api-key-modal input[type="text"],
       .api-key-modal input[type="password"],
-      .api-key-modal * {
+      .api-key-modal *,
+      .youtube-url-input input,
+      .youtube-url-input *,
+      .transcript-input textarea,
+      .transcript-input *,
+      .user-idea-keyword-input input,
+      .user-idea-keyword-input *,
+      .new-idea-input,
+      .new-idea-input input,
+      .new-idea-input *,
+      .new-title-input,
+      .new-title-input input,
+      .new-title-input * {
         -webkit-user-select: text !important;
         -moz-user-select: text !important;
         -ms-user-select: text !important;
@@ -110,6 +122,7 @@
         -o-user-drag: auto !important;
         user-drag: auto !important;
         cursor: text !important;
+        pointer-events: auto !important;
       }
 
       *:not(.api-key-modal):not(.api-key-modal *):not(.youtube-url-input):not(
@@ -130,32 +143,7 @@
         user-drag: none !important;
       }
 
-      .youtube-url-input input,
-      .youtube-url-input *,
-      .transcript-input textarea,
-      .transcript-input *,
-      .user-idea-keyword-input input,
-      .user-idea-keyword-input *,
-      .new-idea-input input,
-      .new-idea-input *,
-      .new-title-input input,
-      .new-title-input * {
-        -webkit-user-select: text !important;
-        -moz-user-select: text !important;
-        -ms-user-select: text !important;
-        user-select: text !important;
-        -webkit-user-drag: auto !important;
-        -khtml-user-drag: auto !important;
-        -moz-user-drag: auto !important;
-        -o-user-drag: auto !important;
-        user-drag: auto !important;
-        cursor: text !important;
-      }
-
-      input,
-      textarea {
-        cursor: text !important;
-      }
+      /* 중복 제거됨 - 위의 통합된 선언 사용 */
 
       body {
         -webkit-touch-callout: none !important;
@@ -363,16 +351,25 @@
                 e.keyCode === 90)
             ) {
               var target = e.target;
-              // API 키 모달 입력창은 모두 허용
-              if (target.closest && target.closest(".api-key-modal")) {
+              // API 키 모달, 유튜브 URL, 대본 입력, 새 아이디어, 새 제목 입력창은 모두 허용
+              if (
+                target.closest &&
+                (target.closest(".api-key-modal") ||
+                  target.closest(".youtube-url-input") ||
+                  target.closest(".transcript-input") ||
+                  target.closest(".user-idea-keyword-input") ||
+                  target.closest(".new-idea-input") ||
+                  target.closest(".new-title-input"))
+              ) {
                 return;
               }
               // 일반 INPUT/TEXTAREA는 허용
-              if (target.tagName !== "INPUT" && target.tagName !== "TEXTAREA") {
-                e.preventDefault();
-                e.stopPropagation();
-                return false;
+              if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+                return;
               }
+              e.preventDefault();
+              e.stopPropagation();
+              return false;
             }
           },
           true
