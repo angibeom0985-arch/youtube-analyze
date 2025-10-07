@@ -6,7 +6,6 @@ import {
   analyzeTranscript,
   generateNewPlan,
   generateIdeas,
-  validateApiKey,
 } from "./services/geminiService";
 import { getVideoDetails } from "./services/youtubeService";
 import type { VideoDetails } from "./services/youtubeService";
@@ -101,7 +100,7 @@ const App: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [isGeneratingIdeas, setIsGeneratingIdeas] = useState<boolean>(false);
   const [isFetchingDetails, setIsFetchingDetails] = useState(false);
-  const [isValidatingApiKey, setIsValidatingApiKey] = useState<boolean>(false);
+  // API 키 검증 로직 제거됨
   const [error, setError] = useState<string | null>(null);
 
   const [selectedCategory, setSelectedCategory] = useState<string>(
@@ -604,28 +603,10 @@ const App: React.FC = () => {
   };
 
   const handleSaveApiKey = async (key: string) => {
-    setIsValidatingApiKey(true);
-    setError(null);
-
-    try {
-      // API 키 검증
-      const isValid = await validateApiKey(key);
-
-      if (isValid) {
-        saveApiKey(key);
-        setApiKey(key);
-        setShowApiKeyModal(false);
-        alert("✅ API 키가 성공적으로 설정되었습니다!");
-      } else {
-        setError("❌ 유효하지 않은 API 키입니다. 다시 확인해주세요.");
-        alert("❌ 유효하지 않은 API 키입니다. 다시 확인해주세요.");
-      }
-    } catch (error) {
-      setError("❌ API 키 검증 중 오류가 발생했습니다.");
-      alert("❌ API 키 검증 중 오류가 발생했습니다.");
-    } finally {
-      setIsValidatingApiKey(false);
-    }
+    saveApiKey(key);
+    setApiKey(key);
+    setShowApiKeyModal(false);
+    alert("✅ API 키가 성공적으로 설정되었습니다!");
   };
 
   const handleDeleteApiKey = (e: React.MouseEvent) => {
@@ -798,11 +779,10 @@ const App: React.FC = () => {
       <AdBlockWarningModal isOpen={adBlockDetected} />
 
       <ApiKeyModal
-        isOpen={showApiKeyModal}
-        onClose={() => setShowApiKeyModal(false)}
-        onSave={handleSaveApiKey}
-        currentApiKey={apiKey}
-        isValidating={isValidatingApiKey}
+  isOpen={showApiKeyModal}
+  onClose={() => setShowApiKeyModal(false)}
+  onSave={handleSaveApiKey}
+  currentApiKey={apiKey}
       />
 
       {/* 애드블럭 감지 시 컨텐츠 흐림 처리 */}
