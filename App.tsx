@@ -1276,7 +1276,7 @@ const App: React.FC = () => {
                     value={userIdeaKeyword}
                     onChange={(e) => setUserIdeaKeyword(e.target.value)}
                     placeholder="원하는 키워드 입력 (선택사항) - 예: 다이어트, 여행, 게임"
-                    className="w-full bg-[#121212] border border-[#2A2A2A] rounded-md p-2 text-sm text-neutral-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                    className="w-full bg-[#121212] border border-[#2A2A2A] rounded-md p-2 text-sm text-neutral-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition new-idea-input"
                     style={
                       {
                         userSelect: "text",
@@ -1314,7 +1314,7 @@ const App: React.FC = () => {
                 )}
               </div>
 
-              <div>
+              <div className="new-title-input">
                 <label
                   htmlFor="new-keyword"
                   className="block text-xl font-bold text-neutral-100 mb-3"
@@ -1328,6 +1328,12 @@ const App: React.FC = () => {
                   onChange={(e) => setNewKeyword(e.target.value)}
                   placeholder={newKeywordPlaceholder}
                   className="w-full bg-[#121212] border border-[#2A2A2A] rounded-md p-3 text-neutral-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                  style={
+                    {
+                      userSelect: "text",
+                      WebkitUserSelect: "text",
+                    } as React.CSSProperties
+                  }
                 />
               </div>
               <button
