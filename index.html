@@ -94,23 +94,29 @@
 
     <!-- 강력한 복사/드래그 방지 CSS -->
     <style>
-      /* API 키 모달 입력창은 모두 허용 (먼저 선언하여 우선순위 확보) */
+      /* 허용된 입력 필드들 - 최우선 순위 */
       .api-key-modal input,
       .api-key-modal textarea,
       .api-key-modal input[type="text"],
       .api-key-modal input[type="password"],
       .api-key-modal *,
       .youtube-url-input input,
+      .youtube-url-input textarea,
       .youtube-url-input *,
+      .transcript-input input,
       .transcript-input textarea,
       .transcript-input *,
+      .user-idea-keyword-input,
       .user-idea-keyword-input input,
+      .user-idea-keyword-input textarea,
       .user-idea-keyword-input *,
       .new-idea-input,
       .new-idea-input input,
+      .new-idea-input textarea,
       .new-idea-input *,
       .new-title-input,
       .new-title-input input,
+      .new-title-input textarea,
       .new-title-input * {
         -webkit-user-select: text !important;
         -moz-user-select: text !important;
@@ -123,6 +129,7 @@
         user-drag: auto !important;
         cursor: text !important;
         pointer-events: auto !important;
+        -webkit-touch-callout: default !important;
       }
 
       *:not(.api-key-modal):not(.api-key-modal *):not(.youtube-url-input):not(
@@ -163,154 +170,103 @@
       (function () {
         "use strict";
 
-        // 우클릭 방지 (API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 제외)
+        // 입력 필드 확인 헬퍼 함수
+        function isAllowedInput(target) {
+          if (!target || !target.closest) return false;
+          return (
+            target.closest(".api-key-modal") ||
+            target.closest(".youtube-url-input") ||
+            target.closest(".transcript-input") ||
+            target.closest(".user-idea-keyword-input") ||
+            target.closest(".new-idea-input") ||
+            target.closest(".new-title-input") ||
+            target.tagName === "INPUT" ||
+            target.tagName === "TEXTAREA"
+          );
+        }
+
+        // 우클릭 방지 (허용된 입력 필드 제외)
         document.addEventListener(
           "contextmenu",
           function (e) {
-            // API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 입력창은 허용
-            if (
-              e.target &&
-              e.target.closest &&
-              (e.target.closest(".api-key-modal") ||
-                e.target.closest(".youtube-url-input") ||
-                e.target.closest(".transcript-input") ||
-                e.target.closest(".user-idea-keyword-input") ||
-                e.target.closest(".new-idea-input") ||
-                e.target.closest(".new-title-input"))
-            ) {
-              return;
+            if (isAllowedInput(e.target)) {
+              return true;
             }
             e.preventDefault();
-            e.stopPropagation();
             return false;
           },
-          true
+          false
         );
 
-        // 드래그 방지 (API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 제외)
+        // 드래그 방지 (허용된 입력 필드 제외)
         document.addEventListener(
           "dragstart",
           function (e) {
-            // API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 입력창은 허용
-            if (
-              e.target &&
-              e.target.closest &&
-              (e.target.closest(".api-key-modal") ||
-                e.target.closest(".youtube-url-input") ||
-                e.target.closest(".transcript-input") ||
-                e.target.closest(".user-idea-keyword-input") ||
-                e.target.closest(".new-idea-input") ||
-                e.target.closest(".new-title-input"))
-            ) {
-              return;
+            if (isAllowedInput(e.target)) {
+              return true;
             }
             e.preventDefault();
-            e.stopPropagation();
             return false;
           },
-          true
+          false
         );
 
-        // 선택 방지 (API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 제외)
+        // 선택 방지 (허용된 입력 필드 제외)
         document.addEventListener(
           "selectstart",
           function (e) {
-            // API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 입력창은 허용
-            if (
-              e.target &&
-              e.target.closest &&
-              (e.target.closest(".api-key-modal") ||
-                e.target.closest(".youtube-url-input") ||
-                e.target.closest(".transcript-input") ||
-                e.target.closest(".user-idea-keyword-input") ||
-                e.target.closest(".new-idea-input") ||
-                e.target.closest(".new-title-input"))
-            ) {
-              return;
+            if (isAllowedInput(e.target)) {
+              return true;
             }
             e.preventDefault();
-            e.stopPropagation();
             return false;
           },
-          true
+          false
         );
 
-        // 복사 방지 (API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 제외)
+        // 복사 방지 (허용된 입력 필드 제외)
         document.addEventListener(
           "copy",
           function (e) {
-            // API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 입력창은 허용
-            if (
-              e.target &&
-              e.target.closest &&
-              (e.target.closest(".api-key-modal") ||
-                e.target.closest(".youtube-url-input") ||
-                e.target.closest(".transcript-input") ||
-                e.target.closest(".user-idea-keyword-input") ||
-                e.target.closest(".new-idea-input") ||
-                e.target.closest(".new-title-input"))
-            ) {
-              return;
+            if (isAllowedInput(e.target)) {
+              return true;
             }
             e.preventDefault();
-            e.stopPropagation();
             if (e.clipboardData) {
               e.clipboardData.clearData();
             }
             return false;
           },
-          true
+          false
         );
 
-        // 잘라내기 방지 (API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 제외)
+        // 잘라내기 방지 (허용된 입력 필드 제외)
         document.addEventListener(
           "cut",
           function (e) {
-            // API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 입력창은 허용
-            if (
-              e.target &&
-              e.target.closest &&
-              (e.target.closest(".api-key-modal") ||
-                e.target.closest(".youtube-url-input") ||
-                e.target.closest(".transcript-input") ||
-                e.target.closest(".user-idea-keyword-input") ||
-                e.target.closest(".new-idea-input") ||
-                e.target.closest(".new-title-input"))
-            ) {
-              return;
+            if (isAllowedInput(e.target)) {
+              return true;
             }
             e.preventDefault();
-            e.stopPropagation();
             if (e.clipboardData) {
               e.clipboardData.clearData();
             }
             return false;
           },
-          true
+          false
         );
 
-        // 붙여넣기 방지 (API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 제외)
+        // 붙여넣기 방지 (허용된 입력 필드 제외)
         document.addEventListener(
           "paste",
           function (e) {
-            // API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 입력창은 허용
-            if (
-              e.target &&
-              e.target.closest &&
-              (e.target.closest(".api-key-modal") ||
-                e.target.closest(".youtube-url-input") ||
-                e.target.closest(".transcript-input") ||
-                e.target.closest(".user-idea-keyword-input") ||
-                e.target.closest(".new-idea-input") ||
-                e.target.closest(".new-title-input"))
-            ) {
-              return;
+            if (isAllowedInput(e.target)) {
+              return true;
             }
             e.preventDefault();
-            e.stopPropagation();
             return false;
           },
-          true
+          false
         );
 
         // 키보드 단축키 방지

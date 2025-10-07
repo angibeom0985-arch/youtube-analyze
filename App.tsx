@@ -1282,6 +1282,7 @@ const App: React.FC = () => {
                         userSelect: "text",
                         WebkitUserSelect: "text",
                         cursor: "text",
+                        pointerEvents: "auto",
                       } as React.CSSProperties
                     }
                   />
@@ -1334,6 +1335,7 @@ const App: React.FC = () => {
                       userSelect: "text",
                       WebkitUserSelect: "text",
                       cursor: "text",
+                      pointerEvents: "auto",
                     } as React.CSSProperties
                   }
                 />
