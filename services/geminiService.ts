@@ -223,7 +223,8 @@ export const analyzeTranscript = async (
 export const generateIdeas = async (
   analysis: AnalysisResult,
   category: string,
-  apiKey: string
+  apiKey: string,
+  userKeyword?: string
 ): Promise<string[]> => {
   try {
     const ai = createAI(apiKey);
@@ -238,9 +239,13 @@ export const generateIdeas = async (
     );
 
     const isShoppingReview = category === "쇼핑 리뷰";
+    const keywordInstruction = userKeyword 
+      ? `\n\n**중요: 사용자가 원하는 키워드 "${userKeyword}"를 반드시 포함하거나 관련된 아이디어를 생성해주세요.**`
+      : '';
+    
     const prompt = isShoppingReview
-      ? `다음은 성공적인 '쇼핑 리뷰' 영상 분석 결과입니다. 이 분석을 바탕으로, 한국의 이커머스 사이트 '쿠팡(Coupang)'에서 현재 판매량이 가장 많거나 후기가 많은 제품 중, 영상 리뷰 콘텐츠로 만들기에 적합한 제품 5가지를 추천해주세요. 아이디어는 한국어로 작성하고 JSON 형식의 배열로 제공해주세요.\n\n분석 내용:\n${analysisString}`
-      : `다음은 성공적인 유튜브 영상 분석 결과입니다. 이 분석을 바탕으로, 비슷한 성공 가능성이 있는 새롭고 창의적인 영상 주제 아이디어 5가지를 제안해주세요. 아이디어는 한국어로 작성하고 JSON 형식의 배열로 제공해주세요.\n\n분석 내용:\n${analysisString}`;
+      ? `다음은 성공적인 '쇼핑 리뷰' 영상 분석 결과입니다. 이 분석을 바탕으로, 한국의 이커머스 사이트 '쿠팡(Coupang)'에서 현재 판매량이 가장 많거나 후기가 많은 제품 중, 영상 리뷰 콘텐츠로 만들기에 적합한 제품 5가지를 추천해주세요. 아이디어는 한국어로 작성하고 JSON 형식의 배열로 제공해주세요.${keywordInstruction}\n\n분석 내용:\n${analysisString}`
+      : `다음은 성공적인 유튜브 영상 분석 결과입니다. 이 분석을 바탕으로, 비슷한 성공 가능성이 있는 새롭고 창의적인 영상 주제 아이디어 5가지를 제안해주세요. 아이디어는 한국어로 작성하고 JSON 형식의 배열로 제공해주세요.${keywordInstruction}\n\n분석 내용:\n${analysisString}`;
 
     const systemInstruction = isShoppingReview
       ? "당신은 최신 트렌드에 밝은 쇼핑 전문가입니다. 성공적인 리뷰 영상을 분석하여, 다음 히트할 만한 리뷰 제품을 추천하는 역할을 합니다."

@@ -88,6 +88,7 @@ const App: React.FC = () => {
   const [youtubeUrl, setYoutubeUrl] = useState<string>("");
   const [transcript, setTranscript] = useState<string>("");
   const [newKeyword, setNewKeyword] = useState<string>("");
+  const [userIdeaKeyword, setUserIdeaKeyword] = useState<string>("");
 
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(
     null
@@ -632,7 +633,7 @@ const App: React.FC = () => {
 
       setIsGeneratingIdeas(true);
       try {
-        const ideas = await generateIdeas(result, selectedCategory, apiKey);
+        const ideas = await generateIdeas(result, selectedCategory, apiKey, userIdeaKeyword);
         setSuggestedIdeas(ideas);
       } catch (e: any) {
         setError(e.message || "아이디어 생성 중 오류가 발생했습니다.");
@@ -654,7 +655,8 @@ const App: React.FC = () => {
       const ideas = await generateIdeas(
         analysisResult,
         selectedCategory,
-        apiKey
+        apiKey,
+        userIdeaKeyword
       );
       setSuggestedIdeas(ideas);
     } catch (e: any) {
@@ -662,7 +664,7 @@ const App: React.FC = () => {
     } finally {
       setIsGeneratingIdeas(false);
     }
-  }, [analysisResult, selectedCategory, apiKey]);
+  }, [analysisResult, selectedCategory, apiKey, userIdeaKeyword]);
 
   const handleGenerate = useCallback(async () => {
     if (!apiKey) {
@@ -1237,6 +1239,19 @@ const App: React.FC = () => {
                     새로고침
                   </button>
                 </div>
+                <div className="mb-3 user-idea-keyword-input">
+                  <input
+                    type="text"
+                    value={userIdeaKeyword}
+                    onChange={(e) => setUserIdeaKeyword(e.target.value)}
+                    placeholder="원하는 키워드 입력 (선택사항) - 예: 다이어트, 여행, 게임"
+                    className="w-full bg-[#121212] border border-[#2A2A2A] rounded-md p-2 text-sm text-neutral-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                    style={{ userSelect: 'text', WebkitUserSelect: 'text' } as React.CSSProperties}
+                  />
+                  <p className="text-xs text-neutral-400 mt-1">
+                    💡 특정 키워드를 입력하면 해당 키워드를 포함한 아이디어가 생성됩니다.
+                  </p>
+                </div>
                 {isGeneratingIdeas ? (
                   <div className="flex justify-center items-center h-24 rounded-lg bg-zinc-900">
                     <Loader />
@@ -1424,8 +1439,7 @@ const App: React.FC = () => {
                         🎬 더 많은 영상 제작 도구가 필요하신가요?
                       </h3>
                       <p className="text-lg text-neutral-200">
-                        콘텐츠 자동화를 원하신다면 아래 도구들을
-                        확인해보세요!
+                        콘텐츠 자동화를 원하신다면 아래 도구들을 확인해보세요!
                       </p>
                       <p className="text-md text-purple-300 mt-2 font-semibold">
                         위에서 만든 대본을 토대로 AI 영상 1분컷 가능
