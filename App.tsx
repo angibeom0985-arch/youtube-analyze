@@ -1281,10 +1281,14 @@ const App: React.FC = () => {
                       {
                         userSelect: "text",
                         WebkitUserSelect: "text",
+                        MozUserSelect: "text",
+                        msUserSelect: "text",
                         cursor: "text",
                         pointerEvents: "auto",
                       } as React.CSSProperties
                     }
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                   />
                   <p className="text-xs text-neutral-400 mt-1">
                     💡 특정 키워드를 입력하면 해당 키워드를 포함한 아이디어가
@@ -1334,10 +1338,14 @@ const App: React.FC = () => {
                     {
                       userSelect: "text",
                       WebkitUserSelect: "text",
+                      MozUserSelect: "text",
+                      msUserSelect: "text",
                       cursor: "text",
                       pointerEvents: "auto",
                     } as React.CSSProperties
                   }
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={(e) => e.stopPropagation()}
                 />
               </div>
               <button
