@@ -147,7 +147,7 @@ const storyChannelNewPlanSchema = {
           imagePrompt: {
             type: Type.STRING,
             description:
-              "이 대사와 장면에 어울리는 이미지를 생성하기 위한 상세한 프롬프트입니다. DALL-E 또는 Midjourney와 같은 이미지 생성 AI에 사용할 수 있도록 영어로 작성해주세요.",
+              "이 대사와 장면에 어울리는 이미지를 생성하기 위한 상세한 프롬프트입니다. DALL-E 또는 Midjourney와 같은 이미지 생성 AI에 사용할 수 있도록 영어로 작성해주세요. **중요**: 실제 사진같은 인물보다는 '일러스트레이션 스타일(illustration style)', '애니메이션 스타일(animation style)', '만화 스타일(cartoon style)', '디지털 아트(digital art)', '웹툰 스타일(webtoon style)' 등 예술적 스타일로 표현하여 AI가 쉽게 생성할 수 있도록 작성해주세요. 예: 'A young woman in illustration style, sitting at a cafe, warm lighting, digital art' 또는 'Cartoon style character expressing surprise, anime style, colorful background'",
           },
         },
         required: ["character", "line", "timestamp", "imagePrompt"],
@@ -351,6 +351,12 @@ export const generateNewPlan = async (
 
 각 대사마다 해당 장면을 시각적으로 묘사하는 상세한 이미지 생성 프롬프트('imagePrompt')를 반드시 포함해야 합니다.
 
+**이미지 프롬프트 작성 가이드:**
+- 실제 사진 스타일(photorealistic) 대신 일러스트/애니메이션 스타일 사용
+- 스타일 키워드 예시: "illustration style", "digital art", "anime style", "cartoon style", "webtoon style", "comic book style"
+- 구체적인 장면, 감정, 배경, 조명, 색감 포함
+- 예시: "A young person looking shocked, illustration style, warm cafe interior, soft lighting, digital art" / "Two friends laughing together, anime style, park setting, bright and cheerful, webtoon art"
+
 **참고용 대본 구조 (구조만 차용, 내용은 절대 사용 금지):**
 
 ${analysisString}
@@ -483,7 +489,18 @@ ${analysisString}
 - 각 배역의 심리와 감정선을 섬세하게 표현
 - 현실적이고 공감 가는 대사와 상황 연출
 
-모든 내용은 건전하고 교육적인 가치를 지니며, 플랫폼 가이드라인을 100% 준수해야 합니다.\n\n성공적인 동영상 분석 내용:\n\n${analysisString}\n\n이제 위 분석된 성공 구조를 따르되 새로운 키워드 "${newKeyword}"에 초점을 맞춘 완전히 새로운 기획안을 생성해주세요. 원본 대본의 내용을 사용하지 말고, 새로운 스토리와 대사를 창작해주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
+**이미지 프롬프트 작성 가이드 (49금 특화):**
+- 인물의 감정과 심리 상태를 중심으로 표현
+- 일러스트레이션 스타일 사용 필수 (실사 금지)
+- 스타일 예시: "romantic illustration style", "emotional digital art", "webtoon romance style", "soft anime style"
+- 분위기와 감정에 집중, 선정적 요소 배제
+- 예시: "A person sitting alone looking thoughtful, soft illustration style, warm cafe interior, melancholic mood" / "Two people talking seriously, webtoon style, emotional atmosphere, subtle lighting"
+
+모든 내용은 건전하고 교육적인 가치를 지니며, 플랫폼 가이드라인을 100% 준수해야 합니다.
+
+각 대사마다 감정과 분위기를 잘 표현하는 이미지 생성 프롬프트('imagePrompt')를 반드시 포함해야 합니다.
+
+성공적인 동영상 분석 내용:\n\n${analysisString}\n\n이제 위 분석된 성공 구조를 따르되 새로운 키워드 "${newKeyword}"에 초점을 맞춘 완전히 새로운 기획안을 생성해주세요. 원본 대본의 내용을 사용하지 말고, 새로운 스토리와 대사를 창작해주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
     } else if (isYadamChannel) {
       contents = `조선시대를 배경으로 한 전통 야담 이야기("${newKeyword}")를 현대적으로 재해석한 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.
 
@@ -519,7 +536,15 @@ ${analysisString}
 - 서예, 한시 등 전통 문화 요소 삽입
 - 현대인이 이해하기 쉽도록 적절한 설명 추가
 
-각 대사마다 조선시대 분위기를 살린 이미지 생성 프롬프트('imagePrompt')를 반드시 포함해야 합니다.\n\n성공적인 동영상 분석 내용:\n\n${analysisString}\n\n이제 위 분석된 성공 구조를 따르되 새로운 키워드 "${newKeyword}"에 초점을 맞춘 완전히 새로운 조선시대 야담 이야기를 창작해주세요. 원본 대본의 내용이나 스토리를 사용하지 말고, 새로운 인물과 사건으로 구성된 독창적인 야담을 만들어주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
+각 대사마다 조선시대 분위기를 살린 이미지 생성 프롬프트('imagePrompt')를 반드시 포함해야 합니다.
+
+**이미지 프롬프트 작성 가이드 (야담 특화):**
+- 조선시대 배경이지만 일러스트레이션 스타일로 표현
+- 스타일 예시: "traditional Korean painting style", "historical illustration", "sageuk drama style digital art", "Korean webtoon style"
+- 한복, 한옥, 전통 소품 등을 구체적으로 묘사
+- 예시: "A scholar in hanbok reading a book under moonlight, traditional Korean illustration style, peaceful atmosphere" / "Joseon era marketplace with people, webtoon style, vibrant colors, historical setting"
+
+성공적인 동영상 분석 내용:\n\n${analysisString}\n\n이제 위 분석된 성공 구조를 따르되 새로운 키워드 "${newKeyword}"에 초점을 맞춘 완전히 새로운 조선시대 야담 이야기를 창작해주세요. 원본 대본의 내용이나 스토리를 사용하지 말고, 새로운 인물과 사건으로 구성된 독창적인 야담을 만들어주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
     } else if (isGukppongChannel) {
       contents = `한국의 우수성과 세계 속에서의 위상을 주제로 한 국뽕 콘텐츠("${newKeyword}")를 기획해 주세요. 목표 영상 길이는 약 ${length}입니다.
 
@@ -608,6 +633,12 @@ ${analysisString}
 - 감정적 공감대 형성에 집중
 
 각 대사마다 한국의 우수성을 시각적으로 보여주는 이미지 생성 프롬프트('imagePrompt')를 반드시 포함해야 합니다.
+
+**이미지 프롬프트 작성 가이드 (국뽕 특화):**
+- 한국의 멋진 풍경, 문화, 기술을 일러스트레이션으로 표현
+- 스타일 예시: "modern Korean illustration", "K-culture digital art", "vibrant webtoon style"
+- 한국의 상징적 요소를 강조 (한글, 태극기, 한복, 현대 건축물, K-pop, 한식 등)
+- 예시: "Seoul skyline at night with Namsan Tower, modern illustration style, vibrant neon colors" / "Korean traditional food beautifully arranged, digital art style, appetizing and colorful"
 
 **참고용 대본 구조 (구조만 차용, 내용은 절대 사용 금지):**
 
