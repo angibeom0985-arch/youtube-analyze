@@ -304,11 +304,19 @@ export const generateNewPlan = async (
   try {
     const ai = createAI(apiKey);
 
+    // scriptStructure에서 원본 대본의 인용구(quotes)를 제거하여
+    // 구조와 목적만 전달하고, 원본 대본 내용이 새 대본에 영향을 주지 않도록 함
+    const cleanedScriptStructure = analysis.scriptStructure?.map(stage => ({
+      stage: stage.stage,
+      purpose: stage.purpose,
+      // quotes는 제거 - 원본 대본 내용 누출 방지
+    }));
+
     const analysisString = JSON.stringify(
       {
         keywords: analysis.keywords,
         intent: analysis.intent,
-        scriptStructure: analysis.scriptStructure,
+        scriptStructure: cleanedScriptStructure,
       },
       null,
       2
