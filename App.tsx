@@ -779,10 +779,10 @@ const App: React.FC = () => {
       <AdBlockWarningModal isOpen={adBlockDetected} />
 
       <ApiKeyModal
-  isOpen={showApiKeyModal}
-  onClose={() => setShowApiKeyModal(false)}
-  onSave={handleSaveApiKey}
-  currentApiKey={apiKey}
+        isOpen={showApiKeyModal}
+        onClose={() => setShowApiKeyModal(false)}
+        onSave={handleSaveApiKey}
+        currentApiKey={apiKey}
       />
 
       {/* 애드블럭 감지 시 컨텐츠 흐림 처리 */}
@@ -1437,10 +1437,8 @@ const App: React.FC = () => {
                                     </div>
                                   )}
                                 </div>
-                                <div className="flex-grow prose prose-invert max-w-none prose-p:my-0 prose-p:text-white prose-strong:text-red-500 prose-strong:underline prose-strong:decoration-red-500/70 prose-strong:underline-offset-4">
-                                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                    {item.line}
-                                  </ReactMarkdown>
+                                <div className="flex-grow text-white whitespace-pre-wrap">
+                                  {item.line}
                                 </div>
                               </div>
                               {item.imagePrompt && (
