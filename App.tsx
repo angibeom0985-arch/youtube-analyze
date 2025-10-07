@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { FiSettings } from "react-icons/fi";
+import { FiSettings, FiTrash2 } from "react-icons/fi";
 import {
   analyzeTranscript,
   generateNewPlan,
@@ -628,6 +628,18 @@ const App: React.FC = () => {
     }
   };
 
+  const handleDeleteApiKey = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const confirmed = window.confirm(
+      "API 키 연결을 해제하시겠습니까?\n다시 사용하려면 API 키를 재입력해야 합니다."
+    );
+    if (confirmed) {
+      localStorage.removeItem("gemini_api_key");
+      setApiKey(null);
+      alert("✅ API 키가 삭제되었습니다. 다시 API 키를 입력해주세요.");
+    }
+  };
+
   const handleAnalyze = useCallback(async () => {
     if (!apiKey) {
       setShowApiKeyModal(true);
@@ -820,30 +832,41 @@ const App: React.FC = () => {
             >
               🗝️ API 키 발급 방법
             </a>
-            <button
-              onClick={() => setShowApiKeyModal(true)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all text-sm font-medium shadow-lg ${
-                apiKey
-                  ? "bg-gradient-to-br from-green-600 to-green-800 hover:from-green-500 hover:to-green-700 border border-green-500/50 shadow-green-500/30"
-                  : "bg-gradient-to-br from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 border border-red-500/50 shadow-red-500/30 animate-pulse"
-              } text-white`}
-            >
-              {apiKey ? (
-                <>
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                    <span>⚙️ API 키 설정됨</span>
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 bg-red-400 rounded-full"></span>
-                    <span>⚙️ API 키 입력 필요</span>
-                  </span>
-                </>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowApiKeyModal(true)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all text-sm font-medium shadow-lg ${
+                  apiKey
+                    ? "bg-gradient-to-br from-green-600 to-green-800 hover:from-green-500 hover:to-green-700 border border-green-500/50 shadow-green-500/30"
+                    : "bg-gradient-to-br from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 border border-red-500/50 shadow-red-500/30 animate-pulse"
+                } text-white`}
+              >
+                {apiKey ? (
+                  <>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                      <span>⚙️ API 키 설정됨</span>
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 bg-red-400 rounded-full"></span>
+                      <span>⚙️ API 키 입력 필요</span>
+                    </span>
+                  </>
+                )}
+              </button>
+              {apiKey && (
+                <button
+                  onClick={handleDeleteApiKey}
+                  className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors shadow-lg"
+                  title="API 키 삭제"
+                >
+                  <FiTrash2 size={16} />
+                </button>
               )}
-            </button>
+            </div>
           </nav>
 
           {!apiKey && (
