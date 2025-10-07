@@ -306,7 +306,7 @@ export const generateNewPlan = async (
 
     // scriptStructure에서 원본 대본의 인용구(quotes)를 제거하여
     // 구조와 목적만 전달하고, 원본 대본 내용이 새 대본에 영향을 주지 않도록 함
-    const cleanedScriptStructure = analysis.scriptStructure?.map(stage => ({
+    const cleanedScriptStructure = analysis.scriptStructure?.map((stage) => ({
       stage: stage.stage,
       purpose: stage.purpose,
       // quotes는 제거 - 원본 대본 내용 누출 방지
@@ -437,7 +437,7 @@ ${specificVlogPrompt}
 - 각 배역의 심리와 감정선을 섬세하게 표현
 - 현실적이고 공감 가는 대사와 상황 연출
 
-모든 내용은 건전하고 교육적인 가치를 지니며, 플랫폼 가이드라인을 100% 준수해야 합니다.\n\n참고용 분석 내용:\n${analysisString}\n\n위 구조를 참고하여 JSON 형식으로 제공해주세요.`;
+모든 내용은 건전하고 교육적인 가치를 지니며, 플랫폼 가이드라인을 100% 준수해야 합니다.\n\n성공적인 동영상 분석 내용:\n\n${analysisString}\n\n이제 위 분석된 성공 구조를 따르되 새로운 키워드 "${newKeyword}"에 초점을 맞춘 완전히 새로운 기획안을 생성해주세요. 원본 대본의 내용을 사용하지 말고, 새로운 스토리와 대사를 창작해주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
     } else if (isYadamChannel) {
       contents = `조선시대를 배경으로 한 전통 야담 이야기("${newKeyword}")를 현대적으로 재해석한 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.
 
@@ -473,7 +473,7 @@ ${specificVlogPrompt}
 - 서예, 한시 등 전통 문화 요소 삽입
 - 현대인이 이해하기 쉽도록 적절한 설명 추가
 
-각 대사마다 조선시대 분위기를 살린 이미지 생성 프롬프트('imagePrompt')를 반드시 포함해야 합니다.\n\n참고용 분석 내용:\n${analysisString}\n\n위 구조를 참고하여 조선시대 야담 스타일로 JSON 형식의 대본을 제공해주세요.`;
+각 대사마다 조선시대 분위기를 살린 이미지 생성 프롬프트('imagePrompt')를 반드시 포함해야 합니다.\n\n성공적인 동영상 분석 내용:\n\n${analysisString}\n\n이제 위 분석된 성공 구조를 따르되 새로운 키워드 "${newKeyword}"에 초점을 맞춘 완전히 새로운 조선시대 야담 이야기를 창작해주세요. 원본 대본의 내용이나 스토리를 사용하지 말고, 새로운 인물과 사건으로 구성된 독창적인 야담을 만들어주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
     } else if (isGukppongChannel) {
       contents = `한국의 우수성과 세계 속에서의 위상을 주제로 한 국뽕 콘텐츠("${newKeyword}")를 기획해 주세요. 목표 영상 길이는 약 ${length}입니다.
 
