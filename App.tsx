@@ -606,11 +606,11 @@ const App: React.FC = () => {
   const handleSaveApiKey = async (key: string) => {
     setIsValidatingApiKey(true);
     setError(null);
-    
+
     try {
       // API 키 검증
       const isValid = await validateApiKey(key);
-      
+
       if (isValid) {
         saveApiKey(key);
         setApiKey(key);
@@ -655,7 +655,12 @@ const App: React.FC = () => {
 
       setIsGeneratingIdeas(true);
       try {
-        const ideas = await generateIdeas(result, selectedCategory, apiKey, userIdeaKeyword);
+        const ideas = await generateIdeas(
+          result,
+          selectedCategory,
+          apiKey,
+          userIdeaKeyword
+        );
         setSuggestedIdeas(ideas);
       } catch (e: any) {
         setError(e.message || "아이디어 생성 중 오류가 발생했습니다.");
@@ -1269,10 +1274,16 @@ const App: React.FC = () => {
                     onChange={(e) => setUserIdeaKeyword(e.target.value)}
                     placeholder="원하는 키워드 입력 (선택사항) - 예: 다이어트, 여행, 게임"
                     className="w-full bg-[#121212] border border-[#2A2A2A] rounded-md p-2 text-sm text-neutral-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
-                    style={{ userSelect: 'text', WebkitUserSelect: 'text' } as React.CSSProperties}
+                    style={
+                      {
+                        userSelect: "text",
+                        WebkitUserSelect: "text",
+                      } as React.CSSProperties
+                    }
                   />
                   <p className="text-xs text-neutral-400 mt-1">
-                    💡 특정 키워드를 입력하면 해당 키워드를 포함한 아이디어가 생성됩니다.
+                    💡 특정 키워드를 입력하면 해당 키워드를 포함한 아이디어가
+                    생성됩니다.
                   </p>
                 </div>
                 {isGeneratingIdeas ? (
