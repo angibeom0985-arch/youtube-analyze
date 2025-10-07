@@ -304,12 +304,14 @@ const App: React.FC = () => {
     }
     // 다층 방어 함수들
     const preventAction = (e: Event) => {
-      // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
+      // API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 내부는 허용
       const target = e.target as HTMLElement;
       if (
         target?.closest(".api-key-modal") ||
         target?.closest(".youtube-url-input") ||
-        target?.closest(".transcript-input")
+        target?.closest(".transcript-input") ||
+        target?.closest(".user-idea-keyword-input") ||
+        target?.closest(".new-title-input")
       ) {
         return;
       }
@@ -319,12 +321,14 @@ const App: React.FC = () => {
     };
 
     const preventCopy = (e: ClipboardEvent) => {
-      // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
+      // API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 내부는 허용
       const target = e.target as HTMLElement;
       if (
         target?.closest(".api-key-modal") ||
         target?.closest(".youtube-url-input") ||
-        target?.closest(".transcript-input")
+        target?.closest(".transcript-input") ||
+        target?.closest(".user-idea-keyword-input") ||
+        target?.closest(".new-title-input")
       ) {
         return;
       }
@@ -335,12 +339,14 @@ const App: React.FC = () => {
     };
 
     const preventDrag = (e: DragEvent) => {
-      // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
+      // API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 내부는 허용
       const target = e.target as HTMLElement;
       if (
         target?.closest(".api-key-modal") ||
         target?.closest(".youtube-url-input") ||
-        target?.closest(".transcript-input")
+        target?.closest(".transcript-input") ||
+        target?.closest(".user-idea-keyword-input") ||
+        target?.closest(".new-title-input")
       ) {
         return;
       }
@@ -350,12 +356,14 @@ const App: React.FC = () => {
     };
 
     const preventSelect = (e: Event) => {
-      // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
+      // API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 내부는 허용
       const target = e.target as HTMLElement;
       if (
         target?.closest(".api-key-modal") ||
         target?.closest(".youtube-url-input") ||
-        target?.closest(".transcript-input")
+        target?.closest(".transcript-input") ||
+        target?.closest(".user-idea-keyword-input") ||
+        target?.closest(".new-title-input")
       ) {
         return;
       }
@@ -364,12 +372,14 @@ const App: React.FC = () => {
     };
 
     const preventPaste = (e: ClipboardEvent) => {
-      // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
+      // API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 내부는 허용
       const target = e.target as HTMLElement;
       if (
         target?.closest(".api-key-modal") ||
         target?.closest(".youtube-url-input") ||
-        target?.closest(".transcript-input")
+        target?.closest(".transcript-input") ||
+        target?.closest(".user-idea-keyword-input") ||
+        target?.closest(".new-title-input")
       ) {
         return;
       }
@@ -386,12 +396,14 @@ const App: React.FC = () => {
     };
 
     const preventKeyboardShortcuts = (e: KeyboardEvent) => {
-      // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
+      // API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 내부는 허용
       const target = e.target as HTMLElement;
       if (
         target?.closest(".api-key-modal") ||
         target?.closest(".youtube-url-input") ||
-        target?.closest(".transcript-input")
+        target?.closest(".transcript-input") ||
+        target?.closest(".user-idea-keyword-input") ||
+        target?.closest(".new-title-input")
       ) {
         return;
       }
@@ -454,31 +466,35 @@ const App: React.FC = () => {
       });
     });
 
-    // 주기적으로 스타일 재적용 (우회 방지, API 키 모달, 유튜브 URL 입력, 대본 입력 제외)
+    // 주기적으로 스타일 재적용 (우회 방지, API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 제외)
     const styleInterval = setInterval(() => {
-      // API 키 모달, 유튜브 URL 입력, 대본 입력이 열려있으면 스킵
+      // API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력이 열려있으면 스킵
       const modal = document.querySelector(".api-key-modal");
       const youtubeInput = document.querySelector(".youtube-url-input");
       const transcriptInput = document.querySelector(".transcript-input");
-      if (!modal && !youtubeInput && !transcriptInput) {
+      const userIdeaInput = document.querySelector(".user-idea-keyword-input");
+      const newTitleInput = document.querySelector(".new-title-input");
+      if (!modal && !youtubeInput && !transcriptInput && !userIdeaInput && !newTitleInput) {
         disableTextSelection();
       }
     }, 1000);
 
-    // Selection API 감시 및 차단 (API 키 모달, 유튜브 URL 입력, 대본 입력 제외)
+    // Selection API 감시 및 차단 (API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 제외)
     const clearSelection = () => {
-      // API 키 모달, 유튜브 URL 입력, 대본 입력이 열려있으면 선택 해제하지 않음
+      // API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력이 열려있으면 선택 해제하지 않음
       const modal = document.querySelector(".api-key-modal");
       const youtubeInput = document.querySelector(".youtube-url-input");
       const transcriptInput = document.querySelector(".transcript-input");
-      if (modal || youtubeInput || transcriptInput) {
+      const userIdeaInput = document.querySelector(".user-idea-keyword-input");
+      const newTitleInput = document.querySelector(".new-title-input");
+      if (modal || youtubeInput || transcriptInput || userIdeaInput || newTitleInput) {
         return;
       }
 
       if (window.getSelection) {
         const selection = window.getSelection();
         if (selection && selection.toString().length > 0) {
-          // 선택된 요소가 API 키 모달, 유튜브 URL 입력, 대본 입력 내부인지 확인
+          // 선택된 요소가 API 키 모달, 유튜브 URL 입력, 대본 입력, 새 아이디어 입력, 새 제목 입력 내부인지 확인
           try {
             const range = selection.getRangeAt(0);
             const container = range.commonAncestorContainer;
@@ -488,7 +504,9 @@ const App: React.FC = () => {
             if (
               element?.closest(".api-key-modal") ||
               element?.closest(".youtube-url-input") ||
-              element?.closest(".transcript-input")
+              element?.closest(".transcript-input") ||
+              element?.closest(".user-idea-keyword-input") ||
+              element?.closest(".new-title-input")
             ) {
               return;
             }
