@@ -37,11 +37,11 @@ const ResultCard: React.FC<ResultCardProps> = ({
       .then(() => {
         alert("✅ 복사되었습니다!");
 
-        // 3초 후 쿠팡 링크 새창으로 열기
+        // 1초 후 쿠팡 링크 새창으로 열기
         setTimeout(() => {
           const coupangLink = getRandomCoupangLink();
           window.open(coupangLink, "_blank");
-        }, 3000);
+        }, 1000);
       })
       .catch((err) => {
         console.error("복사 실패:", err);
@@ -65,11 +65,11 @@ const ResultCard: React.FC<ResultCardProps> = ({
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    // 3초 후 쿠팡 링크 새창으로 열기
+    // 1초 후 쿠팡 링크 새창으로 열기
     setTimeout(() => {
       const coupangLink = getRandomCoupangLink();
       window.open(coupangLink, "_blank");
-    }, 3000);
+    }, 1000);
   };
 
   // 드래그 방지 핸들러

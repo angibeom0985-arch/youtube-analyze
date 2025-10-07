@@ -304,7 +304,11 @@ const App: React.FC = () => {
     const preventAction = (e: Event) => {
       // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input") || target?.closest(".transcript-input")) {
+      if (
+        target?.closest(".api-key-modal") ||
+        target?.closest(".youtube-url-input") ||
+        target?.closest(".transcript-input")
+      ) {
         return;
       }
       e.preventDefault();
@@ -315,7 +319,11 @@ const App: React.FC = () => {
     const preventCopy = (e: ClipboardEvent) => {
       // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input") || target?.closest(".transcript-input")) {
+      if (
+        target?.closest(".api-key-modal") ||
+        target?.closest(".youtube-url-input") ||
+        target?.closest(".transcript-input")
+      ) {
         return;
       }
       e.preventDefault();
@@ -327,7 +335,11 @@ const App: React.FC = () => {
     const preventDrag = (e: DragEvent) => {
       // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input") || target?.closest(".transcript-input")) {
+      if (
+        target?.closest(".api-key-modal") ||
+        target?.closest(".youtube-url-input") ||
+        target?.closest(".transcript-input")
+      ) {
         return;
       }
       e.preventDefault();
@@ -338,7 +350,11 @@ const App: React.FC = () => {
     const preventSelect = (e: Event) => {
       // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input") || target?.closest(".transcript-input")) {
+      if (
+        target?.closest(".api-key-modal") ||
+        target?.closest(".youtube-url-input") ||
+        target?.closest(".transcript-input")
+      ) {
         return;
       }
       e.preventDefault();
@@ -348,7 +364,11 @@ const App: React.FC = () => {
     const preventPaste = (e: ClipboardEvent) => {
       // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input") || target?.closest(".transcript-input")) {
+      if (
+        target?.closest(".api-key-modal") ||
+        target?.closest(".youtube-url-input") ||
+        target?.closest(".transcript-input")
+      ) {
         return;
       }
       e.preventDefault();
@@ -366,7 +386,11 @@ const App: React.FC = () => {
     const preventKeyboardShortcuts = (e: KeyboardEvent) => {
       // API 키 모달, 유튜브 URL 입력, 대본 입력 내부는 허용
       const target = e.target as HTMLElement;
-      if (target?.closest(".api-key-modal") || target?.closest(".youtube-url-input") || target?.closest(".transcript-input")) {
+      if (
+        target?.closest(".api-key-modal") ||
+        target?.closest(".youtube-url-input") ||
+        target?.closest(".transcript-input")
+      ) {
         return;
       }
 
@@ -459,7 +483,11 @@ const App: React.FC = () => {
             const element = (
               container.nodeType === 1 ? container : container.parentElement
             ) as HTMLElement;
-            if (element?.closest(".api-key-modal") || element?.closest(".youtube-url-input") || element?.closest(".transcript-input")) {
+            if (
+              element?.closest(".api-key-modal") ||
+              element?.closest(".youtube-url-input") ||
+              element?.closest(".transcript-input")
+            ) {
               return;
             }
           } catch (e) {
@@ -530,11 +558,11 @@ const App: React.FC = () => {
         setTimeout(() => setCopiedPromptIndex(null), 2000);
         alert("✅ 이미지 프롬프트가 복사되었습니다!");
 
-        // 3초 후 쿠팡 파트너스 링크 새창으로 열기
+        // 1초 후 쿠팡 파트너스 링크 새창으로 열기
         setTimeout(() => {
           const coupangLink = getRandomCoupangLink();
           window.open(coupangLink, "_blank");
-        }, 3000);
+        }, 1000);
       })
       .catch((err) => {
         console.error("복사 실패:", err);
@@ -818,7 +846,12 @@ const App: React.FC = () => {
                     onChange={handleUrlChange}
                     placeholder="https://www.youtube.com/watch?v=..."
                     className="w-full bg-[#121212] border border-[#2A2A2A] rounded-md p-2 text-neutral-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
-                    style={{ userSelect: 'text', WebkitUserSelect: 'text' } as React.CSSProperties}
+                    style={
+                      {
+                        userSelect: "text",
+                        WebkitUserSelect: "text",
+                      } as React.CSSProperties
+                    }
                   />
                   {isFetchingDetails && (
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -952,7 +985,12 @@ const App: React.FC = () => {
                   onChange={(e) => setTranscript(e.target.value)}
                   placeholder="여기에 스크립트를 붙여넣어 주세요."
                   className="w-full bg-[#121212] border border-[#2A2A2A] rounded-md p-2 text-neutral-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
-                  style={{ userSelect: 'text', WebkitUserSelect: 'text' } as React.CSSProperties}
+                  style={
+                    {
+                      userSelect: "text",
+                      WebkitUserSelect: "text",
+                    } as React.CSSProperties
+                  }
                 />
               </div>
             </div>
@@ -1386,7 +1424,7 @@ const App: React.FC = () => {
                         🎬 더 많은 영상 제작 도구가 필요하신가요?
                       </h3>
                       <p className="text-lg text-neutral-200">
-                        프로페셔널한 영상 편집과 효과를 위한 도구들을
+                        콘텐츠 자동화를 원하신다면 아래 도구들을
                         확인해보세요!
                       </p>
                       <p className="text-md text-purple-300 mt-2 font-semibold">
