@@ -139,13 +139,22 @@
       .new-idea-input input,
       .new-idea-input *,
       .new-title-input input,
-      .new-title-input *,
-      input,
-      textarea {
+      .new-title-input * {
         -webkit-user-select: text !important;
         -moz-user-select: text !important;
         -ms-user-select: text !important;
         user-select: text !important;
+        -webkit-user-drag: auto !important;
+        -khtml-user-drag: auto !important;
+        -moz-user-drag: auto !important;
+        -o-user-drag: auto !important;
+        user-drag: auto !important;
+        cursor: text !important;
+      }
+
+      input,
+      textarea {
+        cursor: text !important;
       }
 
       body {
@@ -419,7 +428,14 @@
             );
             var newIdeaInput = document.querySelector(".new-idea-input");
             var newTitleInput = document.querySelector(".new-title-input");
-            if (modal || youtubeInput || transcriptInput || userIdeaInput || newIdeaInput || newTitleInput) {
+            if (
+              modal ||
+              youtubeInput ||
+              transcriptInput ||
+              userIdeaInput ||
+              newIdeaInput ||
+              newTitleInput
+            ) {
               return;
             }
 
