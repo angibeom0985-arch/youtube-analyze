@@ -4,8 +4,9 @@ import { FiX, FiSave, FiTrash2 } from "react-icons/fi";
 interface ApiKeyModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (apiKey: string) => void;
+  onSave: (apiKey: string) => Promise<void>;
   currentApiKey: string | null;
+  isValidating?: boolean;
 }
 
 const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
@@ -13,6 +14,7 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
   onClose,
   onSave,
   currentApiKey,
+  isValidating = false,
 }) => {
   const [apiKey, setApiKey] = useState(currentApiKey || "");
   const [showKey, setShowKey] = useState(false);
@@ -25,10 +27,9 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (apiKey.trim()) {
-      onSave(apiKey.trim());
-      onClose();
+      await onSave(apiKey.trim());
     }
   };
 
@@ -123,11 +124,20 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
         <div className="flex gap-2">
           <button
             onClick={handleSave}
-            disabled={!apiKey.trim()}
+            disabled={!apiKey.trim() || isValidating}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
           >
-            <FiSave size={16} />
-            저장하기
+            {isValidating ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                검증 중...
+              </>
+            ) : (
+              <>
+                <FiSave size={16} />
+                저장하기
+              </>
+            )}
           </button>
           <button
             onClick={handleClear}

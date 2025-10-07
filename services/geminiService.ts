@@ -5,6 +5,27 @@ const createAI = (apiKey: string) => {
   return new GoogleGenAI({ apiKey });
 };
 
+// API 키 검증 함수
+export const validateApiKey = async (apiKey: string): Promise<boolean> => {
+  try {
+    const ai = createAI(apiKey);
+    // 간단한 테스트 요청으로 API 키 검증
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: "Hello",
+      config: {
+        maxOutputTokens: 10,
+      },
+    });
+    
+    // 응답이 있으면 유효한 키
+    return !!response.text;
+  } catch (error) {
+    console.error("API key validation failed:", error);
+    return false;
+  }
+};
+
 const structuredContentSchema = {
   type: Type.ARRAY,
   items: {
