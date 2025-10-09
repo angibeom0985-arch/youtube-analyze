@@ -1055,6 +1055,11 @@ const App: React.FC = () => {
                     } as React.CSSProperties
                   }
                 />
+                {error && (
+                  <div className="bg-red-900 border border-red-700 text-red-200 p-3 rounded-lg mt-2 text-sm">
+                    {error}
+                  </div>
+                )}
               </div>
             </div>
             <button
@@ -1065,12 +1070,6 @@ const App: React.FC = () => {
               {isAnalyzing ? "분석 중..." : "떡상 이유 분석하기"}
             </button>
           </div>
-
-          {error && (
-            <div className="bg-red-900 border border-red-700 text-red-200 p-4 rounded-lg my-6 text-center">
-              {error}
-            </div>
-          )}
 
           <AdSense />
 
