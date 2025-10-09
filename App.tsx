@@ -474,7 +474,13 @@ const App: React.FC = () => {
       const transcriptInput = document.querySelector(".transcript-input");
       const userIdeaInput = document.querySelector(".user-idea-keyword-input");
       const newTitleInput = document.querySelector(".new-title-input");
-      if (!modal && !youtubeInput && !transcriptInput && !userIdeaInput && !newTitleInput) {
+      if (
+        !modal &&
+        !youtubeInput &&
+        !transcriptInput &&
+        !userIdeaInput &&
+        !newTitleInput
+      ) {
         disableTextSelection();
       }
     }, 1000);
@@ -487,7 +493,13 @@ const App: React.FC = () => {
       const transcriptInput = document.querySelector(".transcript-input");
       const userIdeaInput = document.querySelector(".user-idea-keyword-input");
       const newTitleInput = document.querySelector(".new-title-input");
-      if (modal || youtubeInput || transcriptInput || userIdeaInput || newTitleInput) {
+      if (
+        modal ||
+        youtubeInput ||
+        transcriptInput ||
+        userIdeaInput ||
+        newTitleInput
+      ) {
         return;
       }
 
@@ -1468,7 +1480,7 @@ const App: React.FC = () => {
                                   )}
                                 </div>
                                 <div className="flex-grow text-white whitespace-pre-wrap">
-                                  {item.line}
+                                  {item.line.replace(/\*\*/g, '').replace(/\*/g, '').replace(/\_\_/g, '').replace(/\_/g, '')}
                                 </div>
                               </div>
                               {item.imagePrompt && (
