@@ -101,14 +101,13 @@ AI가 분석한 떡상 영상의 공식을 지금 바로 무료로 확인하세�
 ## 🎁 지금 바로 시작하면?
 
 ### ✅ 즉시 획득
-1. 성공 영상 분석 결과 (PDF 다운로드)
+1. 성공 영상 분석 결과 (다운로드 가능)
 2. 맞춤형 영상 기획안 (분당 15개까지 무료)
 3. 완성된 대본 + 타임라인 + 이미지 프롬프트
 4. AI 이미지/음악 제작 도구 연결
-5. 쿠팡 파트너스 추가 혜택
 
 ### 📞 지원 채널
-- � [사용법 가이드](https://youtube-analyze.money-hotissue.com/guide)
+- 📖 [사용법 가이드](https://youtube-analyze.money-hotissue.com/guide)
 - 🔑 [API 키 발급 방법](https://youtube-analyze.money-hotissue.com/api-guide)
 - 💬 GitHub Issues (버그 제보/기능 요청)
 

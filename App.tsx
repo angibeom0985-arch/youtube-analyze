@@ -69,26 +69,12 @@ const characterColors = [
   "text-orange-400",
 ];
 
-// 쿠팡파트너스 링크 배열
-const coupangLinks = [
-  "https://link.coupang.com/a/cUJcDz",
-  "https://link.coupang.com/a/cUJcJa",
-  "https://link.coupang.com/a/cUJcNB",
-  "https://link.coupang.com/a/cUJcSB",
-  "https://link.coupang.com/a/cUJcU8",
-  "https://link.coupang.com/a/cUJc0a",
-];
-
-// 랜덤 쿠팡 링크 선택 함수
-const getRandomCoupangLink = (): string => {
-  return coupangLinks[Math.floor(Math.random() * coupangLinks.length)];
-};
-
 const App: React.FC = () => {
   const [youtubeUrl, setYoutubeUrl] = useState<string>("");
   const [transcript, setTranscript] = useState<string>("");
   const [newKeyword, setNewKeyword] = useState<string>("");
   const [userIdeaKeyword, setUserIdeaKeyword] = useState<string>("");
+  const [appliedIdeaKeyword, setAppliedIdeaKeyword] = useState<string>("");
 
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(
     null
@@ -116,9 +102,6 @@ const App: React.FC = () => {
   const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
   const [characterColorMap, setCharacterColorMap] = useState(
     new Map<string, string>()
-  );
-  const [copiedPromptIndex, setCopiedPromptIndex] = useState<number | null>(
-    null
   );
 
   // API 키 관리
@@ -580,28 +563,6 @@ const App: React.FC = () => {
     setError(null);
   };
 
-  // 이미지 프롬프트 개별 복사
-  const handleCopyPrompt = (prompt: string, index: number) => {
-    // 클립보드에 복사
-    navigator.clipboard
-      .writeText(prompt)
-      .then(() => {
-        setCopiedPromptIndex(index);
-        setTimeout(() => setCopiedPromptIndex(null), 2000);
-        alert("✅ 이미지 프롬프트가 복사되었습니다!");
-
-        // 1초 후 쿠팡 파트너스 링크 새창으로 열기
-        setTimeout(() => {
-          const coupangLink = getRandomCoupangLink();
-          window.open(coupangLink, "_blank");
-        }, 1000);
-      })
-      .catch((err) => {
-        console.error("복사 실패:", err);
-        alert("❌ 복사에 실패했습니다.");
-      });
-  };
-
   // 전체 초기화 함수
   const handleReset = () => {
     const confirmed = window.confirm(
@@ -682,7 +643,7 @@ const App: React.FC = () => {
           result,
           selectedCategory,
           apiKey,
-          userIdeaKeyword
+          appliedIdeaKeyword || undefined
         );
         setSuggestedIdeas(ideas);
       } catch (e: any) {
@@ -695,7 +656,7 @@ const App: React.FC = () => {
     } finally {
       setIsAnalyzing(false);
     }
-  }, [transcript, selectedCategory, videoDetails, apiKey]);
+  }, [transcript, selectedCategory, videoDetails, apiKey, appliedIdeaKeyword]);
 
   const handleRefreshIdeas = useCallback(async () => {
     if (!analysisResult || !apiKey) return;
@@ -706,7 +667,7 @@ const App: React.FC = () => {
         analysisResult,
         selectedCategory,
         apiKey,
-        userIdeaKeyword
+        appliedIdeaKeyword || undefined
       );
       setSuggestedIdeas(ideas);
     } catch (e: any) {
@@ -714,7 +675,48 @@ const App: React.FC = () => {
     } finally {
       setIsGeneratingIdeas(false);
     }
+  }, [analysisResult, selectedCategory, apiKey, appliedIdeaKeyword]);
+
+  const handleApplyIdeaKeyword = useCallback(async () => {
+    if (!analysisResult || !apiKey) return;
+    setAppliedIdeaKeyword(userIdeaKeyword);
+    setIsGeneratingIdeas(true);
+    setError(null);
+    try {
+      const ideas = await generateIdeas(
+        analysisResult,
+        selectedCategory,
+        apiKey,
+        userIdeaKeyword || undefined
+      );
+      setSuggestedIdeas(ideas);
+    } catch (e: any) {
+      setError(e.message || "아이디어 생성 중 오류가 발생했습니다.");
+    } finally {
+      setIsGeneratingIdeas(false);
+    }
   }, [analysisResult, selectedCategory, apiKey, userIdeaKeyword]);
+
+  const handleResetToAIRecommendation = useCallback(async () => {
+    if (!analysisResult || !apiKey) return;
+    setUserIdeaKeyword("");
+    setAppliedIdeaKeyword("");
+    setIsGeneratingIdeas(true);
+    setError(null);
+    try {
+      const ideas = await generateIdeas(
+        analysisResult,
+        selectedCategory,
+        apiKey,
+        undefined
+      );
+      setSuggestedIdeas(ideas);
+    } catch (e: any) {
+      setError(e.message || "아이디어 재생성 중 오류가 발생했습니다.");
+    } finally {
+      setIsGeneratingIdeas(false);
+    }
+  }, [analysisResult, selectedCategory, apiKey]);
 
   const handleGenerate = useCallback(async () => {
     if (!apiKey) {
@@ -1300,28 +1302,55 @@ const App: React.FC = () => {
                   </button>
                 </div>
                 <div className="mb-3 user-idea-keyword-input">
-                  <input
-                    type="text"
-                    value={userIdeaKeyword}
-                    onChange={(e) => setUserIdeaKeyword(e.target.value)}
-                    placeholder="원하는 키워드 입력 (선택사항) - 예: 다이어트, 여행, 게임"
-                    className="w-full bg-[#121212] border border-[#2A2A2A] rounded-md p-2 text-sm text-neutral-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition new-idea-input"
-                    style={
-                      {
-                        userSelect: "text",
-                        WebkitUserSelect: "text",
-                        MozUserSelect: "text",
-                        msUserSelect: "text",
-                        cursor: "text",
-                        pointerEvents: "auto",
-                      } as React.CSSProperties
-                    }
-                    onMouseDown={(e) => e.stopPropagation()}
-                    onClick={(e) => e.stopPropagation()}
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={userIdeaKeyword}
+                      onChange={(e) => setUserIdeaKeyword(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && userIdeaKeyword.trim()) {
+                          handleApplyIdeaKeyword();
+                        }
+                      }}
+                      placeholder="원하는 키워드 입력 (선택사항) - 예: 다이어트, 여행, 게임"
+                      className="flex-1 bg-[#121212] border border-[#2A2A2A] rounded-md p-2 text-sm text-neutral-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition new-idea-input"
+                      style={
+                        {
+                          userSelect: "text",
+                          WebkitUserSelect: "text",
+                          MozUserSelect: "text",
+                          msUserSelect: "text",
+                          cursor: "text",
+                          pointerEvents: "auto",
+                        } as React.CSSProperties
+                      }
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <button
+                      onClick={handleApplyIdeaKeyword}
+                      disabled={isGeneratingIdeas || !analysisResult || !userIdeaKeyword.trim()}
+                      className="px-4 py-2 text-sm font-medium bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                    >
+                      적용
+                    </button>
+                    {appliedIdeaKeyword && (
+                      <button
+                        onClick={handleResetToAIRecommendation}
+                        disabled={isGeneratingIdeas || !analysisResult}
+                        className="px-4 py-2 text-sm font-medium bg-zinc-700 hover:bg-zinc-600 text-white rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                      >
+                        AI 추천으로
+                      </button>
+                    )}
+                  </div>
                   <p className="text-xs text-neutral-400 mt-1">
-                    💡 특정 키워드를 입력하면 해당 키워드를 포함한 아이디어가
-                    생성됩니다.
+                    💡 특정 키워드를 입력하고 '적용' 버튼을 누르면 해당 키워드를 포함한 아이디어가 생성됩니다.
+                    {appliedIdeaKeyword && (
+                      <span className="text-red-400 font-medium">
+                        {" "}현재 적용된 키워드: "{appliedIdeaKeyword}"
+                      </span>
+                    )}
                   </p>
                 </div>
                 {isGeneratingIdeas ? (
@@ -1479,28 +1508,21 @@ const App: React.FC = () => {
                                   )}
                                 </div>
                                 <div className="flex-grow text-white whitespace-pre-wrap">
-                                  {item.line.replace(/\*\*/g, '').replace(/\*/g, '').replace(/\_\_/g, '').replace(/\_/g, '')}
+                                  {item.line
+                                    .replace(/\*\*/g, "")
+                                    .replace(/\*/g, "")
+                                    .replace(/\_\_/g, "")
+                                    .replace(/\_/g, "")}
                                 </div>
                               </div>
                               {item.imagePrompt && (
-                                <div className="mt-3 ml-[128px] p-3 rounded-md border bg-zinc-950 border-zinc-700/50 relative">
+                                <div className="mt-3 ml-[128px] p-3 rounded-md border bg-zinc-950 border-zinc-700/50">
                                   <p className="text-xs font-semibold text-neutral-400 mb-1">
                                     🎨 이미지 생성 프롬프트
                                   </p>
-                                  <p className="text-sm text-neutral-300 font-mono pr-16">
+                                  <p className="text-sm text-neutral-300 font-mono">
                                     {item.imagePrompt}
                                   </p>
-                                  <button
-                                    onClick={() =>
-                                      handleCopyPrompt(item.imagePrompt, index)
-                                    }
-                                    className="absolute top-2 right-2 text-xs bg-gradient-to-br from-[#D90000] to-[#FF2B2B] hover:from-[#D90000]/90 hover:to-[#FF2B2B]/90 text-white font-bold py-1.5 px-3 rounded-md transition-all shadow-[0_0_10px_rgba(255,43,43,0.5)] hover:shadow-[0_0_15px_rgba(255,43,43,0.7)]"
-                                    title="프롬프트 복사"
-                                  >
-                                    {copiedPromptIndex === index
-                                      ? "✅ 복사됨!"
-                                      : "📋 복사"}
-                                  </button>
                                 </div>
                               )}
                             </div>

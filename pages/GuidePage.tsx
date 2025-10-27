@@ -98,12 +98,12 @@ const GuidePage: React.FC = () => {
               </ul>
               
               <div className="mt-4 p-4 bg-blue-900/20 border border-blue-700/50 rounded-lg">
-                <h3 className="text-blue-300 font-bold mb-2">📥 다운로드 및 복사 기능</h3>
+                <h3 className="text-blue-300 font-bold mb-2">📥 다운로드 기능</h3>
                 <p>각 결과 카드에서 "다운로드" 버튼을 클릭하면:</p>
                 <ul className="list-disc list-inside ml-4 mt-2 space-y-1 text-sm">
-                  <li>분석 결과가 .txt 파일로 다운로드됩니다</li>
-                  <li>자동으로 쿠팡 파트너스 페이지가 열립니다 (추가 비용 없음)</li>
-                  <li>수수료는 개발자에게 지원되어 무료 서비스 유지에 도움이 됩니다</li>
+                  <li>파일 형식을 선택할 수 있습니다 (TXT, Markdown, PDF)</li>
+                  <li>메타데이터 및 타임스탬프 포함 여부를 선택할 수 있습니다</li>
+                  <li>분석 결과가 선택한 형식으로 다운로드됩니다</li>
                 </ul>
               </div>
             </div>
@@ -174,8 +174,7 @@ const GuidePage: React.FC = () => {
                 <li><strong>카테고리 선택:</strong> 영상의 성격에 맞는 카테고리를 선택하는 것이 중요합니다.</li>
                 <li><strong>창의적 활용:</strong> 생성된 기획안은 참고용이며, 자신만의 아이디어를 추가하여 사용하세요.</li>
                 <li><strong>API 사용량:</strong> Google Gemini API 무료 등급은 분당 15회 제한이 있습니다.</li>
-                <li><strong>결과 저장:</strong> 다운로드 기능으로 분석 결과를 .txt 파일로 보관할 수 있습니다.</li>
-                <li><strong>쿠팡 파트너스:</strong> 다운로드 시 쿠팡 페이지가 열리며, 이는 무료 서비스 운영에 도움이 됩니다.</li>
+                <li><strong>결과 저장:</strong> 다운로드 기능으로 분석 결과를 원하는 형식으로 보관할 수 있습니다.</li>
                 <li><strong>브라우저 저장:</strong> API 키는 브라우저에만 저장되며 외부로 전송되지 않습니다.</li>
               </ul>
             </div>

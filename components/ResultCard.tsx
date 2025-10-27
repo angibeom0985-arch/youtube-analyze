@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import DownloadModal, { DownloadOptions } from "./DownloadModal";
 
 interface ResultCardProps {
   title: string;
@@ -8,21 +9,6 @@ interface ResultCardProps {
   downloadFileName: string;
 }
 
-// 쿠팡파트너스 링크 배열
-const coupangLinks = [
-  "https://link.coupang.com/a/cUJcDz",
-  "https://link.coupang.com/a/cUJcJa",
-  "https://link.coupang.com/a/cUJcNB",
-  "https://link.coupang.com/a/cUJcSB",
-  "https://link.coupang.com/a/cUJcU8",
-  "https://link.coupang.com/a/cUJc0a",
-];
-
-// 랜덤 쿠팡 링크 선택 함수
-const getRandomCoupangLink = (): string => {
-  return coupangLinks[Math.floor(Math.random() * coupangLinks.length)];
-};
-
 const ResultCard: React.FC<ResultCardProps> = ({
   title,
   children,
@@ -30,46 +16,45 @@ const ResultCard: React.FC<ResultCardProps> = ({
   contentToCopy,
   downloadFileName,
 }) => {
-  const handleCopy = () => {
-    // 클립보드에 복사
-    navigator.clipboard
-      .writeText(contentToCopy)
-      .then(() => {
-        alert("✅ 복사되었습니다!");
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
 
-        // 1초 후 쿠팡 링크 새창으로 열기
-        setTimeout(() => {
-          const coupangLink = getRandomCoupangLink();
-          window.open(coupangLink, "_blank");
-        }, 1000);
-      })
-      .catch((err) => {
-        console.error("복사 실패:", err);
-        alert("❌ 복사에 실패했습니다.");
-      });
-  };
+  const handleDownload = (options: DownloadOptions) => {
+    let content = contentToCopy;
+    const now = new Date();
+    const timestamp = now.toLocaleString("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
 
-  const handleDownload = () => {
-    alert("✅ 다운로드되었습니다!");
+    // 메타데이터 추가
+    if (options.includeMetadata) {
+      content = `제목: ${title}\n${"=".repeat(50)}\n\n${content}`;
+    }
 
-    // 다운로드 실행
-    const blob = new Blob([contentToCopy], {
-      type: "text/plain;charset=utf-8",
+    // 타임스탬프 추가
+    if (options.includeTimestamp) {
+      content = `생성 일시: ${timestamp}\n\n${content}`;
+    }
+
+    // 파일 확장자에 따른 다운로드
+    const blob = new Blob([content], {
+      type:
+        options.format === "md"
+          ? "text/markdown;charset=utf-8"
+          : "text/plain;charset=utf-8",
     });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${downloadFileName}.txt`;
+    a.download = `${downloadFileName}.${options.format}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-
-    // 1초 후 쿠팡 링크 새창으로 열기
-    setTimeout(() => {
-      const coupangLink = getRandomCoupangLink();
-      window.open(coupangLink, "_blank");
-    }, 1000);
   };
 
   // 드래그 방지 핸들러
@@ -81,7 +66,6 @@ const ResultCard: React.FC<ResultCardProps> = ({
   // 우클릭 방지
   const preventContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
-    alert('❌ 복사는 상단의 "복사" 버튼을 이용해주세요!');
     return false;
   };
 
@@ -89,67 +73,80 @@ const ResultCard: React.FC<ResultCardProps> = ({
   const preventKeyboardCopy = (e: React.KeyboardEvent) => {
     if ((e.ctrlKey || e.metaKey) && (e.key === "c" || e.key === "C")) {
       e.preventDefault();
-      alert('❌ 복사는 상단의 "복사" 버튼을 이용해주세요!');
       return false;
     }
   };
 
   return (
-    <div
-      className={`bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-6 mb-6 ${className} relative`}
-    >
-      {/* Sticky 헤더 영역 */}
-      <div className="sticky top-0 bg-[#1A1A1A] z-10 -mx-6 -mt-6 px-6 pt-6 pb-4 rounded-t-xl border-b border-[#2A2A2A]">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-red-400 to-red-500 bg-clip-text text-transparent">
-            {title}
-          </h2>
-          <div className="flex items-center gap-2">
+    <>
+      <DownloadModal
+        isOpen={showDownloadModal}
+        onClose={() => setShowDownloadModal(false)}
+        onDownload={handleDownload}
+        title={title}
+      />
+      
+      <div
+        className={`bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-6 mb-6 ${className} relative`}
+      >
+        {/* Sticky 헤더 영역 */}
+        <div className="sticky top-0 bg-[#1A1A1A] z-10 -mx-6 -mt-6 px-6 pt-6 pb-4 rounded-t-xl border-b border-[#2A2A2A]">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-red-400 to-red-500 bg-clip-text text-transparent">
+              {title}
+            </h2>
             <button
-              onClick={handleCopy}
-              className="text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors shadow-lg whitespace-nowrap"
-              title="복사하고 쿠팡 혜택 받기"
+              onClick={() => setShowDownloadModal(true)}
+              className="group relative px-6 py-3 bg-gradient-to-br from-[#D90000] to-[#FF2B2B] text-white font-bold rounded-lg shadow-[0_0_20px_rgba(255,43,43,0.5)] hover:shadow-[0_0_30px_rgba(255,43,43,0.8)] transition-all transform hover:scale-[1.05] hover:-translate-y-0.5 active:scale-[0.98]"
+              title="다운로드 옵션 설정"
             >
-              📋 복사
-            </button>
-            <button
-              onClick={handleDownload}
-              className="text-xs bg-zinc-700 hover:bg-zinc-600 text-neutral-300 font-semibold py-2 px-4 rounded-md transition-colors shadow-lg whitespace-nowrap"
-              title="다운로드하고 쿠팡 혜택 받기"
-            >
-              💾 다운로드
+              <span className="flex items-center gap-2">
+                <svg
+                  className="w-5 h-5 animate-bounce"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
+                </svg>
+                💾 다운로드
+              </span>
+              <div className="absolute inset-0 rounded-lg bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
             </button>
           </div>
         </div>
-      </div>
 
-      {/* 컨텐츠 영역 */}
-      <div
-        className="text-white mt-4"
-        onMouseDown={preventSelection}
-        onDragStart={preventSelection}
-        onContextMenu={preventContextMenu}
-        onCopy={(e) => {
-          e.preventDefault();
-          alert('❌ 복사는 상단의 "복사" 버튼을 이용해주세요!');
-        }}
-        onCut={(e) => {
-          e.preventDefault();
-          alert("❌ 잘라내기는 사용할 수 없습니다.");
-        }}
-        onKeyDown={preventKeyboardCopy}
-        style={{
-          userSelect: "none",
-          WebkitUserSelect: "none",
-          MozUserSelect: "none",
-          msUserSelect: "none",
-          cursor: "default",
-        }}
-        tabIndex={0}
-      >
-        {children}
+        {/* 컨텐츠 영역 */}
+        <div
+          className="text-white mt-4"
+          onMouseDown={preventSelection}
+          onDragStart={preventSelection}
+          onContextMenu={preventContextMenu}
+          onCopy={(e) => {
+            e.preventDefault();
+          }}
+          onCut={(e) => {
+            e.preventDefault();
+          }}
+          onKeyDown={preventKeyboardCopy}
+          style={{
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            msUserSelect: "none",
+            cursor: "default",
+          }}
+          tabIndex={0}
+        >
+          {children}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

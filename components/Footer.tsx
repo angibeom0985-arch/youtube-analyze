@@ -7,9 +7,6 @@ const Footer: React.FC = () => {
         <div className="text-center space-y-4">
           <div className="text-sm text-neutral-400">
             <p className="mb-2">유튜브 영상 분석 AI © 2025. All rights reserved.</p>
-            <p className="text-xs leading-relaxed">
-              쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.
-            </p>
           </div>
           <div className="flex justify-center gap-4 text-xs text-neutral-500">
             <a href="/guide" className="hover:text-neutral-300 transition-colors">사용법</a>
