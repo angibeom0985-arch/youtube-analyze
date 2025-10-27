@@ -19,42 +19,57 @@ const ResultCard: React.FC<ResultCardProps> = ({
   const [showDownloadModal, setShowDownloadModal] = useState(false);
 
   const handleDownload = (options: DownloadOptions) => {
-    let content = contentToCopy;
-    const now = new Date();
-    const timestamp = now.toLocaleString("ko-KR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
+    // 새 창 열기 (다운로드 진행 상황 표시)
+    const downloadWindow = window.open(
+      "/download-progress",
+      "downloadProgress",
+      "width=500,height=600,left=100,top=100"
+    );
 
-    // 메타데이터 추가
-    if (options.includeMetadata) {
-      content = `제목: ${title}\n${"=".repeat(50)}\n\n${content}`;
-    }
+    // 다운로드 실행 (약간의 지연 후)
+    setTimeout(() => {
+      let content = contentToCopy;
+      const now = new Date();
+      const timestamp = now.toLocaleString("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
 
-    // 타임스탬프 추가
-    if (options.includeTimestamp) {
-      content = `생성 일시: ${timestamp}\n\n${content}`;
-    }
+      // 메타데이터 추가
+      if (options.includeMetadata) {
+        content = `제목: ${title}\n${"=".repeat(50)}\n\n${content}`;
+      }
 
-    // 파일 확장자에 따른 다운로드
-    const blob = new Blob([content], {
-      type:
-        options.format === "md"
-          ? "text/markdown;charset=utf-8"
-          : "text/plain;charset=utf-8",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${downloadFileName}.${options.format}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+      // 타임스탬프 추가
+      if (options.includeTimestamp) {
+        content = `생성 일시: ${timestamp}\n\n${content}`;
+      }
+
+      // 파일 확장자에 따른 다운로드
+      const blob = new Blob([content], {
+        type:
+          options.format === "md"
+            ? "text/markdown;charset=utf-8"
+            : "text/plain;charset=utf-8",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${downloadFileName}.${options.format}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      // 새 창이 열려있으면 다운로드 완료 메시지 전송
+      if (downloadWindow && !downloadWindow.closed) {
+        downloadWindow.postMessage({ type: "DOWNLOAD_COMPLETE" }, "*");
+      }
+    }, 500);
   };
 
   // 드래그 방지 핸들러
