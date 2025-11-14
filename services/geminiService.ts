@@ -233,11 +233,24 @@ export const analyzeTranscript = async (
 
     const jsonText = response.text.trim();
     return JSON.parse(jsonText) as AnalysisResult;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error analyzing transcript:", error);
-    throw new Error(
-      "Failed to analyze transcript. Please check the console for details."
-    );
+    
+    let userMessage = "❌ 스크립트 분석 중 오류가 발생했습니다.\n\n";
+    
+    if (error.message && error.message.includes('API_KEY')) {
+      userMessage += "📌 원인:\n• API 키가 유효하지 않거나 만료되었습니다\n\n💡 해결 방법:\n• API 키를 다시 확인하고 재설정해주세요\n• API 키 발급 가이드를 참고하여 새로운 키를 발급받으세요";
+    } else if (error.message && error.message.includes('quota')) {
+      userMessage += "📌 원인:\n• API 사용량이 초과되었습니다\n\n💡 해결 방법:\n• 잠시 후 다시 시도해주세요\n• Google AI Studio에서 API 사용량을 확인해주세요";
+    } else if (error.message && error.message.includes('rate')) {
+      userMessage += "📌 원인:\n• API 요청이 너무 빠르게 발생했습니다\n\n💡 해결 방법:\n• 10초 정도 기다린 후 다시 시도해주세요";
+    } else {
+      userMessage += "📌 가능한 원인:\n• 스크립트 길이가 너무 길거나 형식이 올바르지 않습니다\n• AI 서버 일시적 오류\n• 네트워크 연결 문제\n\n💡 해결 방법:\n• 스크립트를 짧게 나눠서 다시 시도해주세요\n• 잠시 후 다시 시도해주세요";
+    }
+    
+    userMessage += `\n\n🔧 개발자에게 전달할 오류 정보:\n${error.message || '알 수 없는 오류'}\n${error.stack ? '\nStack: ' + error.stack : ''}`;
+    
+    throw new Error(userMessage);
   }
 };
 
@@ -285,11 +298,24 @@ export const generateIdeas = async (
     const jsonText = response.text.trim();
     const result = JSON.parse(jsonText);
     return result.ideas as string[];
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error generating ideas:", error);
-    throw new Error(
-      "Failed to generate ideas. Please check the console for details."
-    );
+    
+    let userMessage = "❌ 아이디어 생성 중 오류가 발생했습니다.\n\n";
+    
+    if (error.message && error.message.includes('API_KEY')) {
+      userMessage += "📌 원인:\n• API 키가 유효하지 않거나 만료되었습니다\n\n💡 해결 방법:\n• API 키를 다시 확인하고 재설정해주세요";
+    } else if (error.message && error.message.includes('quota')) {
+      userMessage += "📌 원인:\n• API 사용량이 초과되었습니다\n\n💡 해결 방법:\n• 잠시 후 다시 시도해주세요\n• Google AI Studio에서 API 사용량을 확인해주세요";
+    } else if (error.message && error.message.includes('rate')) {
+      userMessage += "📌 원인:\n• API 요청이 너무 빠르게 발생했습니다\n\n💡 해결 방법:\n• 10초 정도 기다린 후 다시 시도해주세요";
+    } else {
+      userMessage += "📌 가능한 원인:\n• AI 서버 일시적 오류\n• 네트워크 연결 문제\n\n💡 해결 방법:\n• 잠시 후 다시 시도해주세요\n• 새로고침 후 다시 시도해주세요";
+    }
+    
+    userMessage += `\n\n🔧 개발자에게 전달할 오류 정보:\n${error.message || '알 수 없는 오류'}\n${error.stack ? '\nStack: ' + error.stack : ''}`;
+    
+    throw new Error(userMessage);
   }
 };
 
@@ -726,10 +752,23 @@ ${analysisString}
 
     const jsonText = response.text.trim();
     return JSON.parse(jsonText) as NewPlan;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error generating new plan:", error);
-    throw new Error(
-      "Failed to generate new plan. Please check the console for details."
-    );
+    
+    let userMessage = "❌ 새로운 기획안 생성 중 오류가 발생했습니다.\n\n";
+    
+    if (error.message && error.message.includes('API_KEY')) {
+      userMessage += "📌 원인:\n• API 키가 유효하지 않거나 만료되었습니다\n\n💡 해결 방법:\n• API 키를 다시 확인하고 재설정해주세요";
+    } else if (error.message && error.message.includes('quota')) {
+      userMessage += "📌 원인:\n• API 사용량이 초과되었습니다\n\n💡 해결 방법:\n• 잠시 후 다시 시도해주세요\n• Google AI Studio에서 API 사용량을 확인해주세요";
+    } else if (error.message && error.message.includes('rate')) {
+      userMessage += "📌 원인:\n• API 요청이 너무 빠르게 발생했습니다\n\n💡 해결 방법:\n• 10초 정도 기다린 후 다시 시도해주세요";
+    } else {
+      userMessage += "📌 가능한 원인:\n• 키워드가 너무 복잡하거나 부적절합니다\n• AI 서버 일시적 오류\n• 네트워크 연결 문제\n\n💡 해결 방법:\n• 더 간단한 키워드로 다시 시도해주세요\n• 잠시 후 다시 시도해주세요";
+    }
+    
+    userMessage += `\n\n🔧 개발자에게 전달할 오류 정보:\n${error.message || '알 수 없는 오류'}\n${error.stack ? '\nStack: ' + error.stack : ''}`;
+    
+    throw new Error(userMessage);
   }
 };

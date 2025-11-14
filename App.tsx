@@ -647,12 +647,14 @@ const App: React.FC = () => {
         );
         setSuggestedIdeas(ideas);
       } catch (e: any) {
-        setError(e.message || "아이디어 생성 중 오류가 발생했습니다.");
+        console.error("아이디어 생성 오류:", e);
+        setError(e.message || "❌ 아이디어 생성 중 알 수 없는 오류가 발생했습니다.\n\n💡 해결 방법:\n• 페이지를 새로고침하고 다시 시도해주세요\n• 문제가 지속되면 개발자에게 문의해주세요");
       } finally {
         setIsGeneratingIdeas(false);
       }
     } catch (e: any) {
-      setError(e.message || "분석 중 오류가 발생했습니다.");
+      console.error("분석 오류:", e);
+      setError(e.message || "❌ 분석 중 알 수 없는 오류가 발생했습니다.\n\n💡 해결 방법:\n• 페이지를 새로고침하고 다시 시도해주세요\n• 문제가 지속되면 개발자에게 문의해주세요");
     } finally {
       setIsAnalyzing(false);
     }
@@ -671,7 +673,7 @@ const App: React.FC = () => {
       );
       setSuggestedIdeas(ideas);
     } catch (e: any) {
-      setError(e.message || "아이디어 재생성 중 오류가 발생했습니다.");
+      setError(e.message || "❌ 아이디어 재생성 중 알 수 없는 오류가 발생했습니다.\n\n💡 해결 방법:\n• 페이지를 새로고침하고 다시 시도해주세요");
     } finally {
       setIsGeneratingIdeas(false);
     }
@@ -691,7 +693,7 @@ const App: React.FC = () => {
       );
       setSuggestedIdeas(ideas);
     } catch (e: any) {
-      setError(e.message || "아이디어 생성 중 오류가 발생했습니다.");
+      setError(e.message || "❌ 아이디어 생성 중 알 수 없는 오류가 발생했습니다.\n\n💡 해결 방법:\n• 페이지를 새로고침하고 다시 시도해주세요");
     } finally {
       setIsGeneratingIdeas(false);
     }
@@ -712,7 +714,7 @@ const App: React.FC = () => {
       );
       setSuggestedIdeas(ideas);
     } catch (e: any) {
-      setError(e.message || "아이디어 재생성 중 오류가 발생했습니다.");
+      setError(e.message || "❌ 아이디어 재생성 중 알 수 없는 오류가 발생했습니다.\n\n💡 해결 방법:\n• 페이지를 새로고침하고 다시 시도해주세요");
     } finally {
       setIsGeneratingIdeas(false);
     }
@@ -743,7 +745,7 @@ const App: React.FC = () => {
       );
       setNewPlan(result);
     } catch (e: any) {
-      setError(e.message || "기획안 생성 중 오류가 발생했습니다.");
+      setError(e.message || "❌ 기획안 생성 중 알 수 없는 오류가 발생했습니다.\n\n💡 해결 방법:\n• 페이지를 새로고침하고 다시 시도해주세요");
     } finally {
       setIsGenerating(false);
     }
@@ -1058,8 +1060,11 @@ const App: React.FC = () => {
                   }
                 />
                 {error && (
-                  <div className="bg-red-900 border border-red-700 text-red-200 p-3 rounded-lg mt-2 text-sm">
-                    {error}
+                  <div className="bg-red-900 border border-red-700 text-red-200 p-4 rounded-lg mt-2 text-sm">
+                    <div className="font-bold mb-2">⚠️ 오류 발생</div>
+                    <pre className="whitespace-pre-wrap overflow-auto max-h-96 font-mono text-xs bg-red-950 p-3 rounded">
+                      {error}
+                    </pre>
                   </div>
                 )}
               </div>
