@@ -1076,6 +1076,32 @@ const App: React.FC = () => {
             >
               {isAnalyzing ? "분석 중..." : "떡상 이유 분석하기"}
             </button>
+
+            {/* 분석 진행 상태 표시 */}
+            {isAnalyzing && (
+              <div className="mt-4 bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] border border-[#3a3a3a] rounded-lg p-6">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF2B2B]"></div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-2 h-2 rounded-full ${isAnalyzing ? 'bg-[#FF2B2B] animate-pulse' : 'bg-gray-600'}`}></div>
+                    <span className="text-sm text-neutral-300">
+                      {isGeneratingIdeas ? '✓ 스크립트 분석 완료' : '📊 스크립트 분석 중...'}
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-2 h-2 rounded-full ${isGeneratingIdeas ? 'bg-[#FF2B2B] animate-pulse' : 'bg-gray-600'}`}></div>
+                    <span className={`text-sm ${isGeneratingIdeas ? 'text-neutral-300' : 'text-gray-500'}`}>
+                      {isGeneratingIdeas ? '💡 새로운 아이디어 생성 중...' : '새로운 아이디어 대기 중'}
+                    </span>
+                  </div>
+                </div>
+                <p className="text-xs text-neutral-500 text-center mt-4">
+                  분석에는 약 10-30초 정도 소요됩니다
+                </p>
+              </div>
+            )}
           </div>
 
           <AdSense />
