@@ -1444,6 +1444,38 @@ const App: React.FC = () => {
               >
                 {isGenerating ? "생성 중..." : "기획안 생성"}
               </button>
+
+              {/* 기획안 생성 진행 상태 표시 */}
+              {isGenerating && (
+                <div className="mt-4 bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] border border-[#3a3a3a] rounded-lg p-6">
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF2B2B]"></div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 rounded-full bg-[#FF2B2B] animate-pulse"></div>
+                      <span className="text-sm text-neutral-300">
+                        📝 새로운 영상 기획 의도 생성 중...
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 rounded-full bg-[#FF2B2B] animate-pulse"></div>
+                      <span className="text-sm text-neutral-300">
+                        🎬 대본 구조 설계 중...
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 rounded-full bg-[#FF2B2B] animate-pulse"></div>
+                      <span className="text-sm text-neutral-300">
+                        ✍️ 완성된 대본 작성 중...
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-neutral-500 text-center mt-4">
+                    생성에는 약 30-60초 정도 소요됩니다
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
