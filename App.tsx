@@ -114,6 +114,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
+    cursor: isDragging ? "grabbing" : "grab",
   };
 
   return (
@@ -121,7 +122,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
       ref={setNodeRef}
       style={style}
       onClick={onClick}
-      className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 cursor-move ${
+      className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
         isSelected
           ? "bg-gradient-to-br from-[#D90000] to-[#FF2B2B] text-white shadow-[0_0_10px_rgba(255,43,43,0.5)]"
           : "bg-[#2A2A2A] hover:bg-zinc-700 text-neutral-200"
@@ -195,7 +196,11 @@ const App: React.FC = () => {
 
   // 드래그 앤 드롭 센서 설정
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 8px 이상 드래그해야 활성화
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
