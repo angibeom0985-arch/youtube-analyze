@@ -3,6 +3,23 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { FiSettings, FiTrash2 } from "react-icons/fi";
 import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  horizontalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
   analyzeTranscript,
   generateNewPlan,
   generateIdeas,
@@ -30,21 +47,22 @@ import SidebarAds from "./components/SidebarAds";
 import { getStoredApiKey, saveApiKey } from "./utils/apiKeyStorage";
 import { highlightImportantText } from "./utils/textHighlight.tsx";
 
-const categories = [
+const defaultCategories = [
   "썰 채널",
+  "건강",
+  "미스터리",
+  "야담",
+  "49금",
+  "국뽕",
+  "북한 이슈",
   "정보 전달",
   "쇼핑 리뷰",
   "IT/테크",
   "요리/쿡방",
   "뷰티",
   "게임",
-  "건강",
-  "미스터리",
-  "브이로그",
-  "야담",
   "먹방",
-  "49금",
-  "국뽕",
+  "브이로그",
 ];
 const lengthOptions = ["8분", "30분", "1시간"];
 const contentTypes = ["숏폼", "롱폼"];
@@ -69,7 +87,67 @@ const characterColors = [
   "text-orange-400",
 ];
 
+// SortableItem 컴포넌트
+interface SortableItemProps {
+  id: string;
+  category: string;
+  isSelected: boolean;
+  onClick: () => void;
+}
+
+const SortableItem: React.FC<SortableItemProps> = ({
+  id,
+  category,
+  isSelected,
+  onClick,
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <button
+      ref={setNodeRef}
+      style={style}
+      onClick={onClick}
+      className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 cursor-move ${
+        isSelected
+          ? "bg-gradient-to-br from-[#D90000] to-[#FF2B2B] text-white shadow-[0_0_10px_rgba(255,43,43,0.5)]"
+          : "bg-[#2A2A2A] hover:bg-zinc-700 text-neutral-200"
+      }`}
+      {...attributes}
+      {...listeners}
+    >
+      {category}
+    </button>
+  );
+};
+
 const App: React.FC = () => {
+  // 카테고리 순서 관리
+  const [categories, setCategories] = useState<string[]>(() => {
+    const saved = localStorage.getItem("categoriesOrder");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Failed to restore categories order:", e);
+      }
+    }
+    return defaultCategories;
+  });
+
   const [youtubeUrl, setYoutubeUrl] = useState<string>("");
   const [transcript, setTranscript] = useState<string>("");
   const [newKeyword, setNewKeyword] = useState<string>("");
@@ -115,6 +193,27 @@ const App: React.FC = () => {
     setAdBlockDetected(true);
   };
 
+  // 드래그 앤 드롭 센서 설정
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // 드래그 종료 핸들러
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setCategories((items) => {
+        const oldIndex = items.indexOf(active.id as string);
+        const newIndex = items.indexOf(over.id as string);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
   // API 키 로드
   useEffect(() => {
     const storedKey = getStoredApiKey();
@@ -122,6 +221,11 @@ const App: React.FC = () => {
       setApiKey(storedKey);
     }
   }, []);
+
+  // 카테고리 순서 저장
+  useEffect(() => {
+    localStorage.setItem("categoriesOrder", JSON.stringify(categories));
+  }, [categories]);
 
   // 분석 결과 저장 (localStorage)
   useEffect(() => {
@@ -979,22 +1083,32 @@ const App: React.FC = () => {
             <div className="mb-6">
               <label className="block text-2xl font-bold text-neutral-100 mb-3">
                 카테고리 선택
+                <span className="text-sm font-normal text-neutral-400 ml-2">
+                  (드래그하여 순서 변경)
+                </span>
               </label>
-              <div className="flex flex-wrap gap-2">
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-                      selectedCategory === category
-                        ? "bg-gradient-to-br from-[#D90000] to-[#FF2B2B] text-white shadow-[0_0_10px_rgba(255,43,43,0.5)]"
-                        : "bg-[#2A2A2A] hover:bg-zinc-700 text-neutral-200"
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={categories}
+                  strategy={horizontalListSortingStrategy}
+                >
+                  <div className="flex flex-wrap gap-2">
+                    {categories.map((category) => (
+                      <SortableItem
+                        key={category}
+                        id={category}
+                        category={category}
+                        isSelected={selectedCategory === category}
+                        onClick={() => setSelectedCategory(category)}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
             </div>
 
             {/* 브이로그 서브타입 선택 */}
