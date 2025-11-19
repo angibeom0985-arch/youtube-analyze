@@ -849,11 +849,29 @@ const App: React.FC = () => {
     setNewPlan(null);
 
     try {
+      // 영상 길이를 분 단위로 변환하여 챕터 시스템 필요 여부 판단
+      const parseMinutes = (lengthStr: string): number => {
+        let totalMinutes = 0;
+        const hourMatch = lengthStr.match(/(\d+)\s*시간/);
+        const minuteMatch = lengthStr.match(/(\d+)\s*분/);
+        
+        if (hourMatch) totalMinutes += parseInt(hourMatch[1]) * 60;
+        if (minuteMatch) totalMinutes += parseInt(minuteMatch[1]);
+        
+        // 숫자만 있으면 분으로 간주
+        if (!hourMatch && !minuteMatch) {
+          const numMatch = lengthStr.match(/(\d+)/);
+          if (numMatch) totalMinutes = parseInt(numMatch[1]);
+        }
+        
+        return totalMinutes;
+      };
+      
+      const totalMinutes = parseMinutes(customLength);
+      
       // 8분 영상: 한 번에 생성 (약 1,400 토큰)
-      // 30분/1시간 영상: 챕터 시스템 사용 (토큰 제한 회피)
-      const needsChapterSystem = customLength.includes('30분') || 
-                                 customLength.includes('1시간') || 
-                                 customLength.includes('60분');
+      // 20분 이상 영상: 챕터 시스템 사용 (토큰 제한 회피)
+      const needsChapterSystem = totalMinutes >= 20;
       
       if (needsChapterSystem) {
         // 챕터 개요만 생성 (대본은 사용자가 순차적으로 생성)
@@ -873,7 +891,7 @@ const App: React.FC = () => {
           chapters: chapterOutline.chapters,
         });
       } else {
-        // 8분 영상은 한 번에 생성 (챕터 시스템 불필요)
+        // 20분 미만 영상은 한 번에 생성 (챕터 시스템 불필요)
         const result = await generateNewPlan(
           analysisResult,
           newKeyword,
