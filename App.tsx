@@ -1811,12 +1811,12 @@ const App: React.FC = () => {
                     <Loader />
                   </div>
                 ) : suggestedIdeas.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid grid-cols-2 gap-3">
                     {suggestedIdeas.map((idea, index) => (
                       <button
                         key={index}
                         onClick={() => setNewKeyword(idea)}
-                        className="bg-[#2A2A2A] hover:bg-zinc-700 text-neutral-200 text-left text-sm px-4 py-2 rounded-lg transition-colors flex-grow"
+                        className="bg-[#2A2A2A] hover:bg-zinc-700 text-neutral-200 text-left text-sm px-4 py-3 rounded-lg transition-colors"
                       >
                         {idea}
                       </button>
