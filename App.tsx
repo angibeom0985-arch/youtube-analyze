@@ -1651,7 +1651,10 @@ const App: React.FC = () => {
                   {lengthOptions.map((option) => (
                     <button
                       key={option}
-                      onClick={() => setLengthMode(option)}
+                      onClick={() => {
+                        setLengthMode(option);
+                        setCustomLength(option);
+                      }}
                       className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
                         lengthMode === option
                           ? "bg-gradient-to-br from-[#D90000] to-[#FF2B2B] text-white shadow-[0_0_10px_rgba(255,43,43,0.5)]"
@@ -1663,7 +1666,10 @@ const App: React.FC = () => {
                   ))}
                   <button
                     key="custom"
-                    onClick={() => setLengthMode("custom")}
+                    onClick={() => {
+                      setLengthMode("custom");
+                      setCustomLength("");
+                    }}
                     className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
                       lengthMode === "custom"
                         ? "bg-gradient-to-br from-[#D90000] to-[#FF2B2B] text-white shadow-[0_0_10px_rgba(255,43,43,0.5)]"
@@ -1672,16 +1678,20 @@ const App: React.FC = () => {
                   >
                     사용자 입력
                   </button>
-                  <input
-                    id="video-length"
-                    type="text"
-                    value={customLength}
-                    onChange={(e) => setCustomLength(e.target.value)}
-                    placeholder="예: 15분 30초"
-                    className="flex-grow bg-[#121212] border border-[#2A2A2A] rounded-md p-2 text-neutral-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={lengthMode !== "custom"}
-                  />
                 </div>
+                {lengthMode === "custom" && (
+                  <div className="mt-3">
+                    <input
+                      id="video-length"
+                      type="text"
+                      value={customLength}
+                      onChange={(e) => setCustomLength(e.target.value)}
+                      placeholder="예: 1시간 30분, 45분, 2시간"
+                      className="w-full bg-[#121212] border border-[#2A2A2A] rounded-md p-3 text-neutral-200 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
+                      autoFocus
+                    />
+                  </div>
+                )}
               </div>
 
               {/* 이미지 프롬프트 옵션 */}
