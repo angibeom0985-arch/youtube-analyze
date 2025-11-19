@@ -27,15 +27,42 @@ export const generateChapterOutline = async (
     // 목표 영상 길이에 따른 챕터 수 결정
     // 토큰 제한: Gemini API 출력 약 8,192 토큰 (한국어 대본 약 1분당 150-200 토큰)
     // 이미지 프롬프트가 많으면 토큰 소비량 증가 → 챕터 수 증가 필요
-    let targetChapters = 4;
+    
+    // 영상 길이를 분 단위로 변환
+    const parseMinutes = (lengthStr: string): number => {
+      let totalMinutes = 0;
+      
+      // "1시간 30분", "90분", "1시간", "2시간 15분 30초" 등 다양한 형식 지원
+      const hourMatch = lengthStr.match(/(\d+)\s*시간/);
+      const minuteMatch = lengthStr.match(/(\d+)\s*분/);
+      
+      if (hourMatch) {
+        totalMinutes += parseInt(hourMatch[1]) * 60;
+      }
+      if (minuteMatch) {
+        totalMinutes += parseInt(minuteMatch[1]);
+      }
+      
+      // 시간/분 단위가 없으면 분으로 간주
+      if (!hourMatch && !minuteMatch) {
+        const numMatch = lengthStr.match(/(\d+)/);
+        if (numMatch) {
+          totalMinutes = parseInt(numMatch[1]);
+        }
+      }
+      
+      return totalMinutes;
+    };
+    
+    const totalMinutes = parseMinutes(length);
     const isDetailedPrompt = imagePromptLevel === "많은 버전";
     
-    if (length.includes('1시간') || length.includes('60분')) {
-      targetChapters = isDetailedPrompt ? 12 : 8; // 많은 버전: 12챕터 (각 5분), 적은 버전: 8챕터 (각 7.5분)
-    } else if (length.includes('30분')) {
-      targetChapters = isDetailedPrompt ? 6 : 4;  // 많은 버전: 6챕터 (각 5분), 적은 버전: 4챕터 (각 7.5분)
-    }
-    // 8분 영상은 한 번에 생성 가능 (약 1,400 토큰)하므로 챕터 시스템 불필요
+    // 챕터당 목표 시간: 적은 버전 7.5분, 많은 버전 5분
+    const chapterDuration = isDetailedPrompt ? 5 : 7.5;
+    let targetChapters = Math.ceil(totalMinutes / chapterDuration);
+    
+    // 최소 4챕터, 최대 20챕터로 제한
+    targetChapters = Math.max(4, Math.min(20, targetChapters));
 
     const chapterSchema = {
       type: Type.OBJECT,
