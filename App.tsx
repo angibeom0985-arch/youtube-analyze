@@ -24,6 +24,10 @@ import {
   generateNewPlan,
   generateIdeas,
 } from "./services/geminiService";
+import {
+  generateChapterOutline,
+  generateChapterScript,
+} from "./services/chapterService";
 import { getVideoDetails } from "./services/youtubeService";
 import type { VideoDetails } from "./services/youtubeService";
 import type {
@@ -844,21 +848,100 @@ const App: React.FC = () => {
     setNewPlan(null);
 
     try {
-      const result = await generateNewPlan(
-        analysisResult,
-        newKeyword,
-        customLength,
-        selectedCategory,
-        apiKey,
-        selectedCategory === "브이로그" ? selectedVlogType : undefined
-      );
-      setNewPlan(result);
+      // 30분 이상 영상은 챕터 기반으로 생성
+      const isLongVideo = customLength.includes('30분') || customLength.includes('1시간') || customLength.includes('60분');
+      
+      if (isLongVideo) {
+        // 챕터 개요 생성
+        const chapterOutline = await generateChapterOutline(
+          analysisResult,
+          newKeyword,
+          customLength,
+          selectedCategory,
+          apiKey,
+          selectedCategory === "브이로그" ? selectedVlogType : undefined
+        );
+        
+        setNewPlan({
+          newIntent: chapterOutline.newIntent,
+          characters: chapterOutline.characters,
+          chapters: chapterOutline.chapters,
+        });
+      } else {
+        // 짧은 영상은 기존 방식대로 한 번에 생성
+        const result = await generateNewPlan(
+          analysisResult,
+          newKeyword,
+          customLength,
+          selectedCategory,
+          apiKey,
+          selectedCategory === "브이로그" ? selectedVlogType : undefined
+        );
+        setNewPlan(result);
+      }
     } catch (e: any) {
       setError(e.message || "❌ 기획안 생성 중 알 수 없는 오류가 발생했습니다.\n\n💡 해결 방법:\n• 페이지를 새로고침하고 다시 시도해주세요");
     } finally {
       setIsGenerating(false);
     }
-  }, [analysisResult, newKeyword, customLength, selectedCategory, apiKey]);
+  }, [analysisResult, newKeyword, customLength, selectedCategory, apiKey, selectedVlogType]);
+
+  // 챕터별 대본 생성 핸들러
+  const handleGenerateChapterScript = useCallback(async (chapterId: string) => {
+    if (!apiKey || !newPlan || !newPlan.chapters || !newPlan.characters) {
+      setError("챕터 대본 생성에 필요한 정보가 없습니다.");
+      return;
+    }
+
+    const chapterIndex = newPlan.chapters.findIndex(ch => ch.id === chapterId);
+    if (chapterIndex === -1) return;
+
+    // 챕터 생성 중 상태 업데이트
+    setNewPlan(prev => {
+      if (!prev || !prev.chapters) return prev;
+      const updatedChapters = [...prev.chapters];
+      updatedChapters[chapterIndex] = {
+        ...updatedChapters[chapterIndex],
+        isGenerating: true,
+      };
+      return { ...prev, chapters: updatedChapters };
+    });
+
+    try {
+      const script = await generateChapterScript(
+        newPlan.chapters[chapterIndex],
+        newPlan.characters,
+        newKeyword,
+        selectedCategory,
+        apiKey,
+        newPlan.chapters
+      );
+
+      // 생성된 대본 저장
+      setNewPlan(prev => {
+        if (!prev || !prev.chapters) return prev;
+        const updatedChapters = [...prev.chapters];
+        updatedChapters[chapterIndex] = {
+          ...updatedChapters[chapterIndex],
+          script,
+          isGenerating: false,
+        };
+        return { ...prev, chapters: updatedChapters };
+      });
+    } catch (e: any) {
+      setError(e.message || "❌ 챕터 대본 생성 중 오류가 발생했습니다.");
+      // 생성 실패 시 상태 복원
+      setNewPlan(prev => {
+        if (!prev || !prev.chapters) return prev;
+        const updatedChapters = [...prev.chapters];
+        updatedChapters[chapterIndex] = {
+          ...updatedChapters[chapterIndex],
+          isGenerating: false,
+        };
+        return { ...prev, chapters: updatedChapters };
+      });
+    }
+  }, [apiKey, newPlan, newKeyword, selectedCategory]);
 
   // --- Text Formatting Helpers for Download ---
   const formatKeywordsToText = (keywords: string[]): string =>
@@ -1661,6 +1744,152 @@ const App: React.FC = () => {
 
                 <AdSense />
 
+                {/* 챕터 기반 대본 (30분 이상 영상) */}
+                {newPlan.chapters && newPlan.characters && (
+                  <ResultCard
+                    title="6. 챕터별 개요 및 대본 생성"
+                  >
+                    <div className="space-y-6">
+                      <div>
+                        <h3 className="text-lg font-semibold text-red-500 mb-3">
+                          등장인물
+                        </h3>
+                        <div className="flex flex-wrap gap-2 p-4 bg-zinc-900 rounded-lg border border-[#2A2A2A]">
+                          {newPlan.characters.map((character, index) => (
+                            <span
+                              key={index}
+                              className={`font-medium px-3 py-1 rounded-full text-sm ${characterColorMap
+                                .get(character)
+                                ?.replace(
+                                  "text-",
+                                  "bg-"
+                                )}/20 ${characterColorMap.get(character)}`}
+                            >
+                              {character}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <h3 className="text-lg font-semibold text-red-500 mb-3">
+                          챕터별 구성
+                        </h3>
+                        <p className="text-sm text-neutral-400 mb-4">
+                          각 챕터의 '대본 생성' 버튼을 클릭하여 상세 대본을 생성하세요.
+                        </p>
+                        <div className="space-y-4">
+                          {newPlan.chapters.map((chapter, index) => (
+                            <div
+                              key={chapter.id}
+                              className="p-6 bg-zinc-900 rounded-lg border border-[#2A2A2A]"
+                            >
+                              <div className="flex items-start justify-between mb-3">
+                                <div className="flex-grow">
+                                  <h4 className="text-xl font-bold text-white mb-1">
+                                    챕터 {index + 1}: {chapter.title}
+                                  </h4>
+                                  <p className="text-sm text-purple-400 mb-2">
+                                    예상 소요 시간: {chapter.estimatedDuration}
+                                  </p>
+                                  <p className="text-neutral-300 whitespace-pre-wrap">
+                                    {chapter.purpose}
+                                  </p>
+                                </div>
+                                <div className="ml-4 flex-shrink-0">
+                                  {!chapter.script && !chapter.isGenerating && (
+                                    <button
+                                      onClick={() => handleGenerateChapterScript(chapter.id)}
+                                      className="px-4 py-2 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg"
+                                    >
+                                      대본 생성
+                                    </button>
+                                  )}
+                                  {chapter.isGenerating && (
+                                    <div className="flex items-center gap-2 px-4 py-2 bg-zinc-800 text-neutral-400 rounded-lg">
+                                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                                      <span>생성 중...</span>
+                                    </div>
+                                  )}
+                                  {chapter.script && !chapter.isGenerating && (
+                                    <div className="flex items-center gap-2 px-4 py-2 bg-green-900/30 text-green-400 rounded-lg border border-green-500/50">
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-5 w-5"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                      >
+                                        <path
+                                          fillRule="evenodd"
+                                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                          clipRule="evenodd"
+                                        />
+                                      </svg>
+                                      <span>생성 완료</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* 생성된 대본 표시 */}
+                              {chapter.script && (
+                                <div className="mt-4 pt-4 border-t border-zinc-700">
+                                  <h5 className="text-lg font-semibold text-cyan-400 mb-3">
+                                    대본 내용
+                                  </h5>
+                                  <div className="space-y-4 max-h-[400px] overflow-y-auto p-4 bg-black/30 rounded-lg">
+                                    {chapter.script.map((item, scriptIndex) => (
+                                      <div key={scriptIndex}>
+                                        <div className="flex items-start gap-4">
+                                          <div className="w-28 flex-shrink-0 pt-1">
+                                            <span
+                                              className={`font-bold text-sm ${
+                                                characterColorMap.get(item.character) ||
+                                                "text-red-500"
+                                              }`}
+                                            >
+                                              {item.character}
+                                            </span>
+                                            {item.timestamp && (
+                                              <div className="text-xs text-neutral-500 font-mono mt-1">
+                                                [{item.timestamp}]
+                                              </div>
+                                            )}
+                                          </div>
+                                          <div className="flex-grow text-white whitespace-pre-wrap">
+                                            {item.line
+                                              .replace(/\*\*/g, "")
+                                              .replace(/\*/g, "")
+                                              .replace(/\_\_/g, "")
+                                              .replace(/\_/g, "")}
+                                          </div>
+                                        </div>
+                                        {item.imagePrompt && (
+                                          <div className="mt-3 ml-[128px] p-3 rounded-md border bg-zinc-950 border-zinc-700/50">
+                                            <p className="text-xs font-semibold text-neutral-400 mb-1">
+                                              🎨 이미지 생성 프롬프트
+                                            </p>
+                                            <p className="text-sm text-neutral-300 font-mono">
+                                              {item.imagePrompt}
+                                            </p>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </ResultCard>
+                )}
+
+                <AdSense />
+
+                {/* 일반 대본 (짧은 영상) */}
                 {newPlan.scriptWithCharacters && newPlan.characters && (
                   <ResultCard
                     title="6. 생성된 대본"
