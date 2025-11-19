@@ -159,11 +159,42 @@ const App: React.FC = () => {
   const [userIdeaKeyword, setUserIdeaKeyword] = useState<string>("");
   const [appliedIdeaKeyword, setAppliedIdeaKeyword] = useState<string>("");
 
-  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(
-    null
-  );
-  const [newPlan, setNewPlan] = useState<NewPlan | null>(null);
-  const [suggestedIdeas, setSuggestedIdeas] = useState<string[]>([]);
+  // localStorage에서 저장된 데이터 복원
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(() => {
+    const saved = localStorage.getItem("analysisResult");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Failed to restore analysis result:", e);
+      }
+    }
+    return null;
+  });
+  
+  const [newPlan, setNewPlan] = useState<NewPlan | null>(() => {
+    const saved = localStorage.getItem("newPlan");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Failed to restore new plan:", e);
+      }
+    }
+    return null;
+  });
+  
+  const [suggestedIdeas, setSuggestedIdeas] = useState<string[]>(() => {
+    const saved = localStorage.getItem("suggestedIdeas");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Failed to restore suggested ideas:", e);
+      }
+    }
+    return [];
+  });
 
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
@@ -240,41 +271,50 @@ const App: React.FC = () => {
   // 분석 결과 저장 (localStorage)
   useEffect(() => {
     if (analysisResult) {
-      localStorage.setItem(
-        "lastAnalysisResult",
-        JSON.stringify(analysisResult)
-      );
+      localStorage.setItem("analysisResult", JSON.stringify(analysisResult));
       localStorage.setItem("lastAnalysisTimestamp", Date.now().toString());
     }
   }, [analysisResult]);
 
+  // 생성된 기획안 저장 (localStorage)
   useEffect(() => {
     if (newPlan) {
-      localStorage.setItem("lastNewPlan", JSON.stringify(newPlan));
-      localStorage.setItem("lastNewPlanTimestamp", Date.now().toString());
+      localStorage.setItem("newPlan", JSON.stringify(newPlan));
+      localStorage.setItem("lastPlanTimestamp", Date.now().toString());
     }
   }, [newPlan]);
 
+  // 추천 아이디어 저장 (localStorage)
   useEffect(() => {
     if (suggestedIdeas.length > 0) {
-      localStorage.setItem(
-        "lastSuggestedIdeas",
-        JSON.stringify(suggestedIdeas)
-      );
+      localStorage.setItem("suggestedIdeas", JSON.stringify(suggestedIdeas));
     }
   }, [suggestedIdeas]);
 
+  // 트랜스크립트 저장
   useEffect(() => {
     if (transcript) {
       localStorage.setItem("lastTranscript", transcript);
     }
   }, [transcript]);
 
+  // YouTube URL 저장
   useEffect(() => {
     if (youtubeUrl) {
       localStorage.setItem("lastYoutubeUrl", youtubeUrl);
     }
   }, [youtubeUrl]);
+
+  // 등장인물 색상 복원
+  useEffect(() => {
+    if (newPlan && newPlan.characters) {
+      const colorMap = new Map<string, string>();
+      newPlan.characters.forEach((char, idx) => {
+        colorMap.set(char, characterColors[idx % characterColors.length]);
+      });
+      setCharacterColorMap(colorMap);
+    }
+  }, [newPlan]);
 
   useEffect(() => {
     if (newKeyword) {
@@ -726,6 +766,36 @@ const App: React.FC = () => {
     }
   };
 
+  // 저장된 데이터 초기화
+  const handleClearData = () => {
+    const confirmed = window.confirm(
+      "저장된 모든 데이터를 삭제하시겠습니까?\n(분석 결과, 기획안, 추천 아이디어 등)"
+    );
+    if (confirmed) {
+      localStorage.removeItem("analysisResult");
+      localStorage.removeItem("newPlan");
+      localStorage.removeItem("suggestedIdeas");
+      localStorage.removeItem("lastAnalysisTimestamp");
+      localStorage.removeItem("lastPlanTimestamp");
+      localStorage.removeItem("lastTranscript");
+      localStorage.removeItem("lastYoutubeUrl");
+      localStorage.removeItem("lastNewKeyword");
+      localStorage.removeItem("lastAnalysisResult");
+      localStorage.removeItem("lastNewPlan");
+      localStorage.removeItem("lastSuggestedIdeas");
+      localStorage.removeItem("lastNewPlanTimestamp");
+      
+      setAnalysisResult(null);
+      setNewPlan(null);
+      setSuggestedIdeas([]);
+      setTranscript("");
+      setYoutubeUrl("");
+      setNewKeyword("");
+      
+      alert("✅ 모든 데이터가 삭제되었습니다.");
+    }
+  };
+
   const handleAnalyze = useCallback(async () => {
     if (!apiKey) {
       setShowApiKeyModal(true);
@@ -1129,6 +1199,16 @@ const App: React.FC = () => {
                   title="API 키 삭제"
                 >
                   <FiTrash2 size={16} />
+                </button>
+              )}
+              {(analysisResult || newPlan || suggestedIdeas.length > 0) && (
+                <button
+                  onClick={handleClearData}
+                  className="flex items-center gap-2 px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg transition-colors shadow-lg text-sm font-medium"
+                  title="저장된 분석 결과 및 기획안 삭제"
+                >
+                  <FiTrash2 size={14} />
+                  <span>데이터 초기화</span>
                 </button>
               )}
             </div>
