@@ -61,8 +61,8 @@ export const generateChapterOutline = async (
     const chapterDuration = isDetailedPrompt ? 5 : 7.5;
     let targetChapters = Math.ceil(totalMinutes / chapterDuration);
     
-    // 최소 4챕터, 최대 20챕터로 제한
-    targetChapters = Math.max(4, Math.min(20, targetChapters));
+    // 최소 4챕터로 제한 (최대 제한 없음)
+    targetChapters = Math.max(4, targetChapters);
 
     const chapterSchema = {
       type: Type.OBJECT,
