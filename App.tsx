@@ -848,11 +848,14 @@ const App: React.FC = () => {
     setNewPlan(null);
 
     try {
-      // 1시간 영상은 챕터 기반으로 생성 (챕터 개요만 먼저 제공)
-      const isOneHourVideo = customLength.includes('1시간') || customLength.includes('60분');
+      // 8분 영상: 한 번에 생성 (약 1,400 토큰)
+      // 30분/1시간 영상: 챕터 시스템 사용 (토큰 제한 회피)
+      const needsChapterSystem = customLength.includes('30분') || 
+                                 customLength.includes('1시간') || 
+                                 customLength.includes('60분');
       
-      if (isOneHourVideo) {
-        // 챕터 개요만 생성 (대본은 사용자가 버튼 클릭 시 생성)
+      if (needsChapterSystem) {
+        // 챕터 개요만 생성 (대본은 사용자가 순차적으로 생성)
         const chapterOutline = await generateChapterOutline(
           analysisResult,
           newKeyword,
@@ -868,7 +871,7 @@ const App: React.FC = () => {
           chapters: chapterOutline.chapters,
         });
       } else {
-        // 1시간 미만 영상은 기존 방식대로 한 번에 생성
+        // 8분 영상은 한 번에 생성 (챕터 시스템 불필요)
         const result = await generateNewPlan(
           analysisResult,
           newKeyword,

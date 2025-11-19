@@ -23,16 +23,15 @@ export const generateChapterOutline = async (
     const isYadamChannel = category === "야담";
     const isGukppongChannel = category === "국뽕";
 
-    // 목표 영상 길이에 따른 챕터 수 결정 (1~20개)
-    let targetChapters = 5;
+    // 목표 영상 길이에 따른 챕터 수 결정
+    // 토큰 제한: Gemini API 출력 약 8,192 토큰 (한국어 대본 약 1분당 150-200 토큰)
+    let targetChapters = 4;
     if (length.includes('1시간') || length.includes('60분')) {
-      targetChapters = 10; // 1시간 = 10챕터 (각 6분)
+      targetChapters = 8; // 1시간 = 8챕터 (각 7-8분, 약 1,200 토큰)
     } else if (length.includes('30분')) {
-      targetChapters = 5; // 30분 = 5챕터 (각 6분)
-    } else if (length.includes('8분')) {
-      targetChapters = 3; // 8분 = 3챕터
+      targetChapters = 4; // 30분 = 4챕터 (각 7-8분, 약 1,200 토큰)
     }
-    // 최대 20챕터까지 가능
+    // 8분 영상은 한 번에 생성 가능 (약 1,400 토큰)하므로 챕터 시스템 불필요
 
     const chapterSchema = {
       type: Type.OBJECT,
