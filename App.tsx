@@ -1744,23 +1744,24 @@ const App: React.FC = () => {
 
                 <AdSense />
 
-                {/* 챕터 기반 대본 (30분 이상 영상) */}
+                {/* 챕터 기반 대본 (1시간 영상) */}
                 {newPlan.chapters && newPlan.characters && (
                   <ResultCard
-                    title="6. 챕터별 개요 및 대본 생성"
+                    title="6. 생성된 대본"
                     contentToCopy=""
                     downloadFileName="chapter-scripts"
                   >
-                    <div className="space-y-6">
+                    <div className="space-y-8">
+                      {/* 1. 등장인물 */}
                       <div>
-                        <h3 className="text-lg font-semibold text-red-500 mb-3">
+                        <h3 className="text-2xl font-bold text-red-500 mb-4">
                           등장인물
                         </h3>
-                        <div className="flex flex-wrap gap-2 p-4 bg-zinc-900 rounded-lg border border-[#2A2A2A]">
+                        <div className="flex flex-wrap gap-3 p-5 bg-zinc-900 rounded-lg border border-[#2A2A2A]">
                           {newPlan.characters.map((character, index) => (
                             <span
                               key={index}
-                              className={`font-medium px-3 py-1 rounded-full text-sm ${characterColorMap
+                              className={`font-semibold px-4 py-2 rounded-full text-sm ${characterColorMap
                                 .get(character)
                                 ?.replace(
                                   "text-",
@@ -1773,83 +1774,109 @@ const App: React.FC = () => {
                         </div>
                       </div>
 
+                      {/* 2. 각 챕터별 */}
                       <div>
-                        <h3 className="text-lg font-semibold text-red-500 mb-3">
-                          챕터별 구성
+                        <h3 className="text-2xl font-bold text-red-500 mb-4">
+                          각 챕터별
                         </h3>
-                        <p className="text-sm text-neutral-400 mb-4">
-                          각 챕터의 '대본 생성' 버튼을 클릭하여 상세 대본을 생성하세요.
-                        </p>
-                        <div className="space-y-4">
-                          {newPlan.chapters.map((chapter, index) => (
-                            <div
-                              key={chapter.id}
-                              className="p-6 bg-zinc-900 rounded-lg border border-[#2A2A2A]"
-                            >
-                              <div className="flex items-start justify-between mb-3">
-                                <div className="flex-grow">
-                                  <h4 className="text-xl font-bold text-white mb-1">
-                                    챕터 {index + 1}: {chapter.title}
-                                  </h4>
-                                  <p className="text-sm text-purple-400 mb-2">
-                                    예상 소요 시간: {chapter.estimatedDuration}
-                                  </p>
-                                  <p className="text-neutral-300 whitespace-pre-wrap">
-                                    {chapter.purpose}
-                                  </p>
-                                </div>
-                                <div className="ml-4 flex-shrink-0">
-                                  {!chapter.script && !chapter.isGenerating && (
-                                    <button
-                                      onClick={() => handleGenerateChapterScript(chapter.id)}
-                                      className="px-4 py-2 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg"
-                                    >
-                                      대본 생성
-                                    </button>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
+                          {newPlan.chapters.map((chapter, index) => {
+                            const prevChapter = index > 0 ? newPlan.chapters[index - 1] : null;
+                            const canGenerate = index === 0 || (prevChapter && prevChapter.script);
+                            
+                            return (
+                              <button
+                                key={chapter.id}
+                                onClick={() => {
+                                  if (canGenerate && !chapter.script && !chapter.isGenerating) {
+                                    handleGenerateChapterScript(chapter.id);
+                                  }
+                                }}
+                                disabled={!canGenerate || chapter.isGenerating}
+                                className={`p-4 rounded-lg border-2 transition-all text-left ${
+                                  chapter.script
+                                    ? 'bg-green-900/20 border-green-500/50 cursor-default'
+                                    : chapter.isGenerating
+                                    ? 'bg-blue-900/20 border-blue-500/50 cursor-wait'
+                                    : canGenerate
+                                    ? 'bg-zinc-900 border-zinc-700 hover:border-blue-500 cursor-pointer'
+                                    : 'bg-zinc-900/50 border-zinc-800 cursor-not-allowed opacity-50'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-lg font-bold text-white">
+                                    {index + 1}
+                                  </span>
+                                  {chapter.script && (
+                                    <svg className="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
                                   )}
                                   {chapter.isGenerating && (
-                                    <div className="flex items-center gap-2 px-4 py-2 bg-zinc-800 text-neutral-400 rounded-lg">
-                                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-                                      <span>생성 중...</span>
-                                    </div>
-                                  )}
-                                  {chapter.script && !chapter.isGenerating && (
-                                    <div className="flex items-center gap-2 px-4 py-2 bg-green-900/30 text-green-400 rounded-lg border border-green-500/50">
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-5 w-5"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                      >
-                                        <path
-                                          fillRule="evenodd"
-                                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                          clipRule="evenodd"
-                                        />
-                                      </svg>
-                                      <span>생성 완료</span>
-                                    </div>
+                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
                                   )}
                                 </div>
-                              </div>
+                                <p className="text-sm text-neutral-300 line-clamp-2">
+                                  {chapter.title}
+                                </p>
+                              </button>
+                            );
+                          })}
+                        </div>
 
-                              {/* 생성된 대본 표시 */}
-                              {chapter.script && (
-                                <div className="mt-4 pt-4 border-t border-zinc-700">
-                                  <h5 className="text-lg font-semibold text-cyan-400 mb-3">
-                                    대본 내용
-                                  </h5>
-                                  <div className="space-y-4 max-h-[400px] overflow-y-auto p-4 bg-black/30 rounded-lg">
+                        {/* 선택된 챕터 상세 정보 */}
+                        <div className="space-y-4">
+                          {newPlan.chapters.map((chapter, index) => {
+                            if (!chapter.script) return null;
+                            
+                            return (
+                              <div key={chapter.id} className="p-6 bg-zinc-900 rounded-lg border border-[#2A2A2A]">
+                                <div className="flex items-start justify-between mb-4">
+                                  <div>
+                                    <h4 className="text-xl font-bold text-white mb-1">
+                                      챕터 {index + 1}: {chapter.title}
+                                    </h4>
+                                    <p className="text-sm text-purple-400">
+                                      예상 소요 시간: {chapter.estimatedDuration}
+                                    </p>
+                                  </div>
+                                  <div className="flex items-center gap-2 px-3 py-1 bg-green-900/30 text-green-400 rounded-full border border-green-500/50 text-sm">
+                                    <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
+                                    생성 완료
+                                  </div>
+                                </div>
+                                <p className="text-neutral-300 mb-4 whitespace-pre-wrap">
+                                  {chapter.purpose}
+                                </p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* 3. 대본 내용 - 생성된 챕터만 표시 */}
+                      {newPlan.chapters.some(ch => ch.script) && (
+                        <div>
+                          <h3 className="text-2xl font-bold text-red-500 mb-4">
+                            대본 내용
+                          </h3>
+                          <div className="space-y-6">
+                            {newPlan.chapters.map((chapter, index) => {
+                              if (!chapter.script) return null;
+                              
+                              return (
+                                <div key={chapter.id} className="p-6 bg-zinc-900 rounded-lg border border-[#2A2A2A]">
+                                  <h4 className="text-lg font-bold text-cyan-400 mb-4">
+                                    챕터 {index + 1}: {chapter.title}
+                                  </h4>
+                                  <div className="space-y-4 max-h-[500px] overflow-y-auto p-4 bg-black/30 rounded-lg">
                                     {chapter.script.map((item, scriptIndex) => (
                                       <div key={scriptIndex}>
                                         <div className="flex items-start gap-4">
                                           <div className="w-28 flex-shrink-0 pt-1">
-                                            <span
-                                              className={`font-bold text-sm ${
-                                                characterColorMap.get(item.character) ||
-                                                "text-red-500"
-                                              }`}
-                                            >
+                                            <span className={`font-bold text-sm ${characterColorMap.get(item.character) || "text-red-500"}`}>
                                               {item.character}
                                             </span>
                                             {item.timestamp && (
@@ -1859,11 +1886,7 @@ const App: React.FC = () => {
                                             )}
                                           </div>
                                           <div className="flex-grow text-white whitespace-pre-wrap">
-                                            {item.line
-                                              .replace(/\*\*/g, "")
-                                              .replace(/\*/g, "")
-                                              .replace(/\_\_/g, "")
-                                              .replace(/\_/g, "")}
+                                            {item.line.replace(/\*\*/g, "").replace(/\*/g, "").replace(/\_\_/g, "").replace(/\_/g, "")}
                                           </div>
                                         </div>
                                         {item.imagePrompt && (
@@ -1879,12 +1902,27 @@ const App: React.FC = () => {
                                       </div>
                                     ))}
                                   </div>
+                                  
+                                  {/* 다음 챕터 생성 버튼 */}
+                                  {index < newPlan.chapters.length - 1 && !newPlan.chapters[index + 1].script && !newPlan.chapters[index + 1].isGenerating && (
+                                    <div className="mt-4 pt-4 border-t border-zinc-700">
+                                      <button
+                                        onClick={() => handleGenerateChapterScript(newPlan.chapters[index + 1].id)}
+                                        className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg flex items-center justify-center gap-2"
+                                      >
+                                        <span>챕터 {index + 2} 대본 생성하기</span>
+                                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
+                                      </button>
+                                    </div>
+                                  )}
                                 </div>
-                              )}
-                            </div>
-                          ))}
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </ResultCard>
                 )}

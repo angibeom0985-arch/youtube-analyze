@@ -23,15 +23,16 @@ export const generateChapterOutline = async (
     const isYadamChannel = category === "야담";
     const isGukppongChannel = category === "국뽕";
 
-    // 목표 영상 길이에 따른 챕터 수 결정
+    // 목표 영상 길이에 따른 챕터 수 결정 (1~20개)
     let targetChapters = 5;
     if (length.includes('1시간') || length.includes('60분')) {
-      targetChapters = 8; // 1시간 = 8챕터 (각 7-8분)
+      targetChapters = 10; // 1시간 = 10챕터 (각 6분)
     } else if (length.includes('30분')) {
       targetChapters = 5; // 30분 = 5챕터 (각 6분)
     } else if (length.includes('8분')) {
       targetChapters = 3; // 8분 = 3챕터
     }
+    // 최대 20챕터까지 가능
 
     const chapterSchema = {
       type: Type.OBJECT,
