@@ -1748,6 +1748,8 @@ const App: React.FC = () => {
                 {newPlan.chapters && newPlan.characters && (
                   <ResultCard
                     title="6. 챕터별 개요 및 대본 생성"
+                    contentToCopy=""
+                    downloadFileName="chapter-scripts"
                   >
                     <div className="space-y-6">
                       <div>
