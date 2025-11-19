@@ -12,7 +12,8 @@ export const generateChapterOutline = async (
   length: string,
   category: string,
   apiKey: string,
-  vlogType?: string
+  vlogType?: string,
+  imagePromptLevel?: string  // "적은 버전" | "많은 버전"
 ): Promise<{ chapters: Chapter[]; characters: string[]; newIntent: StructuredContent[] }> => {
   try {
     const ai = createAI(apiKey);
@@ -25,11 +26,14 @@ export const generateChapterOutline = async (
 
     // 목표 영상 길이에 따른 챕터 수 결정
     // 토큰 제한: Gemini API 출력 약 8,192 토큰 (한국어 대본 약 1분당 150-200 토큰)
+    // 이미지 프롬프트가 많으면 토큰 소비량 증가 → 챕터 수 증가 필요
     let targetChapters = 4;
+    const isDetailedPrompt = imagePromptLevel === "많은 버전";
+    
     if (length.includes('1시간') || length.includes('60분')) {
-      targetChapters = 8; // 1시간 = 8챕터 (각 7-8분, 약 1,200 토큰)
+      targetChapters = isDetailedPrompt ? 12 : 8; // 많은 버전: 12챕터 (각 5분), 적은 버전: 8챕터 (각 7.5분)
     } else if (length.includes('30분')) {
-      targetChapters = 4; // 30분 = 4챕터 (각 7-8분, 약 1,200 토큰)
+      targetChapters = isDetailedPrompt ? 6 : 4;  // 많은 버전: 6챕터 (각 5분), 적은 버전: 4챕터 (각 7.5분)
     }
     // 8분 영상은 한 번에 생성 가능 (약 1,400 토큰)하므로 챕터 시스템 불필요
 
@@ -138,10 +142,13 @@ export const generateChapterScript = async (
   newKeyword: string,
   category: string,
   apiKey: string,
-  allChapters: Chapter[]
+  allChapters: Chapter[],
+  imagePromptLevel?: string  // "적은 버전" | "많은 버전"
 ): Promise<ScriptLine[]> => {
   try {
     const ai = createAI(apiKey);
+
+    const isDetailedPrompt = imagePromptLevel === "많은 버전";
 
     const scriptSchema = {
       type: Type.OBJECT,
@@ -178,6 +185,14 @@ export const generateChapterScript = async (
 
     const isStoryChannel = category === "썰 채널" || category === "북한 이슈" || category === "49금" || category === "야담" || category === "국뽕";
 
+    const imagePromptGuideline = isDetailedPrompt
+      ? `5. **이미지 프롬프트 (상세 버전)**: 각 장면을 매우 상세하게 표현할 수 있는 영어 프롬프트를 작성하세요
+   - 배경, 조명, 색감, 분위기, 카메라 앵글 등을 구체적으로 명시
+   - 예: "A man standing in front of a dimly lit art gallery at night, soft ambient lighting reflecting in his eyes, cinematic composition, wide angle shot, mysterious atmosphere"`
+      : `5. **이미지 프롬프트 (간단 버전)**: 각 장면의 핵심 요소만 포함한 간결한 영어 프롬프트를 작성하세요
+   - 주요 인물, 장소, 행동만 명시
+   - 예: "A man in an art gallery at night"`;
+
     const prompt = `"${newKeyword}" 주제의 다음 챕터에 대한 상세 대본을 작성해주세요:
 
 **현재 챕터 정보:**
@@ -197,7 +212,7 @@ ${nextChaptersSummary ? `**다음 챕터 예정:**\n${nextChaptersSummary}\n` : 
 2. **흐름**: 이전 챕터와 자연스럽게 연결되고, 다음 챕터로 이어지도록 구성하세요
 3. **등장인물**: 지정된 등장인물만 사용하세요
 4. **타임스탬프**: 각 대사의 예상 시점을 MM:SS 형식으로 정확히 계산하세요
-5. **이미지 프롬프트**: 각 장면을 시각적으로 표현할 수 있는 상세한 영어 프롬프트를 작성하세요
+${imagePromptGuideline}
 
 ${isStoryChannel ? `
 **스토리 요소:**

@@ -181,6 +181,7 @@ const App: React.FC = () => {
   const [contentType, setContentType] = useState<string>("롱폼");
   const [lengthMode, setLengthMode] = useState<string>("8분");
   const [customLength, setCustomLength] = useState<string>("8분");
+  const [imagePromptLevel, setImagePromptLevel] = useState<string>("적은 버전"); // "적은 버전" | "많은 버전"
 
   const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
   const [characterColorMap, setCharacterColorMap] = useState(
@@ -862,7 +863,8 @@ const App: React.FC = () => {
           customLength,
           selectedCategory,
           apiKey,
-          selectedCategory === "브이로그" ? selectedVlogType : undefined
+          selectedCategory === "브이로그" ? selectedVlogType : undefined,
+          imagePromptLevel
         );
         
         setNewPlan({
@@ -917,7 +919,8 @@ const App: React.FC = () => {
         newKeyword,
         selectedCategory,
         apiKey,
-        newPlan.chapters
+        newPlan.chapters,
+        imagePromptLevel
       );
 
       // 생성된 대본 저장
@@ -988,6 +991,41 @@ const App: React.FC = () => {
     script: { character: string; line: string }[]
   ): string => {
     return script.map((item) => `${item.character}: ${item.line}`).join("\n");
+  };
+
+  // 챕터별 대본 다운로드 포맷
+  const formatChapterScriptToText = (
+    chapter: { title: string; script?: { character: string; line: string; timestamp?: string }[] }
+  ): string => {
+    if (!chapter.script) return "";
+    
+    let text = `${chapter.title}\n${"=".repeat(50)}\n\n`;
+    chapter.script.forEach((item) => {
+      if (item.timestamp) {
+        text += `[${item.timestamp}] ${item.character}: ${item.line}\n\n`;
+      } else {
+        text += `${item.character}: ${item.line}\n\n`;
+      }
+    });
+    return text;
+  };
+
+  // 전체 챕터 대본 다운로드 포맷
+  const formatAllChaptersToText = (chapters: any[]): string => {
+    return chapters
+      .filter((chapter) => chapter.script)
+      .map((chapter, index) => {
+        let text = `챕터 ${index + 1}: ${chapter.title}\n${"=".repeat(50)}\n\n`;
+        chapter.script.forEach((item: any) => {
+          if (item.timestamp) {
+            text += `[${item.timestamp}] ${item.character}: ${item.line}\n\n`;
+          } else {
+            text += `${item.character}: ${item.line}\n\n`;
+          }
+        });
+        return text;
+      })
+      .join("\n\n" + "=".repeat(50) + "\n\n");
   };
 
   const ideasTitle =
@@ -1548,6 +1586,53 @@ const App: React.FC = () => {
                 </div>
               </div>
 
+              {/* 이미지 프롬프트 옵션 */}
+              <div>
+                <label className="block text-xl font-bold text-neutral-100 mb-3">
+                  이미지 생성 프롬프트
+                  <span className="ml-2 text-sm font-normal text-neutral-400">
+                    (대본 길이에 영향)
+                  </span>
+                </label>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setImagePromptLevel("적은 버전")}
+                    className={`flex-1 px-4 py-3 text-sm font-medium rounded-md transition-all duration-200 ${
+                      imagePromptLevel === "적은 버전"
+                        ? "bg-gradient-to-br from-[#D90000] to-[#FF2B2B] text-white shadow-[0_0_10px_rgba(255,43,43,0.5)]"
+                        : "bg-[#2A2A2A] hover:bg-zinc-700 text-neutral-200"
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div className="font-bold">적은 버전</div>
+                      <div className="text-xs mt-1 opacity-80">간단한 프롬프트, 대본 길이 우선</div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => setImagePromptLevel("많은 버전")}
+                    className={`flex-1 px-4 py-3 text-sm font-medium rounded-md transition-all duration-200 ${
+                      imagePromptLevel === "많은 버전"
+                        ? "bg-gradient-to-br from-[#D90000] to-[#FF2B2B] text-white shadow-[0_0_10px_rgba(255,43,43,0.5)]"
+                        : "bg-[#2A2A2A] hover:bg-zinc-700 text-neutral-200"
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div className="font-bold">많은 버전</div>
+                      <div className="text-xs mt-1 opacity-80">상세한 프롬프트, 챕터 수 증가</div>
+                    </div>
+                  </button>
+                </div>
+                {imagePromptLevel === "많은 버전" && (
+                  <div className="mt-3 p-3 bg-amber-900/20 border border-amber-500/30 rounded-lg">
+                    <p className="text-sm text-amber-400">
+                      💡 <strong>많은 버전</strong> 선택 시 이미지 프롬프트가 상세해져 토큰을 많이 사용합니다.
+                      <br />
+                      대본 길이를 확보하기 위해 챕터 수가 자동으로 증가합니다: <strong>30분 → 6챕터 / 1시간 → 12챕터</strong>
+                    </p>
+                  </div>
+                )}
+              </div>
+
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-xl font-bold text-neutral-100 mb-3">
@@ -1751,7 +1836,7 @@ const App: React.FC = () => {
                 {newPlan.chapters && newPlan.characters && (
                   <ResultCard
                     title="6. 생성된 대본"
-                    contentToCopy=""
+                    contentToCopy={formatAllChaptersToText(newPlan.chapters)}
                     downloadFileName="chapter-scripts"
                   >
                     <div className="space-y-8">
@@ -1904,6 +1989,28 @@ const App: React.FC = () => {
                                         )}
                                       </div>
                                     ))}
+                                  </div>
+                                  
+                                  {/* 챕터별 다운로드 버튼 */}
+                                  <div className="mt-4 pt-4 border-t border-zinc-700 flex gap-3">
+                                    <button
+                                      onClick={() => {
+                                        const text = formatChapterScriptToText(chapter);
+                                        const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+                                        const url = URL.createObjectURL(blob);
+                                        const a = document.createElement("a");
+                                        a.href = url;
+                                        a.download = `chapter-${index + 1}-script.txt`;
+                                        a.click();
+                                        URL.revokeObjectURL(url);
+                                      }}
+                                      className="flex-1 px-4 py-2.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg flex items-center justify-center gap-2"
+                                    >
+                                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                      </svg>
+                                      챕터 {index + 1} 대본 다운로드
+                                    </button>
                                   </div>
                                   
                                   {/* 다음 챕터 생성 버튼 */}
