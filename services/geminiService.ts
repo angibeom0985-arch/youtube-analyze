@@ -354,14 +354,29 @@ export const generateNewPlan = async (
     const isYadamChannel = category === "야담";
     const isMukbangChannel = category === "먹방";
     const isGukppongChannel = category === "국뽕";
+    const isNorthKoreaChannel = category === "북한 이슈";
     const schema =
-      isStoryChannel || is49Channel || isYadamChannel || isGukppongChannel
+      isStoryChannel || is49Channel || isYadamChannel || isGukppongChannel || isNorthKoreaChannel
         ? storyChannelNewPlanSchema
         : structuredOutlinePlanSchema;
 
     let contents;
+    
+    // 영상 길이에 따른 최소 대본 라인 수 계산
+    const getMinimumLines = (lengthStr: string): number => {
+      if (lengthStr.includes('1시간') || lengthStr.includes('60분')) return 200;
+      if (lengthStr.includes('30분')) return 100;
+      if (lengthStr.includes('8분')) return 30;
+      return 30;
+    };
+    
+    const minimumLines = getMinimumLines(length);
+    const lengthGuideline = length.includes('1시간') || length.includes('60분')
+      ? `\n\n**⚠️ 중요: 영상 길이 가이드 (${length})**\n- 최소 ${minimumLines}개 이상의 대사 라인을 생성해야 합니다\n- 1시간 = 약 18,000-21,000자 분량 (한국어 낭독 속도 기준)\n- 각 대사는 자연스러운 대화 길이로 작성하되, 전체 스토리가 ${length} 분량에 맞도록 충분히 상세하게 작성하세요\n- 장면 전환, 복선, 클라이맥스 등 스토리 요소를 풍부하게 포함하세요\n- 대사 사이의 자연스러운 간격과 감정 표현도 충분히 담아주세요`
+      : `\n\n**영상 길이 가이드 (${length})**: 최소 ${minimumLines}개 이상의 대사 라인을 생성하세요.`;
+    
     if (isStoryChannel) {
-      contents = `"${newKeyword}"를 주제로 한 완전히 새로운 스토리 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.
+      contents = `"${newKeyword}"를 주제로 한 완전히 새로운 스토리 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.${lengthGuideline}
 
 **절대 규칙:**
 - 아래 제공된 분석 자료의 **대본 구조(단계별 흐름)**만 참고하세요
@@ -411,7 +426,7 @@ ${analysisString}
 
       contents = `"${newKeyword}"를 주제로 한 "${
         vlogType || "일상"
-      }" 타입의 완전히 새로운 브이로그를 기획해주세요. 목표 영상 길이는 약 ${length}입니다.
+      }" 타입의 완전히 새로운 브이로그를 기획해주세요. 목표 영상 길이는 약 ${length}입니다.${lengthGuideline}
 
 **절대 규칙:**
 - 아래 제공된 분석 자료의 **대본 구조(단계별 흐름)**만 참고하세요
@@ -460,7 +475,7 @@ ${analysisString}
 
 위 구조의 흐름만 참고하여, "${newKeyword}"를 주제로 완전히 새로운 브이로그 장면과 대사를 창작해주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
     } else if (isMukbangChannel) {
-      contents = `"${newKeyword}" 음식으로 완전히 새로운 먹방 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.
+      contents = `"${newKeyword}" 음식으로 완전히 새로운 먹방 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.${lengthGuideline}
 
 **절대 규칙:**
 - 아래 제공된 분석 자료의 **대본 구조(단계별 흐름)**만 참고하세요
@@ -495,7 +510,7 @@ ${analysisString}
 
 위 구조의 흐름만 참고하여, "${newKeyword}"를 주제로 완전히 새로운 먹방 장면과 리액션을 창작해주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
     } else if (category === "쇼핑 리뷰") {
-      contents = `"${newKeyword}" 제품에 대한 완전히 새로운 리뷰 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.
+      contents = `"${newKeyword}" 제품에 대한 완전히 새로운 리뷰 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.${lengthGuideline}
 
 **절대 규칙:**
 - 아래 제공된 분석 자료의 **대본 구조(단계별 흐름)**만 참고하세요
@@ -516,7 +531,7 @@ ${analysisString}
 
 위 구조의 흐름만 참고하여, "${newKeyword}"를 주제로 완전히 새로운 리뷰 내용을 창작해주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
     } else if (category === "49금") {
-      contents = `성인 대상의 성숙한 연애/관계 이야기("${newKeyword}")를 다루는 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.
+      contents = `성인 대상의 성숙한 연애/관계 이야기("${newKeyword}")를 다루는 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.${lengthGuideline}
 
 **중요: 콘텐츠 가이드라인**
 - 선정적이거나 노골적인 표현은 절대 사용하지 마세요
@@ -598,7 +613,7 @@ ${analysisString}
 
 성공적인 동영상 분석 내용:\n\n${analysisString}\n\n이제 위 분석된 성공 구조를 따르되 새로운 키워드 "${newKeyword}"에 초점을 맞춘 완전히 새로운 조선시대 야담 이야기를 창작해주세요. 원본 대본의 내용이나 스토리를 사용하지 말고, 새로운 인물과 사건으로 구성된 독창적인 야담을 만들어주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
     } else if (isGukppongChannel) {
-      contents = `한국의 우수성과 세계 속에서의 위상을 주제로 한 국뽕 콘텐츠("${newKeyword}")를 기획해 주세요. 목표 영상 길이는 약 ${length}입니다.
+      contents = `한국의 우수성과 세계 속에서의 위상을 주제로 한 국뽕 콘텐츠("${newKeyword}")를 기획해 주세요. 목표 영상 길이는 약 ${length}입니다.${lengthGuideline}
 
 **중요: 국뽕 콘텐츠 가이드라인**
 
@@ -697,8 +712,72 @@ ${analysisString}
 ${analysisString}
 
 위 구조의 흐름만 참고하여, "${newKeyword}"를 주제로 완전히 새로운 국뽕 스토리와 대사를 창작해주세요. 원본 대본의 사례나 내용은 사용하지 마세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
+    } else if (isNorthKoreaChannel) {
+      contents = `북한 관련 이슈와 탈북민 이야기("${newKeyword}")를 다루는 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.${lengthGuideline}
+
+**절대 규칙:**
+- 아래 제공된 분석 자료의 **대본 구조(단계별 흐름)**만 참고하세요
+- 원본 영상의 등장인물, 상황, 배경, 대사는 절대 사용하지 마세요
+- "${newKeyword}"를 중심으로 완전히 새로운 인물, 상황, 스토리를 창작하세요
+
+**중요: 북한 이슈 콘텐츠 가이드라인**
+
+북한 이슈 콘텐츠는 북한의 실상과 탈북민의 경험담을 진지하면서도 흥미롭게 다루는 콘텐츠입니다.
+
+**핵심 테마:**
+1. **탈북민의 생생한 증언**
+   - 북한에서의 실제 생활 경험
+   - 탈북 과정의 위험과 역경
+   - 남한 적응기와 문화 충격
+   - 북한에 두고 온 가족에 대한 그리움
+
+2. **북한 사회의 실상**
+   - 북한의 일상생활과 문화
+   - 계급 제도와 사회 구조
+   - 북한 주민들의 실제 생활상
+   - 외부 세계에 대한 북한 주민의 인식
+
+3. **남북 비교와 문화 차이**
+   - 같은 언어, 다른 문화
+   - 생활 방식의 차이
+   - 가치관과 사고방식의 차이
+   - 통일에 대한 현실적 고민
+
+**스토리텔링 구조:**
+1. 후크: 충격적이거나 흥미로운 북한 관련 사실
+2. 배경: 탈북민의 북한 생활 소개
+3. 전개: 구체적인 경험담과 에피소드
+4. 절정: 가장 인상 깊거나 극적인 순간
+5. 마무리: 현재의 삶과 메시지
+
+**배역 구성:**
+- '탈북민', '인터뷰어', '친구', '가족' 등
+- 북한식 억양과 표현을 자연스럽게 반영
+- 감정선을 섬세하게 표현
+
+**주의사항:**
+- 북한 주민에 대한 존중과 이해 유지
+- 선정적이거나 자극적인 표현 지양
+- 팩트 기반의 정보 전달
+- 탈북민의 인권과 안전 고려
+- 통일과 화해의 메시지 포함
+
+각 대사마다 북한의 실상이나 탈북 과정을 시각적으로 표현하는 이미지 생성 프롬프트('imagePrompt')를 반드시 포함해야 합니다.
+
+**이미지 프롬프트 작성 가이드 - 북한 이슈 스타일**:
+- 핵심 키워드: documentary style, historical, somber mood, contrast between light and dark, emotional, realistic
+- 다큐멘터리 같은 진지하고 사실적인 분위기
+- 북한의 특징적 요소 반영 (건축물, 의상, 생활 모습 등)
+- 탈북 과정의 긴장감과 감정 표현
+- 예시: "documentary style photo of North Korean daily life, somber mood, historical atmosphere, realistic depiction, contrast lighting, emotional storytelling"
+
+**참고용 대본 구조 (구조만 차용, 내용은 절대 사용 금지):**
+
+${analysisString}
+
+위 구조의 단계별 흐름(예: 도입→전개→절정→결말)만 참고하여, "${newKeyword}"를 주제로 완전히 새로운 북한 이슈 스토리를 창작해주세요. 모든 결과 항목을 지정된 구조에 맞춰 JSON 형식으로 제공해주세요.`;
     } else {
-      contents = `"${newKeyword}" 주제에 대한 완전히 새로운 정보성 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.
+      contents = `"${newKeyword}" 주제에 대한 완전히 새로운 정보성 영상 기획안을 만들어 주세요. 목표 영상 길이는 약 ${length}입니다.${lengthGuideline}
 
 **절대 규칙:**
 - 아래 제공된 분석 자료의 **대본 구조(단계별 흐름)**만 참고하세요
