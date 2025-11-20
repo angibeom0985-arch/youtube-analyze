@@ -2308,7 +2308,7 @@ const App: React.FC = () => {
                       >
                         <div className="text-4xl mb-3">📹</div>
                         <div className="text-xl font-bold">숏폼/롱폼 영상 소스 무제한 생성</div>
-                        <p className="text-sm mt-2 opacity-90">프로페셔널 영상 편집과 효과를 위한 도구를 확인해보세요</p>
+                        <p className="text-sm mt-2 opacity-90">'딸깍' 한 번으로 영상에 필요한 이미지들을 마음껏 만들어보세요</p>
                       </a>
                       <a
                         href="https://aimusic.money-hotissue.com/"
@@ -2316,7 +2316,7 @@ const App: React.FC = () => {
                       >
                         <div className="text-4xl mb-3">🔥</div>
                         <div className="text-xl font-bold">AI 음악 가사+썸네일 1초 완성</div>
-                        <p className="text-sm mt-2 opacity-90">위에서 만든 대본을 토대로 AI 영상 1분 가능</p>
+                        <p className="text-sm mt-2 opacity-90">요즘 유행하는 플리 채널, 나도 만들어보기</p>
                       </a>
                     </div>
                   </div>
