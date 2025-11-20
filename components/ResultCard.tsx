@@ -31,14 +31,23 @@ const ResultCard: React.FC<ResultCardProps> = ({
     // 다운로드 실행 (약간의 지연 후)
     setTimeout(() => {
       let content = "";
+      let fileName = downloadFileName;
       
       // 다운로드 타입에 따라 content 결정
       if (options.downloadType === "script") {
         content = contentToCopy;
-      } else if (options.downloadType === "imagePrompts" && imagePrompts) {
-        content = imagePrompts;
+        fileName = `${downloadFileName}-script`;
+      } else if (options.downloadType === "imagePrompts") {
+        content = imagePrompts || "이미지 프롬프트가 없습니다.";
+        fileName = `${downloadFileName}-image-prompts`;
       } else if (options.downloadType === "both") {
-        content = contentToCopy + "\n\n" + "=".repeat(50) + "\n\n이미지 생성 프롬프트\n" + "=".repeat(50) + "\n\n" + (imagePrompts || "");
+        content = contentToCopy + "\n\n" + "=".repeat(50) + "\n\n이미지 생성 프롬프트\n" + "=".repeat(50) + "\n\n" + (imagePrompts || "이미지 프롬프트가 없습니다.");
+        fileName = `${downloadFileName}-complete`;
+      }
+      
+      // content가 비어있으면 기본값 사용
+      if (!content || content.trim() === "") {
+        content = contentToCopy || "내용이 없습니다.";
       }
       
       const now = new Date();
@@ -71,7 +80,7 @@ const ResultCard: React.FC<ResultCardProps> = ({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${downloadFileName}.${options.format}`;
+      a.download = `${fileName}.${options.format}`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

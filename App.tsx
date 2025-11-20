@@ -2121,6 +2121,10 @@ const App: React.FC = () => {
                                     <button
                                       onClick={() => {
                                         const text = formatChapterScriptToText(chapter);
+                                        if (!text || text.trim() === "") {
+                                          alert("다운로드할 대본이 없습니다.");
+                                          return;
+                                        }
                                         const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
                                         const url = URL.createObjectURL(blob);
                                         const a = document.createElement("a");
@@ -2134,7 +2138,38 @@ const App: React.FC = () => {
                                       <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                       </svg>
-                                      챕터 {index + 1} 대본 다운로드
+                                      📜 대본
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        if (!chapter.script) {
+                                          alert("다운로드할 내용이 없습니다.");
+                                          return;
+                                        }
+                                        let text = `챕터 ${index + 1}: ${chapter.title}\n${"=".repeat(50)}\n\n`;
+                                        chapter.script.forEach((item: any, idx: number) => {
+                                          if (item.imagePrompt) {
+                                            text += `[${idx + 1}] ${item.imagePrompt}\n\n`;
+                                          }
+                                        });
+                                        if (text.trim() === `챕터 ${index + 1}: ${chapter.title}\n${"=".repeat(50)}\n\n`) {
+                                          alert("이미지 프롬프트가 없습니다.");
+                                          return;
+                                        }
+                                        const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+                                        const url = URL.createObjectURL(blob);
+                                        const a = document.createElement("a");
+                                        a.href = url;
+                                        a.download = `chapter-${index + 1}-image-prompts.txt`;
+                                        a.click();
+                                        URL.revokeObjectURL(url);
+                                      }}
+                                      className="flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg flex items-center justify-center gap-2"
+                                    >
+                                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                      </svg>
+                                      🎨 이미지
                                     </button>
                                   </div>
                                   
