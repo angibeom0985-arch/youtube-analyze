@@ -1118,18 +1118,37 @@ const App: React.FC = () => {
 
   // 전체 챕터 이미지 프롬프트 다운로드 포맷
   const formatAllImagePromptsToText = (chapters: any[]): string => {
-    return chapters
-      .filter((chapter) => chapter.script)
+    if (!chapters || chapters.length === 0) {
+      return "챕터가 없습니다.";
+    }
+    
+    const chaptersWithScript = chapters.filter((chapter) => chapter.script);
+    
+    if (chaptersWithScript.length === 0) {
+      return "생성된 대본이 없습니다.";
+    }
+    
+    const result = chaptersWithScript
       .map((chapter, index) => {
         let text = `챕터 ${index + 1}: ${chapter.title}\n${"=".repeat(50)}\n\n`;
+        let hasPrompts = false;
+        
         chapter.script.forEach((item: any, idx: number) => {
-          if (item.imagePrompt) {
+          if (item.imagePrompt && item.imagePrompt.trim() !== "") {
             text += `[${idx + 1}] ${item.imagePrompt}\n\n`;
+            hasPrompts = true;
           }
         });
+        
+        if (!hasPrompts) {
+          text += "이미지 프롬프트가 없습니다.\n\n";
+        }
+        
         return text;
       })
       .join("\n\n" + "=".repeat(50) + "\n\n");
+      
+    return result || "이미지 프롬프트가 없습니다.";
   };
 
   const ideasTitle =
@@ -1962,7 +1981,11 @@ const App: React.FC = () => {
                     title="6. 생성된 대본"
                     contentToCopy={formatAllChaptersToText(newPlan.chapters)}
                     downloadFileName="chapter-scripts"
-                    imagePrompts={formatAllImagePromptsToText(newPlan.chapters)}
+                    imagePrompts={(() => {
+                      const prompts = formatAllImagePromptsToText(newPlan.chapters);
+                      console.log("ImagePrompts for download:", prompts);
+                      return prompts;
+                    })()}
                   >
                     <div className="space-y-8">
                       {/* 1. 등장인물 */}

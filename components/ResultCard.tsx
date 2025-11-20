@@ -40,14 +40,19 @@ const ResultCard: React.FC<ResultCardProps> = ({
       } else if (options.downloadType === "imagePrompts") {
         content = imagePrompts || "이미지 프롬프트가 없습니다.";
         fileName = `${downloadFileName}-image-prompts`;
+        console.log("Image prompts content:", content);
       } else if (options.downloadType === "both") {
         content = contentToCopy + "\n\n" + "=".repeat(50) + "\n\n이미지 생성 프롬프트\n" + "=".repeat(50) + "\n\n" + (imagePrompts || "이미지 프롬프트가 없습니다.");
         fileName = `${downloadFileName}-complete`;
+      } else {
+        // 기본값: 대본
+        content = contentToCopy;
       }
       
       // content가 비어있으면 기본값 사용
       if (!content || content.trim() === "") {
-        content = contentToCopy || "내용이 없습니다.";
+        content = "내용이 없습니다.";
+        console.warn("Download content is empty, using fallback");
       }
       
       const now = new Date();
