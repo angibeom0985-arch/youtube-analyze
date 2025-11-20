@@ -2208,8 +2208,6 @@ const App: React.FC = () => {
                   </ResultCard>
                 )}
 
-                <AdSense />
-
                 {/* 일반 대본 (짧은 영상) */}
                 {newPlan.scriptWithCharacters && newPlan.characters && (
                   <ResultCard
@@ -2288,8 +2286,6 @@ const App: React.FC = () => {
                     </div>
                   </ResultCard>
                 )}
-
-                <AdSense />
 
                 {/* 다른 사이트 소개 섹션 */}
                 {(newPlan.scriptWithCharacters || newPlan.chapters) && (
