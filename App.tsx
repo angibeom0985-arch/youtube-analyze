@@ -2295,10 +2295,7 @@ const App: React.FC = () => {
                         🎬 더 많은 영상 제작 도구가 필요하신가요?
                       </h3>
                       <p className="text-lg text-neutral-200">
-                        프로페셔널 영상 편집과 효과를 위한 도구들을 확인해보세요!
-                      </p>
-                      <p className="text-md text-purple-300 mt-2 font-semibold">
-                        위에서 만든 대본을 토대로 AI 영상 1분 가능
+                        나도 유튜브로 인생 대박나보자!!
                       </p>
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
