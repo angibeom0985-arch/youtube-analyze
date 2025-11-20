@@ -7,6 +7,7 @@ interface ResultCardProps {
   className?: string;
   contentToCopy: string;
   downloadFileName: string;
+  imagePrompts?: string; // 이미지 프롬프트 추가
 }
 
 const ResultCard: React.FC<ResultCardProps> = ({
@@ -15,6 +16,7 @@ const ResultCard: React.FC<ResultCardProps> = ({
   className,
   contentToCopy,
   downloadFileName,
+  imagePrompts,
 }) => {
   const [showDownloadModal, setShowDownloadModal] = useState(false);
 
@@ -28,7 +30,17 @@ const ResultCard: React.FC<ResultCardProps> = ({
 
     // 다운로드 실행 (약간의 지연 후)
     setTimeout(() => {
-      let content = contentToCopy;
+      let content = "";
+      
+      // 다운로드 타입에 따라 content 결정
+      if (options.downloadType === "script") {
+        content = contentToCopy;
+      } else if (options.downloadType === "imagePrompts" && imagePrompts) {
+        content = imagePrompts;
+      } else if (options.downloadType === "both") {
+        content = contentToCopy + "\n\n" + "=".repeat(50) + "\n\n이미지 생성 프롬프트\n" + "=".repeat(50) + "\n\n" + (imagePrompts || "");
+      }
+      
       const now = new Date();
       const timestamp = now.toLocaleString("ko-KR", {
         year: "numeric",

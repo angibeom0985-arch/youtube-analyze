@@ -11,6 +11,7 @@ export interface DownloadOptions {
   format: "txt" | "md" | "pdf";
   includeMetadata: boolean;
   includeTimestamp: boolean;
+  downloadType: "script" | "imagePrompts" | "both"; // 추가
 }
 
 const DownloadModal: React.FC<DownloadModalProps> = ({
@@ -22,6 +23,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   const [format, setFormat] = useState<"txt" | "md" | "pdf">("txt");
   const [includeMetadata, setIncludeMetadata] = useState(true);
   const [includeTimestamp, setIncludeTimestamp] = useState(true);
+  const [downloadType, setDownloadType] = useState<"script" | "imagePrompts" | "both">("script");
 
   if (!isOpen) return null;
 
@@ -30,6 +32,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
       format,
       includeMetadata,
       includeTimestamp,
+      downloadType,
     });
     onClose();
   };
@@ -72,6 +75,33 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
         <p className="text-sm text-neutral-400 mb-6">
           {title} 파일을 다운로드합니다
         </p>
+
+        {/* 파일 형식 선택 */}
+        <div className="mb-6">
+          <label className="block text-lg font-semibold text-white mb-3">
+            📁 다운로드 내용
+          </label>
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            {[
+              { value: "script", label: "대본만", icon: "📜" },
+              { value: "imagePrompts", label: "이미지 프롬프트", icon: "🎨" },
+              { value: "both", label: "둘 다", icon: "📦" },
+            ].map((option) => (
+              <button
+                key={option.value}
+                onClick={() => setDownloadType(option.value as "script" | "imagePrompts" | "both")}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  downloadType === option.value
+                    ? "bg-gradient-to-br from-[#D90000] to-[#FF2B2B] border-red-500 text-white shadow-[0_0_15px_rgba(255,43,43,0.5)]"
+                    : "bg-[#2A2A2A] border-[#3A3A3A] text-neutral-300 hover:border-red-500/50"
+                }`}
+              >
+                <div className="text-2xl mb-1">{option.icon}</div>
+                <div className="text-xs font-medium">{option.label}</div>
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* 파일 형식 선택 */}
         <div className="mb-6">

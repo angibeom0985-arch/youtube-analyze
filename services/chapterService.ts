@@ -57,12 +57,13 @@ export const generateChapterOutline = async (
     const totalMinutes = parseMinutes(length);
     const isDetailedPrompt = imagePromptLevel === "많은 버전";
     
-    // 챕터당 목표 시간: 적은 버전 7.5분, 많은 버전 5분
-    const chapterDuration = isDetailedPrompt ? 5 : 7.5;
+    // 챕터당 목표 시간: 대본 길이 2배 증가 → 챕터당 시간 절반으로 감소
+    // 적은 버전: 3.75분 (7.5분의 절반), 많은 버전: 2.5분 (5분의 절반)
+    const chapterDuration = isDetailedPrompt ? 2.5 : 3.75;
     let targetChapters = Math.ceil(totalMinutes / chapterDuration);
     
-    // 최소 4챕터로 제한 (최대 제한 없음)
-    targetChapters = Math.max(4, targetChapters);
+    // 최소 2챕터로 제한 (8분 영상도 챕터 2개)
+    targetChapters = Math.max(2, targetChapters);
 
     const chapterSchema = {
       type: Type.OBJECT,
@@ -233,9 +234,10 @@ ${previousChaptersSummary ? `**이전 챕터 요약:**\n${previousChaptersSummar
 ${nextChaptersSummary ? `**다음 챕터 예정:**\n${nextChaptersSummary}\n` : ''}
 
 **대본 작성 지침:**
-1. **분량**: 이 챕터의 예상 시간(${chapter.estimatedDuration})에 맞는 충분한 대사를 작성하세요
-   - 한국어 낭독 속도: 분당 약 300-350자 (약 5-6자/초)
-   - 대사 개수: 최소 ${Math.ceil(parseInt(chapter.estimatedDuration) * 4)}개 이상
+1. **분량 (중요!)**: 이 챕터의 예상 시간(${chapter.estimatedDuration})에 맞는 **풍부하고 상세한 대사**를 작성하세요
+   - 한국어 낭독 속도: 분당 약 600-700자 (기존의 2배)
+   - **대사 개수: 최소 ${Math.ceil(parseInt(chapter.estimatedDuration) * 8)}개 이상** (기존의 2배)
+   - 각 대사는 충분히 길고 상세하게 작성하여 시청자가 몰입할 수 있도록 구성하세요
 2. **흐름**: 이전 챕터와 자연스럽게 연결되고, 다음 챕터로 이어지도록 구성하세요
 3. **등장인물**: 지정된 등장인물만 사용하세요
 4. **타임스탬프**: 각 대사의 예상 시점을 MM:SS 형식으로 정확히 계산하세요

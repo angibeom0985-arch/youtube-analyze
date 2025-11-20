@@ -939,9 +939,9 @@ const App: React.FC = () => {
       
       const totalMinutes = parseMinutes(customLength);
       
-      // 8분 영상: 한 번에 생성 (약 1,400 토큰)
-      // 20분 이상 영상: 챕터 시스템 사용 (토큰 제한 회피)
-      const needsChapterSystem = totalMinutes >= 20;
+      // 모든 영상에 챕터 시스템 사용 (대본 길이 2배 증가로 인해)
+      // 8분 영상도 챕터 2개로 시작
+      const needsChapterSystem = true;
       
       if (needsChapterSystem) {
         // 챕터 개요만 생성 (대본은 사용자가 순차적으로 생성)
@@ -1109,6 +1109,22 @@ const App: React.FC = () => {
             text += `[${item.timestamp}] ${item.character}: ${item.line}\n\n`;
           } else {
             text += `${item.character}: ${item.line}\n\n`;
+          }
+        });
+        return text;
+      })
+      .join("\n\n" + "=".repeat(50) + "\n\n");
+  };
+
+  // 전체 챕터 이미지 프롬프트 다운로드 포맷
+  const formatAllImagePromptsToText = (chapters: any[]): string => {
+    return chapters
+      .filter((chapter) => chapter.script)
+      .map((chapter, index) => {
+        let text = `챕터 ${index + 1}: ${chapter.title}\n${"=".repeat(50)}\n\n`;
+        chapter.script.forEach((item: any, idx: number) => {
+          if (item.imagePrompt) {
+            text += `[${idx + 1}] ${item.imagePrompt}\n\n`;
           }
         });
         return text;
@@ -1946,6 +1962,7 @@ const App: React.FC = () => {
                     title="6. 생성된 대본"
                     contentToCopy={formatAllChaptersToText(newPlan.chapters)}
                     downloadFileName="chapter-scripts"
+                    imagePrompts={formatAllImagePromptsToText(newPlan.chapters)}
                   >
                     <div className="space-y-8">
                       {/* 1. 등장인물 */}
