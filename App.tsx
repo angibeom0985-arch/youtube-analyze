@@ -1961,6 +1961,8 @@ const App: React.FC = () => {
                   </div>
                 </ResultCard>
 
+                <AdSense />
+
                 {/* 챕터 기반 대본 (1시간 영상) */}
                 {newPlan.chapters && newPlan.characters && (
                   <ResultCard
