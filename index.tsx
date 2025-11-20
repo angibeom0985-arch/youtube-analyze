@@ -7,6 +7,7 @@ import GuidePage from './pages/GuidePage.tsx';
 import ApiGuidePage from './pages/ApiGuidePage.tsx';
 import AdminPage from './pages/AdminPage.tsx';
 import DownloadProgressPage from './pages/DownloadProgressPage.tsx';
+import DownloadPage from './pages/DownloadPage.tsx';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -23,6 +24,7 @@ root.render(
         <Route path="/api-guide" element={<ApiGuidePage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/download-progress" element={<DownloadProgressPage />} />
+        <Route path="/download" element={<DownloadPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
