@@ -212,7 +212,7 @@ const App: React.FC = () => {
   const [contentType, setContentType] = useState<string>("롱폼");
   const [lengthMode, setLengthMode] = useState<string>("8분");
   const [customLength, setCustomLength] = useState<string>("8분");
-  const [imagePromptLevel, setImagePromptLevel] = useState<string>("적은 버전"); // "적은 버전" | "많은 버전"
+  const [scriptStyle, setScriptStyle] = useState<string>("대화 버전"); // "대화 버전" | "나레이션 버전"
 
   const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
   const [characterColorMap, setCharacterColorMap] = useState(
@@ -952,7 +952,7 @@ const App: React.FC = () => {
           selectedCategory,
           apiKey,
           selectedCategory === "브이로그" ? selectedVlogType : undefined,
-          imagePromptLevel
+          scriptStyle
         );
         
         setNewPlan({
@@ -1008,7 +1008,7 @@ const App: React.FC = () => {
         selectedCategory,
         apiKey,
         newPlan.chapters,
-        imagePromptLevel
+        scriptStyle
       );
 
       // 생성된 대본 저장
@@ -1732,48 +1732,36 @@ const App: React.FC = () => {
               {/* 이미지 프롬프트 옵션 */}
               <div>
                 <label className="block text-xl font-bold text-neutral-100 mb-3">
-                  이미지 생성 프롬프트
-                  <span className="ml-2 text-sm font-normal text-neutral-400">
-                    (대본 길이에 영향)
-                  </span>
+                  대본 스타일
                 </label>
                 <div className="flex gap-3">
                   <button
-                    onClick={() => setImagePromptLevel("적은 버전")}
+                    onClick={() => setScriptStyle("대화 버전")}
                     className={`flex-1 px-4 py-3 text-sm font-medium rounded-md transition-all duration-200 ${
-                      imagePromptLevel === "적은 버전"
+                      scriptStyle === "대화 버전"
                         ? "bg-gradient-to-br from-[#D90000] to-[#FF2B2B] text-white shadow-[0_0_10px_rgba(255,43,43,0.5)]"
                         : "bg-[#2A2A2A] hover:bg-zinc-700 text-neutral-200"
                     }`}
                   >
                     <div className="text-center">
-                      <div className="font-bold">적은 버전</div>
-                      <div className="text-xs mt-1 opacity-80">간단한 프롬프트, 대본 길이 우선</div>
+                      <div className="font-bold">💬 대화 버전</div>
+                      <div className="text-xs mt-1 opacity-80">등장인물 간 대화 형식</div>
                     </div>
                   </button>
                   <button
-                    onClick={() => setImagePromptLevel("많은 버전")}
+                    onClick={() => setScriptStyle("나레이션 버전")}
                     className={`flex-1 px-4 py-3 text-sm font-medium rounded-md transition-all duration-200 ${
-                      imagePromptLevel === "많은 버전"
+                      scriptStyle === "나레이션 버전"
                         ? "bg-gradient-to-br from-[#D90000] to-[#FF2B2B] text-white shadow-[0_0_10px_rgba(255,43,43,0.5)]"
                         : "bg-[#2A2A2A] hover:bg-zinc-700 text-neutral-200"
                     }`}
                   >
                     <div className="text-center">
-                      <div className="font-bold">많은 버전</div>
-                      <div className="text-xs mt-1 opacity-80">상세한 프롬프트, 챕터 수 증가</div>
+                      <div className="font-bold">🎙️ 나레이션 버전</div>
+                      <div className="text-xs mt-1 opacity-80">단독 나레이터 형식</div>
                     </div>
                   </button>
                 </div>
-                {imagePromptLevel === "많은 버전" && (
-                  <div className="mt-3 p-3 bg-amber-900/20 border border-amber-500/30 rounded-lg">
-                    <p className="text-sm text-amber-400">
-                      💡 <strong>많은 버전</strong> 선택 시 이미지 프롬프트가 상세해져 토큰을 많이 사용합니다.
-                      <br />
-                      대본 길이를 확보하기 위해 챕터 수가 자동으로 증가합니다: <strong>30분 → 6챕터 / 1시간 → 12챕터</strong>
-                    </p>
-                  </div>
-                )}
               </div>
 
               <div>
@@ -1972,8 +1960,6 @@ const App: React.FC = () => {
                     ))}
                   </div>
                 </ResultCard>
-
-                <AdSense />
 
                 {/* 챕터 기반 대본 (1시간 영상) */}
                 {newPlan.chapters && newPlan.characters && (

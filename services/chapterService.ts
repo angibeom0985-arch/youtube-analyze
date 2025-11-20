@@ -13,7 +13,7 @@ export const generateChapterOutline = async (
   category: string,
   apiKey: string,
   vlogType?: string,
-  imagePromptLevel?: string  // "적은 버전" | "많은 버전"
+  scriptStyle?: string  // "대화 버전" | "나레이션 버전"
 ): Promise<{ chapters: Chapter[]; characters: string[]; newIntent: StructuredContent[] }> => {
   try {
     const ai = createAI(apiKey);
@@ -26,7 +26,6 @@ export const generateChapterOutline = async (
 
     // 목표 영상 길이에 따른 챕터 수 결정
     // 토큰 제한: Gemini API 출력 약 8,192 토큰 (한국어 대본 약 1분당 150-200 토큰)
-    // 이미지 프롬프트가 많으면 토큰 소비량 증가 → 챕터 수 증가 필요
     
     // 영상 길이를 분 단위로 변환
     const parseMinutes = (lengthStr: string): number => {
@@ -55,11 +54,9 @@ export const generateChapterOutline = async (
     };
     
     const totalMinutes = parseMinutes(length);
-    const isDetailedPrompt = imagePromptLevel === "많은 버전";
     
-    // 챕터당 목표 시간: 대본 길이 2배 증가 → 챕터당 시간 절반으로 감소
-    // 적은 버전: 3.75분 (7.5분의 절반), 많은 버전: 2.5분 (5분의 절반)
-    const chapterDuration = isDetailedPrompt ? 2.5 : 3.75;
+    // 챕터당 목표 시간: 3.75분 (대본 길이 2배 증가로 인해)
+    const chapterDuration = 3.75;
     let targetChapters = Math.ceil(totalMinutes / chapterDuration);
     
     // 최소 2챕터로 제한 (8분 영상도 챕터 2개)
@@ -171,12 +168,12 @@ export const generateChapterScript = async (
   category: string,
   apiKey: string,
   allChapters: Chapter[],
-  imagePromptLevel?: string  // "적은 버전" | "많은 버전"
+  scriptStyle?: string  // "대화 버전" | "나레이션 버전"
 ): Promise<ScriptLine[]> => {
   try {
     const ai = createAI(apiKey);
 
-    const isDetailedPrompt = imagePromptLevel === "많은 버전";
+    const isNarration = scriptStyle === "나레이션 버전";
 
     const scriptSchema = {
       type: Type.OBJECT,
@@ -211,15 +208,25 @@ export const generateChapterScript = async (
       .map((ch) => `- ${ch.title}: ${ch.purpose}`)
       .join('\n');
 
-    const isStoryChannel = category === "썰 채널" || category === "북한 이슈" || category === "49금" || category === "야담" || category === "국뽕";
+    const isStoryChannel = category === "쇼 채널" || category === "북한 이슈" || category === "49금" || category === "야담" || category === "국뽕";
 
-    const imagePromptGuideline = isDetailedPrompt
-      ? `5. **이미지 프롬프트 (상세 버전)**: 각 장면을 매우 상세하게 표현할 수 있는 영어 프롬프트를 작성하세요
-   - 배경, 조명, 색감, 분위기, 카메라 앵글 등을 구체적으로 명시
-   - 예: "A man standing in front of a dimly lit art gallery at night, soft ambient lighting reflecting in his eyes, cinematic composition, wide angle shot, mysterious atmosphere"`
-      : `5. **이미지 프롬프트 (간단 버전)**: 각 장면의 핵심 요소만 포함한 간결한 영어 프롬프트를 작성하세요
-   - 주요 인물, 장소, 행동만 명시
-   - 예: "A man in an art gallery at night"`;
+    const styleGuideline = isNarration
+      ? `5. **나레이션 스타일**: 단독 나레이터가 이야기하는 형식으로 작성하세요
+   - character는 항상 "나레이터"로 통일
+   - 설명하는 투의 문체 사용
+   - 예: "나레이터: 그날 밤, 그는 어두운 갤러리 앞에 서 있었습니다..."
+
+6. **이미지 프롬프트**: 각 장면을 시각적으로 표현할 수 있는 영어 프롬프트를 작성하세요
+   - 주요 인물, 장소, 행동, 분위기 포함
+   - 예: "A man standing in front of an art gallery at night, mysterious atmosphere"`
+      : `5. **대화 스타일**: 등장인물 간의 대화로 이야기를 전개하세요
+   - character에 지정된 등장인물 이름 사용
+   - 자연스러운 대화체 문체
+   - 예: "주인공: 여기가 그 유명한 갤러리군요"
+
+6. **이미지 프롬프트**: 각 장면을 시각적으로 표현할 수 있는 영어 프롬프트를 작성하세요
+   - 주요 인물, 장소, 행동, 분위기 포함
+   - 예: "A man standing in front of an art gallery at night, mysterious atmosphere"`;
 
     const prompt = `"${newKeyword}" 주제의 다음 챕터에 대한 상세 대본을 작성해주세요:
 
@@ -239,9 +246,9 @@ ${nextChaptersSummary ? `**다음 챕터 예정:**\n${nextChaptersSummary}\n` : 
    - **대사 개수: 최소 ${Math.ceil(parseInt(chapter.estimatedDuration) * 8)}개 이상** (기존의 2배)
    - 각 대사는 충분히 길고 상세하게 작성하여 시청자가 몰입할 수 있도록 구성하세요
 2. **흐름**: 이전 챕터와 자연스럽게 연결되고, 다음 챕터로 이어지도록 구성하세요
-3. **등장인물**: 지정된 등장인물만 사용하세요
+3. **등장인물**: ${isNarration ? '"나레이터"만 사용하세요' : '지정된 등장인물만 사용하세요'}
 4. **타임스탬프**: 각 대사의 예상 시점을 MM:SS 형식으로 정확히 계산하세요
-${imagePromptGuideline}
+${styleGuideline}
 
 ${isStoryChannel ? `
 **스토리 요소:**
