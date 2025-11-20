@@ -1834,7 +1834,7 @@ const App: React.FC = () => {
                     <Loader />
                   </div>
                 ) : suggestedIdeas.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-3 gap-3">
                     {suggestedIdeas.map((idea, index) => (
                       <button
                         key={index}
