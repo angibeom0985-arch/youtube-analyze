@@ -2292,40 +2292,35 @@ const App: React.FC = () => {
                 <AdSense />
 
                 {/* 다른 사이트 소개 섹션 */}
-                {newPlan.scriptWithCharacters && (
+                {(newPlan.scriptWithCharacters || newPlan.chapters) && (
                   <div className="mt-8 bg-gradient-to-br from-purple-900/30 via-pink-900/30 to-blue-900/30 border-2 border-purple-500/50 rounded-xl p-8">
                     <div className="text-center mb-6">
                       <h3 className="text-2xl font-bold text-white mb-2">
                         🎬 더 많은 영상 제작 도구가 필요하신가요?
                       </h3>
                       <p className="text-lg text-neutral-200">
-                        콘텐츠 자동화를 원하신다면 아래 도구들을 확인해보세요!
+                        프로페셔널 영상 편집과 효과를 위한 도구들을 확인해보세요!
                       </p>
                       <p className="text-md text-purple-300 mt-2 font-semibold">
-                        위에서 만든 대본을 토대로 AI 영상 1분컷 가능
+                        위에서 만든 대본을 토대로 AI 영상 1분 가능
                       </p>
                     </div>
-                    <div className="grid md:grid-cols-3 gap-4">
+                    <div className="grid md:grid-cols-2 gap-4">
                       <a
-                        href="https://youtube-image.money-hotissue.com"
-                        className="bg-gradient-to-br from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 text-center shadow-lg"
+                        href="https://youtube-image.money-hotissue.com/"
+                        className="bg-gradient-to-br from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white font-bold py-6 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 text-center shadow-lg"
                       >
-                        <div className="text-3xl mb-2">📸</div>
-                        <div className="text-lg">숏폼/롱폼 이미지 생성</div>
+                        <div className="text-4xl mb-3">📹</div>
+                        <div className="text-xl font-bold">숏폼/롱폼 영상 소스 무제한 생성</div>
+                        <p className="text-sm mt-2 opacity-90">프로페셔널 영상 편집과 효과를 위한 도구를 확인해보세요</p>
                       </a>
                       <a
                         href="https://aimusic.money-hotissue.com/"
-                        className="bg-gradient-to-br from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 text-center shadow-lg"
+                        className="bg-gradient-to-br from-orange-600 to-orange-700 hover:from-orange-500 hover:to-orange-600 text-white font-bold py-6 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 text-center shadow-lg"
                       >
-                        <div className="text-3xl mb-2">🎵</div>
-                        <div className="text-lg">AI 음악 가사 1초 완성</div>
-                      </a>
-                      <a
-                        href="https://aimusic.money-hotissue.com/"
-                        className="bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 text-center shadow-lg"
-                      >
-                        <div className="text-3xl mb-2">🎨</div>
-                        <div className="text-lg">AI 음악 썸네일 제작</div>
+                        <div className="text-4xl mb-3">🔥</div>
+                        <div className="text-xl font-bold">AI 음악 가사+썸네일 1초 완성</div>
+                        <p className="text-sm mt-2 opacity-90">위에서 만든 대본을 토대로 AI 영상 1분 가능</p>
                       </a>
                     </div>
                   </div>
