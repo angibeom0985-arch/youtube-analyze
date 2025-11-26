@@ -974,9 +974,74 @@ const App: React.FC = () => {
       }
     } catch (e: any) {
       console.error("기획안 생성 오류:", e);
-      const errorMessage = e.message || "❌ 기획안 생성 중 알 수 없는 오류가 발생했습니다.\n\n💡 해결 방법:\n• 페이지를 새로고침하고 다시 시도해주세요\n• API 키가 올바른지 확인해주세요\n• 인터넷 연결을 확인해주세요";
-      setError(errorMessage);
-      alert(errorMessage);
+      
+      // 상세한 오류 정보 수집
+      const errorDetails = {
+        message: e.message || "알 수 없는 오류",
+        stack: e.stack || "스택 정보 없음",
+        timestamp: new Date().toISOString(),
+        category: selectedCategory,
+        length: customLength,
+        keyword: newKeyword,
+        hasApiKey: !!apiKey,
+        hasAnalysisResult: !!analysisResult,
+      };
+      
+      console.error("상세 오류 정보:", errorDetails);
+      
+      // 사용자 친화적인 오류 메시지 생성
+      let userMessage = "🚨 기획안 생성 실패\n\n";
+      userMessage += "━━━━━━━━━━━━━━━━━━━━━━\n\n";
+      
+      // 오류 원인 분석
+      userMessage += "📋 오류 원인:\n";
+      if (e.message?.includes("API_KEY") || e.message?.includes("api key") || e.message?.includes("401")) {
+        userMessage += "• API 키가 유효하지 않거나 만료되었습니다\n\n";
+      } else if (e.message?.includes("quota") || e.message?.includes("limit")) {
+        userMessage += "• API 사용량 한도를 초과했습니다\n\n";
+      } else if (e.message?.includes("network") || e.message?.includes("fetch")) {
+        userMessage += "• 네트워크 연결에 문제가 있습니다\n\n";
+      } else if (e.message?.includes("timeout")) {
+        userMessage += "• 요청 시간이 초과되었습니다\n\n";
+      } else {
+        userMessage += `• ${e.message || "알 수 없는 오류가 발생했습니다"}\n\n`;
+      }
+      
+      // 사용자 해결 방법
+      userMessage += "💡 해결 방법:\n";
+      userMessage += "1. 페이지를 새로고침(F5)하고 다시 시도해주세요\n";
+      userMessage += "2. API 키가 올바르게 설정되었는지 확인해주세요\n";
+      userMessage += "3. 인터넷 연결 상태를 확인해주세요\n";
+      userMessage += "4. 브라우저 캐시를 지우고 다시 시도해주세요\n";
+      userMessage += "5. 잠시 후 다시 시도해주세요 (서버 과부하 가능성)\n\n";
+      
+      // 개발자 전달 정보
+      userMessage += "🔧 개발자에게 전달할 정보:\n";
+      userMessage += `• 오류 시각: ${new Date().toLocaleString("ko-KR")}\n`;
+      userMessage += `• 카테고리: ${selectedCategory}\n`;
+      userMessage += `• 영상 길이: ${customLength}\n`;
+      userMessage += `• 키워드: ${newKeyword}\n`;
+      userMessage += `• 오류 메시지: ${e.message || "없음"}\n`;
+      userMessage += `• 브라우저: ${navigator.userAgent}\n\n`;
+      
+      userMessage += "━━━━━━━━━━━━━━━━━━━━━━\n";
+      userMessage += "문제가 계속되면 위 정보를 개발자에게 전달해주세요.";
+      
+      setError(userMessage);
+      
+      // 오류 로그를 localStorage에 저장 (디버깅용)
+      try {
+        const errorLog = JSON.parse(localStorage.getItem("errorLog") || "[]");
+        errorLog.push({
+          ...errorDetails,
+          userAgent: navigator.userAgent,
+        });
+        // 최근 10개만 보관
+        if (errorLog.length > 10) errorLog.shift();
+        localStorage.setItem("errorLog", JSON.stringify(errorLog));
+      } catch (logError) {
+        console.error("오류 로그 저장 실패:", logError);
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -1463,11 +1528,28 @@ const App: React.FC = () => {
                   }
                 />
                 {error && (
-                  <div className="bg-red-900 border border-red-700 text-red-200 p-4 rounded-lg mt-2 text-sm">
-                    <div className="font-bold mb-2">⚠️ 오류 발생</div>
-                    <pre className="whitespace-pre-wrap overflow-auto max-h-96 font-mono text-xs bg-red-950 p-3 rounded">
-                      {error}
-                    </pre>
+                  <div className="bg-red-900/50 border-2 border-red-500 text-red-100 p-5 rounded-xl mt-3 shadow-[0_0_20px_rgba(220,38,38,0.3)]">
+                    <div className="flex items-center gap-2 font-bold text-xl mb-3">
+                      <span className="text-2xl">🚨</span>
+                      <span>오류 발생</span>
+                    </div>
+                    <div className="bg-red-950/80 rounded-lg p-4 mb-3">
+                      <pre className="whitespace-pre-wrap overflow-auto max-h-96 font-mono text-sm text-red-200 leading-relaxed">
+                        {error}
+                      </pre>
+                    </div>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(error);
+                        alert("오류 메시지가 복사되었습니다. 개발자에게 전달해주세요.");
+                      }}
+                      className="w-full bg-red-700 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      오류 메시지 복사하기
+                    </button>
                   </div>
                 )}
               </div>
@@ -1899,6 +1981,41 @@ const App: React.FC = () => {
               >
                 {isGenerating ? "생성 중..." : "기획안 생성"}
               </button>
+
+              {/* 기획안 생성 오류 표시 */}
+              {error && !isAnalyzing && !isGenerating && (
+                <div className="mt-4 bg-red-900/50 border-2 border-red-500 text-red-100 p-5 rounded-xl shadow-[0_0_20px_rgba(220,38,38,0.3)]">
+                  <div className="flex items-center gap-2 font-bold text-xl mb-3">
+                    <span className="text-2xl">🚨</span>
+                    <span>기획안 생성 실패</span>
+                  </div>
+                  <div className="bg-red-950/80 rounded-lg p-4 mb-3">
+                    <pre className="whitespace-pre-wrap overflow-auto max-h-96 font-mono text-sm text-red-200 leading-relaxed">
+                      {error}
+                    </pre>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(error);
+                        alert("오류 메시지가 복사되었습니다. 개발자에게 전달해주세요.");
+                      }}
+                      className="flex-1 bg-red-700 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      오류 복사
+                    </button>
+                    <button
+                      onClick={() => setError(null)}
+                      className="flex-1 bg-zinc-700 hover:bg-zinc-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+                    >
+                      닫기
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* 기획안 생성 진행 상태 표시 */}
               {isGenerating && (
