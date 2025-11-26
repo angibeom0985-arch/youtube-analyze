@@ -1050,12 +1050,23 @@ const App: React.FC = () => {
   // 챕터별 대본 생성 핸들러
   const handleGenerateChapterScript = useCallback(async (chapterId: string) => {
     if (!apiKey || !newPlan || !newPlan.chapters || !newPlan.characters) {
-      setError("챕터 대본 생성에 필요한 정보가 없습니다.");
+      const errorMsg = "챕터 대본 생성에 필요한 정보가 없습니다.";
+      setError(errorMsg);
+      alert(errorMsg);
       return;
     }
 
     const chapterIndex = newPlan.chapters.findIndex(ch => ch.id === chapterId);
-    if (chapterIndex === -1) return;
+    if (chapterIndex === -1) {
+      alert("챕터를 찾을 수 없습니다.");
+      return;
+    }
+
+    // 이미 생성 중이면 무시
+    if (newPlan.chapters[chapterIndex].isGenerating) {
+      alert("이미 생성 중입니다. 잠시만 기다려주세요.");
+      return;
+    }
 
     // 챕터 생성 중 상태 업데이트
     setNewPlan(prev => {
@@ -1068,7 +1079,27 @@ const App: React.FC = () => {
       return { ...prev, chapters: updatedChapters };
     });
 
+    // 타임아웃 설정 (3분)
+    const timeoutId = setTimeout(() => {
+      setNewPlan(prev => {
+        if (!prev || !prev.chapters) return prev;
+        const updatedChapters = [...prev.chapters];
+        if (updatedChapters[chapterIndex].isGenerating) {
+          updatedChapters[chapterIndex] = {
+            ...updatedChapters[chapterIndex],
+            isGenerating: false,
+          };
+          const errorMsg = `🚨 챕터 ${chapterIndex + 1} 생성 시간 초과\n\n타임아웃이 발생했습니다. 다시 시도해주세요.\n\n문제가 지속되면:\n1. 페이지를 새로고침해주세요\n2. 영상 길이를 짧게 설정해보세요\n3. 잠시 후 다시 시도해주세요`;
+          setError(errorMsg);
+          alert(errorMsg);
+        }
+        return { ...prev, chapters: updatedChapters };
+      });
+    }, 180000); // 3분
+
     try {
+      console.log(`챕터 ${chapterIndex + 1} 생성 시작...`);
+      
       const script = await generateChapterScript(
         newPlan.chapters[chapterIndex],
         newPlan.characters,
@@ -1078,6 +1109,9 @@ const App: React.FC = () => {
         newPlan.chapters,
         scriptStyle
       );
+
+      clearTimeout(timeoutId);
+      console.log(`챕터 ${chapterIndex + 1} 생성 완료!`);
 
       // 생성된 대본 저장
       setNewPlan(prev => {
@@ -1090,8 +1124,64 @@ const App: React.FC = () => {
         };
         return { ...prev, chapters: updatedChapters };
       });
+
+      // 성공 알림
+      alert(`✅ 챕터 ${chapterIndex + 1} 생성 완료!`);
+
     } catch (e: any) {
-      setError(e.message || "❌ 챕터 대본 생성 중 오류가 발생했습니다.");
+      clearTimeout(timeoutId);
+      console.error(`챕터 ${chapterIndex + 1} 생성 오류:`, e);
+      
+      // 상세한 오류 정보
+      const errorDetails = {
+        chapterIndex: chapterIndex + 1,
+        chapterTitle: newPlan.chapters[chapterIndex].title,
+        message: e.message || "알 수 없는 오류",
+        timestamp: new Date().toISOString(),
+        category: selectedCategory,
+        keyword: newKeyword,
+      };
+      
+      console.error("상세 오류 정보:", errorDetails);
+      
+      // 사용자 친화적인 오류 메시지
+      let userMessage = `🚨 챕터 ${chapterIndex + 1} 생성 실패\n\n`;
+      userMessage += `━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+      userMessage += `챕터 제목: ${newPlan.chapters[chapterIndex].title}\n\n`;
+      
+      // 오류 원인 분석
+      userMessage += "📋 오류 원인:\n";
+      if (e.message?.includes("API_KEY") || e.message?.includes("api key") || e.message?.includes("401")) {
+        userMessage += "• API 키가 유효하지 않거나 만료되었습니다\n\n";
+      } else if (e.message?.includes("quota") || e.message?.includes("limit")) {
+        userMessage += "• API 사용량 한도를 초과했습니다\n\n";
+      } else if (e.message?.includes("network") || e.message?.includes("fetch")) {
+        userMessage += "• 네트워크 연결에 문제가 있습니다\n\n";
+      } else if (e.message?.includes("timeout")) {
+        userMessage += "• 요청 시간이 초과되었습니다\n\n";
+      } else {
+        userMessage += `• ${e.message || "알 수 없는 오류가 발생했습니다"}\n\n`;
+      }
+      
+      // 해결 방법
+      userMessage += "💡 해결 방법:\n";
+      userMessage += "1. 페이지를 새로고침하고 다시 시도해주세요\n";
+      userMessage += "2. API 키를 확인해주세요\n";
+      userMessage += "3. 인터넷 연결을 확인해주세요\n";
+      userMessage += "4. 다른 챕터부터 생성해보세요\n";
+      userMessage += "5. 영상 길이를 짧게 설정해보세요\n\n";
+      
+      userMessage += `🔧 개발자 전달 정보:\n`;
+      userMessage += `• 챕터 번호: ${chapterIndex + 1}\n`;
+      userMessage += `• 오류 시각: ${new Date().toLocaleString("ko-KR")}\n`;
+      userMessage += `• 오류 메시지: ${e.message || "없음"}\n\n`;
+      
+      userMessage += "━━━━━━━━━━━━━━━━━━━━━━\n";
+      userMessage += "이 챕터를 건너뛰고 다음 챕터를 생성할 수 있습니다.";
+      
+      setError(userMessage);
+      alert(userMessage);
+      
       // 생성 실패 시 상태 복원
       setNewPlan(prev => {
         if (!prev || !prev.chapters) return prev;
@@ -1103,7 +1193,7 @@ const App: React.FC = () => {
         return { ...prev, chapters: updatedChapters };
       });
     }
-  }, [apiKey, newPlan, newKeyword, selectedCategory]);
+  }, [apiKey, newPlan, newKeyword, selectedCategory, scriptStyle]);
 
   // --- Text Formatting Helpers for Download ---
   const formatKeywordsToText = (keywords: string[]): string =>
