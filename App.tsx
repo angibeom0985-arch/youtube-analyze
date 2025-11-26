@@ -973,11 +973,14 @@ const App: React.FC = () => {
         setNewPlan(result);
       }
     } catch (e: any) {
-      setError(e.message || "❌ 기획안 생성 중 알 수 없는 오류가 발생했습니다.\n\n💡 해결 방법:\n• 페이지를 새로고침하고 다시 시도해주세요");
+      console.error("기획안 생성 오류:", e);
+      const errorMessage = e.message || "❌ 기획안 생성 중 알 수 없는 오류가 발생했습니다.\n\n💡 해결 방법:\n• 페이지를 새로고침하고 다시 시도해주세요\n• API 키가 올바른지 확인해주세요\n• 인터넷 연결을 확인해주세요";
+      setError(errorMessage);
+      alert(errorMessage);
     } finally {
       setIsGenerating(false);
     }
-  }, [analysisResult, newKeyword, customLength, selectedCategory, apiKey, selectedVlogType]);
+  }, [analysisResult, newKeyword, customLength, selectedCategory, apiKey, selectedVlogType, scriptStyle]);
 
   // 챕터별 대본 생성 핸들러
   const handleGenerateChapterScript = useCallback(async (chapterId: string) => {
@@ -1882,6 +1885,13 @@ const App: React.FC = () => {
                   onClick={(e) => e.stopPropagation()}
                 />
               </div>
+              {(!analysisResult || !newKeyword) && (
+                <div className="mb-4 p-4 bg-yellow-900/30 border border-yellow-500/50 rounded-lg">
+                  <p className="text-yellow-300 text-sm">
+                    ⚠️ {!analysisResult ? "먼저 영상을 분석해주세요." : "새로운 떡상 제목을 입력해주세요."}
+                  </p>
+                </div>
+              )}
               <button
                 onClick={handleGenerate}
                 disabled={isGenerating || !newKeyword || !analysisResult}
