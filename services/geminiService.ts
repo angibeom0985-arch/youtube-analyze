@@ -238,17 +238,29 @@ export const analyzeTranscript = async (
     
     let userMessage = "[오류] 스크립트 분석 중 오류가 발생했습니다.\n\n";
     
-    if (error.message && error.message.includes('API_KEY')) {
+    const errorString = JSON.stringify(error);
+    const errorMessage = error.message || '';
+    
+    if (errorString.includes('SERVICE_DISABLED') || errorString.includes('PERMISSION_DENIED') || errorMessage.includes('has not been used in project') || errorMessage.includes('is disabled')) {
+      userMessage += "[원인]\n- API 키의 Generative Language API가 비활성화되어 있습니다\n- 또는 API 키가 잘못되었습니다\n\n[해결 방법]\n";
+      userMessage += "1. Google AI Studio (aistudio.google.com)에서 새 API 키를 발급받으세요\n";
+      userMessage += "2. 기존 API 키를 사용 중이라면, Google Cloud Console에서 'Generative Language API'를 활성화하세요\n";
+      userMessage += "3. API 키를 새로 발급받은 경우, 5-10분 정도 기다린 후 다시 시도하세요\n\n";
+      userMessage += "[API 키 재발급 방법]\n";
+      userMessage += "- https://aistudio.google.com/app/apikey 방문\n";
+      userMessage += "- 'Create API key' 버튼 클릭\n";
+      userMessage += "- 새 API 키를 복사하여 사용하세요";
+    } else if (errorMessage.includes('API_KEY') || errorMessage.includes('invalid') || errorString.includes('INVALID_ARGUMENT')) {
       userMessage += "[원인]\n- API 키가 유효하지 않거나 만료되었습니다\n\n[해결 방법]\n- API 키를 다시 확인하고 재설정해주세요\n- API 키 발급 가이드를 참고하여 새로운 키를 발급받으세요";
-    } else if (error.message && error.message.includes('quota')) {
+    } else if (errorMessage.includes('quota') || errorString.includes('RESOURCE_EXHAUSTED')) {
       userMessage += "[원인]\n- API 사용량이 초과되었습니다\n\n[해결 방법]\n- 잠시 후 다시 시도해주세요\n- Google AI Studio에서 API 사용량을 확인해주세요";
-    } else if (error.message && error.message.includes('rate')) {
+    } else if (errorMessage.includes('rate') || errorString.includes('RATE_LIMIT')) {
       userMessage += "[원인]\n- API 요청이 너무 빠르게 발생했습니다\n\n[해결 방법]\n- 10초 정도 기다린 후 다시 시도해주세요";
     } else {
       userMessage += "[가능한 원인]\n- 스크립트 길이가 너무 길거나 형식이 올바르지 않습니다\n- AI 서버 일시적 오류\n- 네트워크 연결 문제\n\n[해결 방법]\n- 스크립트를 짧게 나눠서 다시 시도해주세요\n- 잠시 후 다시 시도해주세요";
     }
     
-    userMessage += `\n\n[개발자 정보]\n${error.message || '알 수 없는 오류'}\n${error.stack ? '\nStack: ' + error.stack : ''}`;
+    userMessage += `\n\n[개발자 정보]\n${errorMessage || '알 수 없는 오류'}\n${error.stack ? '\nStack: ' + error.stack : ''}`;
     
     throw new Error(userMessage);
   }
@@ -303,17 +315,25 @@ export const generateIdeas = async (
     
     let userMessage = "[오류] 아이디어 생성 중 오류가 발생했습니다.\n\n";
     
-    if (error.message && error.message.includes('API_KEY')) {
+    const errorString = JSON.stringify(error);
+    const errorMessage = error.message || '';
+    
+    if (errorString.includes('SERVICE_DISABLED') || errorString.includes('PERMISSION_DENIED') || errorMessage.includes('has not been used in project') || errorMessage.includes('is disabled')) {
+      userMessage += "[원인]\n- API 키의 Generative Language API가 비활성화되어 있습니다\n\n[해결 방법]\n";
+      userMessage += "1. https://aistudio.google.com/app/apikey 에서 새 API 키를 발급받으세요\n";
+      userMessage += "2. 기존 API 키 사용 시, Google Cloud Console에서 'Generative Language API'를 활성화하세요\n";
+      userMessage += "3. API 키를 새로 발급받은 경우, 5-10분 정도 기다린 후 다시 시도하세요";
+    } else if (errorMessage.includes('API_KEY') || errorMessage.includes('invalid') || errorString.includes('INVALID_ARGUMENT')) {
       userMessage += "[원인]\n- API 키가 유효하지 않거나 만료되었습니다\n\n[해결 방법]\n- API 키를 다시 확인하고 재설정해주세요";
-    } else if (error.message && error.message.includes('quota')) {
+    } else if (errorMessage.includes('quota') || errorString.includes('RESOURCE_EXHAUSTED')) {
       userMessage += "[원인]\n- API 사용량이 초과되었습니다\n\n[해결 방법]\n- 잠시 후 다시 시도해주세요\n- Google AI Studio에서 API 사용량을 확인해주세요";
-    } else if (error.message && error.message.includes('rate')) {
+    } else if (errorMessage.includes('rate') || errorString.includes('RATE_LIMIT')) {
       userMessage += "[원인]\n- API 요청이 너무 빠르게 발생했습니다\n\n[해결 방법]\n- 10초 정도 기다린 후 다시 시도해주세요";
     } else {
       userMessage += "[가능한 원인]\n- AI 서버 일시적 오류\n- 네트워크 연결 문제\n\n[해결 방법]\n- 잠시 후 다시 시도해주세요\n- 새로고침 후 다시 시도해주세요";
     }
     
-    userMessage += `\n\n[개발자 정보]\n${error.message || '알 수 없는 오류'}\n${error.stack ? '\nStack: ' + error.stack : ''}`;
+    userMessage += `\n\n[개발자 정보]\n${errorMessage || '알 수 없는 오류'}\n${error.stack ? '\nStack: ' + error.stack : ''}`;
     
     throw new Error(userMessage);
   }
@@ -836,17 +856,25 @@ ${analysisString}
     
     let userMessage = "[오류] 새로운 기획안 생성 중 오류가 발생했습니다.\n\n";
     
-    if (error.message && error.message.includes('API_KEY')) {
+    const errorString = JSON.stringify(error);
+    const errorMessage = error.message || '';
+    
+    if (errorString.includes('SERVICE_DISABLED') || errorString.includes('PERMISSION_DENIED') || errorMessage.includes('has not been used in project') || errorMessage.includes('is disabled')) {
+      userMessage += "[원인]\n- API 키의 Generative Language API가 비활성화되어 있습니다\n\n[해결 방법]\n";
+      userMessage += "1. https://aistudio.google.com/app/apikey 에서 새 API 키를 발급받으세요\n";
+      userMessage += "2. 기존 API 키 사용 시, Google Cloud Console에서 'Generative Language API'를 활성화하세요\n";
+      userMessage += "3. API 키를 새로 발급받은 경우, 5-10분 정도 기다린 후 다시 시도하세요";
+    } else if (errorMessage.includes('API_KEY') || errorMessage.includes('invalid') || errorString.includes('INVALID_ARGUMENT')) {
       userMessage += "[원인]\n- API 키가 유효하지 않거나 만료되었습니다\n\n[해결 방법]\n- API 키를 다시 확인하고 재설정해주세요";
-    } else if (error.message && error.message.includes('quota')) {
+    } else if (errorMessage.includes('quota') || errorString.includes('RESOURCE_EXHAUSTED')) {
       userMessage += "[원인]\n- API 사용량이 초과되었습니다\n\n[해결 방법]\n- 잠시 후 다시 시도해주세요\n- Google AI Studio에서 API 사용량을 확인해주세요";
-    } else if (error.message && error.message.includes('rate')) {
+    } else if (errorMessage.includes('rate') || errorString.includes('RATE_LIMIT')) {
       userMessage += "[원인]\n- API 요청이 너무 빠르게 발생했습니다\n\n[해결 방법]\n- 10초 정도 기다린 후 다시 시도해주세요";
     } else {
       userMessage += "[가능한 원인]\n- 키워드가 너무 복잡하거나 부적절합니다\n- AI 서버 일시적 오류\n- 네트워크 연결 문제\n\n[해결 방법]\n- 더 간단한 키워드로 다시 시도해주세요\n- 잠시 후 다시 시도해주세요";
     }
     
-    userMessage += `\n\n[개발자 정보]\n${error.message || '알 수 없는 오류'}\n${error.stack ? '\nStack: ' + error.stack : ''}`;
+    userMessage += `\n\n[개발자 정보]\n${errorMessage || '알 수 없는 오류'}\n${error.stack ? '\nStack: ' + error.stack : ''}`;
     
     throw new Error(userMessage);
   }
