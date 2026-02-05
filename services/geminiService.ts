@@ -1,8 +1,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, NewPlan } from "../types";
+import { validateApiKeyFormat } from "../utils/apiKeyValidation";
 
 const createAI = (apiKey: string) => {
-  return new GoogleGenAI({ apiKey });
+  const validation = validateApiKeyFormat(apiKey);
+  if (!validation.ok) {
+    throw new Error(`[API_KEY_INVALID] ${validation.reason ?? "API 키가 유효하지 않습니다."}`);
+  }
+  return new GoogleGenAI({ apiKey: validation.normalized });
 };
 
 // API 키 검증 함수
@@ -250,7 +255,9 @@ export const analyzeTranscript = async (
       userMessage += "- https://aistudio.google.com/app/apikey 방문\n";
       userMessage += "- 'Create API key' 버튼 클릭\n";
       userMessage += "- 새 API 키를 복사하여 사용하세요";
-    } else if (errorMessage.includes('API_KEY') || errorMessage.includes('invalid') || errorString.includes('INVALID_ARGUMENT')) {
+    } else if (errorMessage.includes('[API_KEY_INVALID]') || errorMessage.includes('non ISO-8859-1')) {
+      userMessage += "[???]\n- API ??? ?????? ?????, ??? ?????? ?????? ??????\n\n[??? ???]\n- API ??? ??? ?????? ??? ????????\n- API ??? ??????????? ??? ?? ??? ??? ?????? ??? ??????\n";
+} else if (errorMessage.includes('API_KEY') || errorMessage.includes('invalid') || errorString.includes('INVALID_ARGUMENT')) {
       userMessage += "[원인]\n- API 키가 유효하지 않거나 만료되었습니다\n\n[해결 방법]\n- API 키를 다시 확인하고 재설정해주세요\n- API 키 발급 가이드를 참고하여 새로운 키를 발급받으세요";
     } else if (errorMessage.includes('quota') || errorString.includes('RESOURCE_EXHAUSTED')) {
       userMessage += "[원인]\n- API 사용량이 초과되었습니다\n\n[해결 방법]\n- 잠시 후 다시 시도해주세요\n- Google AI Studio에서 API 사용량을 확인해주세요";
@@ -323,7 +330,9 @@ export const generateIdeas = async (
       userMessage += "1. https://aistudio.google.com/app/apikey 에서 새 API 키를 발급받으세요\n";
       userMessage += "2. 기존 API 키 사용 시, Google Cloud Console에서 'Generative Language API'를 활성화하세요\n";
       userMessage += "3. API 키를 새로 발급받은 경우, 5-10분 정도 기다린 후 다시 시도하세요";
-    } else if (errorMessage.includes('API_KEY') || errorMessage.includes('invalid') || errorString.includes('INVALID_ARGUMENT')) {
+    } else if (errorMessage.includes('[API_KEY_INVALID]') || errorMessage.includes('non ISO-8859-1')) {
+      userMessage += "[???]\n- API ??? ?????? ?????, ??? ?????? ?????? ??????\n\n[??? ???]\n- API ??? ??? ?????? ??? ????????\n- API ??? ??????????? ??? ?? ??? ??? ?????? ??? ??????\n";
+} else if (errorMessage.includes('API_KEY') || errorMessage.includes('invalid') || errorString.includes('INVALID_ARGUMENT')) {
       userMessage += "[원인]\n- API 키가 유효하지 않거나 만료되었습니다\n\n[해결 방법]\n- API 키를 다시 확인하고 재설정해주세요";
     } else if (errorMessage.includes('quota') || errorString.includes('RESOURCE_EXHAUSTED')) {
       userMessage += "[원인]\n- API 사용량이 초과되었습니다\n\n[해결 방법]\n- 잠시 후 다시 시도해주세요\n- Google AI Studio에서 API 사용량을 확인해주세요";
@@ -864,7 +873,9 @@ ${analysisString}
       userMessage += "1. https://aistudio.google.com/app/apikey 에서 새 API 키를 발급받으세요\n";
       userMessage += "2. 기존 API 키 사용 시, Google Cloud Console에서 'Generative Language API'를 활성화하세요\n";
       userMessage += "3. API 키를 새로 발급받은 경우, 5-10분 정도 기다린 후 다시 시도하세요";
-    } else if (errorMessage.includes('API_KEY') || errorMessage.includes('invalid') || errorString.includes('INVALID_ARGUMENT')) {
+    } else if (errorMessage.includes('[API_KEY_INVALID]') || errorMessage.includes('non ISO-8859-1')) {
+      userMessage += "[???]\n- API ??? ?????? ?????, ??? ?????? ?????? ??????\n\n[??? ???]\n- API ??? ??? ?????? ??? ????????\n- API ??? ??????????? ??? ?? ??? ??? ?????? ??? ??????\n";
+} else if (errorMessage.includes('API_KEY') || errorMessage.includes('invalid') || errorString.includes('INVALID_ARGUMENT')) {
       userMessage += "[원인]\n- API 키가 유효하지 않거나 만료되었습니다\n\n[해결 방법]\n- API 키를 다시 확인하고 재설정해주세요";
     } else if (errorMessage.includes('quota') || errorString.includes('RESOURCE_EXHAUSTED')) {
       userMessage += "[원인]\n- API 사용량이 초과되었습니다\n\n[해결 방법]\n- 잠시 후 다시 시도해주세요\n- Google AI Studio에서 API 사용량을 확인해주세요";

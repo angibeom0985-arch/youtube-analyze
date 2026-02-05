@@ -1,8 +1,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
+import { validateApiKeyFormat } from "../utils/apiKeyValidation";
 import type { AnalysisResult, Chapter, ScriptLine, StructuredContent } from "../types";
 
 const createAI = (apiKey: string) => {
-  return new GoogleGenAI({ apiKey });
+  const validation = validateApiKeyFormat(apiKey);
+  if (!validation.ok) {
+    throw new Error(`[API_KEY_INVALID] ${validation.reason ?? "API ?? ???? ????."}`);
+  }
+  return new GoogleGenAI({ apiKey: validation.normalized });
 };
 
 // 챕터 기반 개요 생성 (긴 영상용)
@@ -156,7 +161,11 @@ ${analysisString}
     return JSON.parse(jsonText);
   } catch (error: any) {
     console.error("Error generating chapter outline:", error);
-    throw new Error(`챕터 개요 생성 중 오류가 발생했습니다: ${error.message}`);
+    const errorMessage = error?.message || "";
+    if (errorMessage.includes('[API_KEY_INVALID]') || errorMessage.includes('non ISO-8859-1')) {
+      throw new Error("API ? ?? ??: ??/??/????? ???? ?? ??? ???.");
+    }
+    throw new Error(`??? ??? ??? ??????? ?????????: ${errorMessage}`);
   }
 };
 
@@ -275,6 +284,10 @@ ${isStoryChannel ? `
     return result.script;
   } catch (error: any) {
     console.error("Error generating chapter script:", error);
-    throw new Error(`챕터 대본 생성 중 오류가 발생했습니다: ${error.message}`);
+    const errorMessage = error?.message || "";
+    if (errorMessage.includes('[API_KEY_INVALID]') || errorMessage.includes('non ISO-8859-1')) {
+      throw new Error("API ? ?? ??: ??/??/????? ???? ?? ??? ???.");
+    }
+    throw new Error(`??? ??????? ??????? ?????????: ${errorMessage}`);
   }
 };

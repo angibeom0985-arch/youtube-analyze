@@ -49,6 +49,7 @@ import AdBlockWarningModal from "./components/AdBlockWarningModal";
 import FloatingAnchorAd from "./components/FloatingAnchorAd";
 import SidebarAds from "./components/SidebarAds";
 import { getStoredApiKey, saveApiKey } from "./utils/apiKeyStorage";
+import { validateApiKeyFormat } from "./utils/apiKeyValidation";
 import { highlightImportantText } from "./utils/textHighlight.tsx";
 
 const defaultCategories = [
@@ -259,7 +260,13 @@ const App: React.FC = () => {
   useEffect(() => {
     const storedKey = getStoredApiKey();
     if (storedKey) {
-      setApiKey(storedKey);
+      const validation = validateApiKeyFormat(storedKey);
+      if (validation.ok) {
+        setApiKey(validation.normalized);
+      } else {
+        localStorage.removeItem("gemini_api_key");
+        setApiKey(null);
+      }
     }
   }, []);
 
@@ -748,10 +755,15 @@ const App: React.FC = () => {
   };
 
   const handleSaveApiKey = async (key: string) => {
-    saveApiKey(key);
-    setApiKey(key);
+    const validation = validateApiKeyFormat(key);
+    if (!validation.ok) {
+      alert(validation.reason ?? "API ?? ???? ????.");
+      return;
+    }
+    saveApiKey(validation.normalized);
+    setApiKey(validation.normalized);
     setShowApiKeyModal(false);
-    alert("✅ API 키가 성공적으로 설정되었습니다!");
+    alert("??API ??? ???????????????????");
   };
 
   const handleDeleteApiKey = (e: React.MouseEvent) => {
