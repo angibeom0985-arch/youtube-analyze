@@ -147,7 +147,7 @@ ${analysisString}
 모든 결과를 JSON 형식으로 제공해주세요.`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -269,7 +269,7 @@ ${isStoryChannel ? `
 모든 결과를 JSON 형식으로 제공해주세요.`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
